@@ -16,8 +16,8 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -301,7 +301,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public RayTraceResult collisionRayTrace(World world, ChunkCoordinates blockPos, Vec3d vec3d, Vec3d vec3d1) {
+    public MovingObjectPosition collisionRayTrace(World world, ChunkCoordinates blockPos, Vec3 vec3d, Vec3 vec3d1) {
         return null;
     }
 
@@ -326,7 +326,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public Vec3d getOffset(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
+    public Vec3 getOffset(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 

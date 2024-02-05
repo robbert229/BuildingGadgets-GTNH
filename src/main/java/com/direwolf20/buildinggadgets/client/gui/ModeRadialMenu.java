@@ -29,7 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -253,7 +253,7 @@ public class ModeRadialMenu extends GuiScreen {
 
         int radiusMin = 26;
         int radiusMax = 60;
-        double dist = new Vec3d(x, y, 0).distanceTo(new Vec3d(mx, my, 0));
+        double dist = Vec3.createVectorHelper(x, y, 0).distanceTo(Vec3.createVectorHelper(mx, my, 0));
         boolean inRange = false;
         if (segments != 0) {
             inRange = dist > radiusMin && dist < radiusMax;

@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -69,12 +69,12 @@ public class ToolRenders {
     public static void renderBuilderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
 
         // Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         List<ChunkCoordinates> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
@@ -156,12 +156,12 @@ public class ToolRenders {
 
     public static void renderExchangerOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         // Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         IBlockState state = Blocks.AIR.getDefaultState();
         List<ChunkCoordinates> coordinates = getAnchor(heldItem);
 
@@ -249,19 +249,32 @@ public class ToolRenders {
     }
 
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
-        if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) return;
-        World world = player.world;
-        ChunkCoordinates startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
-        EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
-        if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+        if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) {
+            return;
+        }
 
-        if (!GadgetDestruction.getOverlay(stack)) return;
+        World world = player.worldObj;
+
+        ChunkCoordinates startBlock = (GadgetDestruction.getAnchor(stack) == null) ?
+                VectorTools.getPosFromMovingObjectPosition(lookingAt) :
+                GadgetDestruction.getAnchor(stack);
+
+        EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
+        if (startBlock == ModBlocks.effectBlock.getDefaultState()) {
+            return;
+        }
+
+        if (!GadgetDestruction.getOverlay(stack)) {
+            return;
+        }
+
         GlStateManager.pushMatrix();
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
         double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
         double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
         GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+
         try {
             GlStateManager.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
                 int displayList = GLAllocation.generateDisplayLists(1);
@@ -273,6 +286,7 @@ public class ToolRenders {
         } catch (ExecutionException e) {
             BuildingGadgets.logger.error("Error encountered while rendering destruction gadget overlay", e);
         }
+
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
@@ -305,7 +319,7 @@ public class ToolRenders {
                 continue;
 
             GlStateManager.pushMatrix();//Push matrix again just because
-            GlStateManager.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
+            GlStateManager.translate(coordinate.posX, coordinate.posY, coordinate.posZ);//Now move the render position to the coordinates we want to render at
             GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
             GlStateManager.translate(-0.005f, -0.005f, 0.005f);
             GlStateManager.scale(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
@@ -329,7 +343,7 @@ public class ToolRenders {
 
     public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         //Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         renderLinkedInventoryOutline(stack, playerPos, player);
         if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null)
@@ -378,12 +392,12 @@ public class ToolRenders {
             GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
             GlStateManager.pushMatrix();//Push matrix again just because
-            GlStateManager.translate(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GlStateManager.translate(startPos.posX-playerPos.xCoord, startPos.posY - playerPos.yCoord, startPos.posZ - playerPos.z);//Now move the render position to the coordinates we want to render at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
             GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
             GlStateManager.scale(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
-            PasteToolBufferBuilder.draw(player, playerPos.x, playerPos.y, playerPos.z, startPos, UUID); //Draw the cached buffer in the world.
+            PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos, UUID); //Draw the cached buffer in the world.
 
             GlStateManager.popMatrix();
 
@@ -404,12 +418,12 @@ public class ToolRenders {
                 return;
 
             // We want to draw from the starting position to the (ending position)+1
-            int x = (startPos.getX() <= endPos.getX()) ? startPos.getX() : endPos.getX();
-            int y = (startPos.getY() <= endPos.getY()) ? startPos.getY() : endPos.getY();
-            int z = (startPos.getZ() <= endPos.getZ()) ? startPos.getZ() : endPos.getZ();
-            int dx = (startPos.getX() > endPos.getX()) ? startPos.getX() + 1 : endPos.getX() + 1;
-            int dy = (startPos.getY() > endPos.getY()) ? startPos.getY() + 1 : endPos.getY() + 1;
-            int dz = (startPos.getZ() > endPos.getZ()) ? startPos.getZ() + 1 : endPos.getZ() + 1;
+            int x = (startPos.posX <= endPos.posX) ? startPos.posX : endPos.posX;
+            int y = (startPos.posY <= endPos.posY) ? startPos.posY : endPos.posY;
+            int z = (startPos.posZ <= endPos.posZ) ? startPos.posZ : endPos.posZ;
+            int dx = (startPos.posX > endPos.posX) ? startPos.posX + 1 : endPos.posX + 1;
+            int dy = (startPos.posY > endPos.posY) ? startPos.posY + 1 : endPos.posY + 1;
+            int dz = (startPos.posZ > endPos.posZ) ? startPos.posZ + 1 : endPos.posZ + 1;
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -434,7 +448,7 @@ public class ToolRenders {
         }
     }
 
-    private static void renderLinkedInventoryOutline(ItemStack item, Vec3d playerPos, EntityPlayer player) {
+    private static void renderLinkedInventoryOutline(ItemStack item, Vec3 playerPos, EntityPlayer player) {
         Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
         ChunkCoordinates pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
 
@@ -522,10 +536,10 @@ public class ToolRenders {
 
     private static class Utils {
 
-        private static IBlockState getStartBlock(RayTraceResult lookingAt, EntityPlayer player) {
+        private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
             IBlockState startBlock = Blocks.AIR.getDefaultState();
             if (lookingAt != null)
-                startBlock = player.world.getBlockState(lookingAt.getBlockPos());
+                startBlock = player.worldObj.getBlockState(VectorTools.getPosFromMovingObjectPosition(lookingAt));
 
             return startBlock;
         }
@@ -544,8 +558,8 @@ public class ToolRenders {
          * Returns a Vec3i of the players position based on partial tick.
          * Used for Render translation.
          */
-        private static Vec3d getPlayerTranslate(EntityPlayer player, float partialTick) {
-            return new Vec3d(
+        private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
+            return Vec3.createVectorHelper(
                     player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
                     player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
                     player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick
@@ -581,8 +595,8 @@ public class ToolRenders {
         /**
          * Prepares our render using base properties
          */
-        private static void stateManagerPrepare(Vec3d playerPos, ChunkCoordinates blockPos, Float shift) {
-            GlStateManager.translate(blockPos.posX-playerPos.x, blockPos.posY - playerPos.y, blockPos.posZ - playerPos.z);//Now move the render position to the coordinates we want to render at
+        private static void stateManagerPrepare(Vec3 playerPos, ChunkCoordinates blockPos, Float shift) {
+            GlStateManager.translate(blockPos.posX-playerPos.xCoord, blockPos.posY - playerPos.yCoord, blockPos.posZ - playerPos.zCoord);//Now move the render position to the coordinates we want to render at
             // Rotate it because i'm not sure why but we need to
             GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.scale(1f, 1f, 1f);

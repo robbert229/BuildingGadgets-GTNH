@@ -16,7 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -146,7 +146,7 @@ public class GadgetExchanger extends GadgetGeneric {
         List<ChunkCoordinates> coords = getAnchor(stack);
 
         if (coords.size() == 0) { //If we don't have an anchor, build in the current spot
-            RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) { //If we aren't looking at anything, exit
                 return false;
             }

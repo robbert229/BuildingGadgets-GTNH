@@ -30,8 +30,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.EnumFacing.Axis;;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -561,11 +560,11 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
-            RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {
                 return;
             }
-            currentAnchor = lookingAt.getBlockPos();
+            currentAnchor = VectorTools.getPosFromMovingObjectPosition(lookingAt);
             setAnchor(stack, currentAnchor);
             player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
         } else {

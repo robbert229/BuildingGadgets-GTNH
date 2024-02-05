@@ -30,7 +30,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -274,11 +274,11 @@ public class GadgetUtils {
     public static void selectBlock(ItemStack stack, EntityPlayer player) {
         //Used to find which block the player is looking at, and store it in NBT on the tool.
         World world = player.world;
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, false);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, false);
         if (lookingAt == null)
             return;
 
-        ChunkCoordinates pos = lookingAt.getBlockPos();
+        ChunkCoordinates pos = VectorTools.getPosFromMovingObjectPosition(lookingAt);
         EnumActionResult result = setRemoteInventory(stack, player, world, pos, true);
         if (result == EnumActionResult.SUCCESS)
             return;
@@ -315,11 +315,11 @@ public class GadgetUtils {
         World world = player.world;
         List<ChunkCoordinates> currentCoords = getAnchor(stack);
         if (currentCoords.size() == 0) {  //If we don't have an anchor, find the block we're supposed to anchor to
-            RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {  //If we aren't looking at anything, exit
                 return false;
             }
-            ChunkCoordinates startBlock = lookingAt.getBlockPos();
+            ChunkCoordinates startBlock = VectorTools.getPosFromMovingObjectPosition(lookingAt);
             EnumFacing sideHit = lookingAt.sideHit;
             if (startBlock == null || world.getBlockState(startBlock) == Blocks.AIR.getDefaultState()) { //If we are looking at air, exit
                 return false;

@@ -15,6 +15,7 @@ import com.google.common.collect.Multiset;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -37,7 +38,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,7 +64,7 @@ public class GadgetUtils {
         }
     }
     private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http", "www");
-    private static Supplier<IItemHandler> remoteInventorySupplier;
+    private static Supplier<IInventory> remoteInventorySupplier;
 
     public static boolean mightBeLink(final String s) {
         return LINK_STARTS.stream().anyMatch(s::startsWith);
@@ -145,9 +145,9 @@ public class GadgetUtils {
         int idx = 0;
         for (ChunkCoordinates coord : undoState.coordinates) {
             //Converts relative chunkCoordinates coordinates to a single integer value. Max range 127 due to 8 bits.
-            int px = (((coord.getX() - startBlock.getX()) & 0xff) << 16);
-            int py = (((coord.getY() - startBlock.getY()) & 0xff) << 8);
-            int pz = (((coord.getZ() - startBlock.getZ()) & 0xff));
+            int px = (((coord.posX - startBlock.posX) & 0xff) << 16);
+            int py = (((coord.posY - startBlock.posY) & 0xff) << 8);
+            int pz = (((coord.posZ - startBlock.posZ) & 0xff));
             int p = (px + py + pz);
             array[idx++] = p;
         }
@@ -366,7 +366,7 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
         return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);
     }
 
@@ -374,7 +374,7 @@ public class GadgetUtils {
      * Call {@link #clearCachedRemoteInventory clearCachedRemoteInventory} when done using this method
      */
     @Nullable
-    public static IItemHandler getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
         if (remoteInventorySupplier == null) {
             remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
                 Integer dim = getDIMFromNBT(tool, "boundTE");
@@ -393,12 +393,12 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player) {
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player) {
         return getRemoteInventory(pos, dim, world, player, NetworkIO.Operation.EXTRACT);
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
         MinecraftServer server = world.getMinecraftServer();
         if (server == null) return null;
         World worldServer = server.getWorld(dim);
@@ -407,12 +407,12 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(ChunkCoordinates pos, World world, EntityPlayer player, NetworkIO.Operation operation) {
-        TileEntity te = world.getTileEntity(pos);
+    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player, NetworkIO.Operation operation) {
+        TileEntity te = world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
         if (te == null) return null;
-        IItemHandler network = NetworkProvider.getWrappedNetwork(te, player, operation);
+        IInventory network = NetworkProvider.getWrappedNetwork(te, player, operation);
         if (network != null) return network;
-        IItemHandler cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IInventory cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         return cap != null ? cap : null;
     }
 
@@ -575,18 +575,18 @@ public class GadgetUtils {
     }
 
     public static int relPosToInt(ChunkCoordinates startPos, ChunkCoordinates relPos) {
-        int px = (((relPos.getX() - startPos.getX()) & 0xff) << 16);
-        int py = (((relPos.getY() - startPos.getY()) & 0xff) << 8);
-        int pz = (((relPos.getZ() - startPos.getZ()) & 0xff));
+        int px = (((relPos.posX - startPos.posX) & 0xff) << 16);
+        int py = (((relPos.posY - startPos.posY) & 0xff) << 8);
+        int pz = (((relPos.posZ - startPos.posZ) & 0xff));
         int p = (px + py + pz);
         return p;
     }
 
     public static ChunkCoordinates relIntToPos(ChunkCoordinates startPos, int relInt) {
         int p = relInt;
-        int x = startPos.getX() + (byte) ((p & 0xff0000) >> 16);
-        int y = startPos.getY() + (byte) ((p & 0x00ff00) >> 8);
-        int z = startPos.getZ() + (byte) (p & 0x0000ff);
+        int x = startPos.posX + (byte) ((p & 0xff0000) >> 16);
+        int y = startPos.posY + (byte) ((p & 0x00ff00) >> 8);
+        int z = startPos.posZ + (byte) (p & 0x0000ff);
         return new ChunkCoordinates(x, y, z);
     }
 

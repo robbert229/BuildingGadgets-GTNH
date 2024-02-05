@@ -10,6 +10,7 @@ import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.Phas
 import com.direwolf20.buildinggadgets.common.tools.NetworkIO.Operation;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.items.IItemHandler;
 
@@ -26,16 +27,16 @@ public abstract class NetworkProvider implements IIntegratedMod {
     }
 
     @Nullable
-    protected abstract IItemHandler getWrappedNetworkInternal(TileEntity te, EntityPlayer player, Operation operation);
+    protected abstract IInventory getWrappedNetworkInternal(TileEntity te, EntityPlayer player, Operation operation);
 
     @Nullable
-    private IItemHandler getWrappedNetworkIfLoaded(TileEntity te, EntityPlayer player, Operation operation) {
+    private IInventory getWrappedNetworkIfLoaded(TileEntity te, EntityPlayer player, Operation operation) {
         return !isLoaded ? null : getWrappedNetworkInternal(te, player, operation);
     }
 
     @Nullable
-    public static IItemHandler getWrappedNetwork(TileEntity te, EntityPlayer player, Operation operation) {
-        IItemHandler network = null;
+    public static IInventory getWrappedNetwork(TileEntity te, EntityPlayer player, Operation operation) {
+        IInventory network = null;
         for (NetworkProvider provider : PROVIDERS) {
             network = provider.getWrappedNetworkIfLoaded(te, player, operation);
             if (network != null) break;

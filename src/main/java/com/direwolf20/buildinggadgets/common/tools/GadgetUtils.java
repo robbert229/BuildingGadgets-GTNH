@@ -31,7 +31,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -51,6 +50,19 @@ import java.util.concurrent.TimeUnit;
 
 public class GadgetUtils {
 
+    private static class ChunkCoordinateComparatorHelper {
+        public static int getX(ChunkCoordinates coordinates) {
+            return coordinates.posX;
+        }
+
+        public static int getY(ChunkCoordinates coordinates) {
+            return coordinates.posY;
+        }
+
+        public static int getZ(ChunkCoordinates coordinates){
+            return coordinates.posZ;
+        }
+    }
     private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http", "www");
     private static Supplier<IItemHandler> remoteInventorySupplier;
 
@@ -58,10 +70,10 @@ public class GadgetUtils {
         return LINK_STARTS.stream().anyMatch(s::startsWith);
     }
 
-    public static final Comparator<Vec3i> POSITION_COMPARATOR = Comparator
-            .comparingInt(Vec3i::getX)
-            .thenComparingInt(Vec3i::getY)
-            .thenComparingInt(Vec3i::getZ);
+    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
+            .comparingInt(ChunkCoordinateComparatorHelper::getX)
+            .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
+            .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
 
     public static String getStackErrorSuffix(ItemStack stack) {
         return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();

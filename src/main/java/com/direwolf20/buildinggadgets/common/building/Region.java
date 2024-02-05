@@ -4,7 +4,6 @@ import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.PeekingIterator;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.math.Vec3i;
 
 import java.util.Objects;
 import java.util.Spliterator;
@@ -30,12 +29,12 @@ public final class Region implements IPlacementSequence {
         this.maxZ = Math.max(minZ, maxZ);
     }
 
-    public Region(Vec3i vertex) {
+    public Region(ChunkCoordinates vertex) {
         this(vertex, vertex);
     }
 
-    public Region(Vec3i min, Vec3i max) {
-        this(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+    public Region(ChunkCoordinates min, ChunkCoordinates max) {
+        this(min.posX, min.posY, min.posZ, max.posX, max.posY, max.posZ);
     }
 
     /**
@@ -53,8 +52,8 @@ public final class Region implements IPlacementSequence {
     /**
      * @see #translate(int, int, int)
      */
-    public Region translate(Vec3i direction) {
-        return this.translate(direction.getX(), direction.getY(), direction.getZ());
+    public Region translate(ChunkCoordinates direction) {
+        return this.translate(direction.posX, direction.posY, direction.posZ);
     }
 
     /**
@@ -116,8 +115,8 @@ public final class Region implements IPlacementSequence {
         return new Region(minX - x, minY - y, minZ - z, maxX + x, maxY + y, maxZ + z);
     }
 
-    public Region expand(Vec3i vec) {
-        return expand(vec.getX(), vec.getY(), vec.getZ());
+    public Region expand(ChunkCoordinates vec) {
+        return expand(vec.posX, vec.posY, vec.posZ);
     }
 
     /**
@@ -143,8 +142,8 @@ public final class Region implements IPlacementSequence {
     /**
      * @see #collapse(int, int, int) - read x, y, and z from the {@link Vec3i}.
      */
-    public Region collapse(Vec3i vec) {
-        return collapse(vec.getX(), vec.getY(), vec.getZ());
+    public Region collapse(ChunkCoordinates vec) {
+        return collapse(vec.posX, vec.posY, vec.posZ);
     }
 
     /**
@@ -261,8 +260,8 @@ public final class Region implements IPlacementSequence {
         return containsX(x) && containsY(y) && containsZ(z);
     }
 
-    public boolean contains(Vec3i vec) {
-        return mayContain(vec.getX(), vec.getY(), vec.getZ());
+    public boolean contains(ChunkCoordinates vec) {
+        return mayContain(vec.posX, vec.posY, vec.posZ);
     }
 
     public boolean intersectsWith(Region other) {

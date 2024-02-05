@@ -14,6 +14,10 @@
 !/gradlew
 !/gradlew.bat
 !/gradle.properties
+!/dependencies.gradle
+!/repositories.gradle
+!/settings.gradle
+!/jitpack.yml
 !/update.json
 !/CHANGELOG.md
 !/EclipseCodeStyle.xml

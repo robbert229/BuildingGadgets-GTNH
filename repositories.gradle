@@ -1,0 +1,40 @@
+// Add any additional repositories for your dependencies here.
+
+repositories {
+    maven {
+        name "tterrag's Maven" // CTM
+        url "https://maven.tterrag.com/"
+    }
+    maven {
+        name "Raoulvdberge Repo" // RS
+        url "https://repo.refinedmods.com/"
+    }
+    maven {
+        name = "DVS1 Maven" // AE2
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = "CurseForge" // SSN, Mekanism, Cyclic
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+    maven {
+        name = "Covers" // CoFH
+        url = "https://maven.covers1624.net/"
+    }
+    maven {
+        name = "Mod Maven" // AA
+        url = "https://modmaven.k-4u.nl/"
+    }
+    maven {
+        name "Jared's Repo" // EI
+        url "https://maven.blamejared.com/"
+    }
+    maven {
+        name "IC2" // IC2, Forestry
+        url "http://maven.ic2.player.to/"
+    }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
+}

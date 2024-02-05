@@ -7,9 +7,9 @@ import java.util.Set;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class IntegrationHandler {
     private static final Set<IIntegratedMod> MODS = new HashSet<>();

@@ -6,8 +6,8 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.Mod.EventBusSubscriber;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 @EventBusSubscriber(modid = BuildingGadgets.MODID)
 public class AnvilRepairHandler {

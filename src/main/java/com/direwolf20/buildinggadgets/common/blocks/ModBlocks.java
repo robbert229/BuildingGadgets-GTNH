@@ -4,10 +4,10 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManager;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+//import net.minecraft.client.renderer.color.BlockColors;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModBlocks {
@@ -25,7 +25,9 @@ public class ModBlocks {
 
     @SideOnly(Side.CLIENT)
     public static void initColorHandlers() {
-        BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
-        if (SyncedConfig.enablePaste) {constructionBlock.initColorHandler(blockColors);}
+        // @TODO(jonrowl) should we fix this?
+        //BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
+        //
+        //if (SyncedConfig.enablePaste) {constructionBlock.initColorHandler(blockColors);}
     }
 }

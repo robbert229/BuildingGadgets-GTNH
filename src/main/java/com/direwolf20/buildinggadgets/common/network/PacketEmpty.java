@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class PacketEmpty implements IMessage {
 

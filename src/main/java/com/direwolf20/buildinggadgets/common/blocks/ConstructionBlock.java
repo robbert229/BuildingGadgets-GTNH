@@ -4,6 +4,7 @@ import com.direwolf20.buildinggadgets.common.blocks.Models.BlockstateProperty;
 import com.direwolf20.buildinggadgets.common.blocks.Models.ConstructionBakedModel;
 import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -28,10 +29,10 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import team.chisel.ctm.api.IFacade;
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import com.cricketcraft.chisel.api.IFacade;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -120,9 +121,9 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Nullable
-    private IBlockState getActualMimicBlock(IBlockAccess blockAccess, ChunkCoordinates pos) {
+    private Block getActualMimicBlock(IBlockAccess blockAccess, ChunkCoordinates pos) {
         try {
-            TileEntity te = blockAccess.getTileEntity(pos);
+            TileEntity te = blockAccess.getTileEntity(pos.posX, pos.posY, pos.posZ);
             if (te instanceof ConstructionBlockTileEntity) {
                 return ((ConstructionBlockTileEntity) te).getActualBlockState();
             }
@@ -348,8 +349,8 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     @Nonnull
     @Deprecated
-    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull ChunkCoordinates pos, @Nullable EnumFacing side) {
-        IBlockState mimicBlock = getActualMimicBlock(world, pos);
+    public Block getFacade(@Nonnull IBlockAccess world, @Nonnull ChunkCoordinates pos, @Nullable EnumFacing side) {
+        Block mimicBlock = getActualMimicBlock(world, pos);
         return mimicBlock != null ? mimicBlock : world.getBlockState(pos);
         //return mimicBlock;
     }

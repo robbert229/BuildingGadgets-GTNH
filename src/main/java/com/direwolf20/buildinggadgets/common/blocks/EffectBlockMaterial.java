@@ -4,7 +4,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
 public class EffectBlockMaterial extends Material {
-    public static final Material EFFECTBLOCKMATERIAL = new EffectBlockMaterial(MapColor.AIR);
+    public static final Material EFFECTBLOCKMATERIAL = new EffectBlockMaterial(MapColor.airColor);
 
     public EffectBlockMaterial(MapColor color) {
         super(color);

@@ -5,8 +5,8 @@ import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.Mod.EventBusSubscriber;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 

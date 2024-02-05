@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.Wall;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

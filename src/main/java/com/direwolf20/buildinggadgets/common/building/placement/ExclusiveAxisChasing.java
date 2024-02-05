@@ -7,7 +7,7 @@ import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public final class ExclusiveAxisChasing implements IPlacementSequence {
 
-    public static ExclusiveAxisChasing create(BlockPos source, BlockPos target, Axis axis, int maxProgression) {
+    public static ExclusiveAxisChasing create(ChunkCoordinates source, ChunkCoordinates target, Axis axis, int maxProgression) {
         int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
         if (difference < 0)
             return create(source, target, EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis), maxProgression);
@@ -25,9 +25,9 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
     }
 
     /**
-     * <p>Note that this factory method does not verify that {@code offsetDirection} is appropriate. Use {@link #create(BlockPos, BlockPos, Axis, int)} if this is required.</p>
+     * <p>Note that this factory method does not verify that {@code offsetDirection} is appropriate. Use {@link #create(ChunkCoordinates, ChunkCoordinates, Axis, int)} if this is required.</p>
      */
-    public static ExclusiveAxisChasing create(BlockPos source, BlockPos target, EnumFacing offsetDirection, int maxProgression) {
+    public static ExclusiveAxisChasing create(ChunkCoordinates source, ChunkCoordinates target, EnumFacing offsetDirection, int maxProgression) {
         Axis axis = offsetDirection.getAxis();
         int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
         maxProgression = Math.min(Math.abs(difference), maxProgression);
@@ -35,11 +35,11 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
         return new ExclusiveAxisChasing(source, offsetDirection, maxProgression);
     }
 
-    private final BlockPos source;
+    private final ChunkCoordinates source;
     private final EnumFacing offsetDirection;
     private final int maxProgression;
 
-    public ExclusiveAxisChasing(BlockPos source, EnumFacing offsetDirection, int maxProgression) {
+    public ExclusiveAxisChasing(ChunkCoordinates source, EnumFacing offsetDirection, int maxProgression) {
         this.source = source;
         this.offsetDirection = offsetDirection;
         this.maxProgression = maxProgression;
@@ -66,12 +66,12 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
 
     @Nonnull
     @Override
-    public Iterator<BlockPos> iterator() {
-        return new AbstractIterator<BlockPos>() {
+    public Iterator<ChunkCoordinates> iterator() {
+        return new AbstractIterator<ChunkCoordinates>() {
             private int progression = 0;
 
             @Override
-            protected BlockPos computeNext() {
+            protected ChunkCoordinates computeNext() {
                 if (progression >= maxProgression)
                     return endOfData();
 

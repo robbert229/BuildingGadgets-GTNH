@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.Iterator;
@@ -56,14 +56,14 @@ public class Context {
      *
      * @return {@link AbstractIterator} that wraps {@code getPositionSequence().iterator()}
      */
-    public Iterator<BlockPos> getFilteredSequence(World world, ItemStack stack, EntityPlayer player, BlockPos initial) {
-        Iterator<BlockPos> positions = getPositionSequence().iterator();
-        BiPredicate<BlockPos, IBlockState> validator = validatorFactory.createValidatorFor(world, stack, player, initial);
-        return new AbstractIterator<BlockPos>() {
+    public Iterator<ChunkCoordinates> getFilteredSequence(World world, ItemStack stack, EntityPlayer player, ChunkCoordinates initial) {
+        Iterator<ChunkCoordinates> positions = getPositionSequence().iterator();
+        BiPredicate<ChunkCoordinates, IBlockState> validator = validatorFactory.createValidatorFor(world, stack, player, initial);
+        return new AbstractIterator<ChunkCoordinates>() {
             @Override
-            protected BlockPos computeNext() {
+            protected ChunkCoordinates computeNext() {
                 while (positions.hasNext()) {
-                    BlockPos next = positions.next();
+                    ChunkCoordinates next = positions.next();
                     if (validator.test(next, blocks.at(next)))
                         return next;
                 }
@@ -75,7 +75,7 @@ public class Context {
     /**
      * @see IPlacementSequence#collect()
      */
-    public ImmutableList<BlockPos> collectFilteredSequence(World world, ItemStack stack, EntityPlayer player, BlockPos initial) {
+    public ImmutableList<ChunkCoordinates> collectFilteredSequence(World world, ItemStack stack, EntityPlayer player, ChunkCoordinates initial) {
         return ImmutableList.copyOf(getFilteredSequence(world, stack, player, initial));
     }
 

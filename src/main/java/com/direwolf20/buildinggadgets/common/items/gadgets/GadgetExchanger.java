@@ -16,7 +16,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -144,21 +143,21 @@ public class GadgetExchanger extends GadgetGeneric {
 
     private boolean exchange(EntityPlayer player, ItemStack stack) {
         World world = player.world;
-        List<BlockPos> coords = getAnchor(stack);
+        List<ChunkCoordinates> coords = getAnchor(stack);
 
         if (coords.size() == 0) { //If we don't have an anchor, build in the current spot
             RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) { //If we aren't looking at anything, exit
                 return false;
             }
-            BlockPos startBlock = lookingAt.getBlockPos();
+            ChunkCoordinates startBlock = lookingAt.getBlockPos();
             EnumFacing sideHit = lookingAt.sideHit;
 //            IBlockState setBlock = getToolBlock(stack);
             coords = ExchangingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock);
         } else { //If we do have an anchor, erase it (Even if the build fails)
-            setAnchor(stack, new ArrayList<BlockPos>());
+            setAnchor(stack, new ArrayList<ChunkCoordinates>());
         }
-        Set<BlockPos> coordinates = new HashSet<BlockPos>(coords);
+        Set<ChunkCoordinates> coordinates = new HashSet<ChunkCoordinates>(coords);
 
         ItemStack heldItem = getGadget(player);
         if (heldItem.isEmpty())
@@ -169,7 +168,7 @@ public class GadgetExchanger extends GadgetGeneric {
         if (blockState != Blocks.AIR.getDefaultState()) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
             IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.world, blockState, coordinates); // Initialize the fake world's blocks
-            for (BlockPos coordinate : coords) {
+            for (ChunkCoordinates coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {
                         state = blockState.getActualState(fakeWorld, coordinate);  //Get the state of the block in the fake world (This lets fences be connected, etc)
@@ -186,7 +185,7 @@ public class GadgetExchanger extends GadgetGeneric {
         return true;
     }
 
-    private boolean exchangeBlock(World world, EntityPlayer player, BlockPos pos, IBlockState setBlock) {
+    private boolean exchangeBlock(World world, EntityPlayer player, ChunkCoordinates pos, IBlockState setBlock) {
         // This is unlikely but good to be sure
         if( world.isOutsideBuildHeight(pos) )
             return false;
@@ -280,7 +279,7 @@ public class GadgetExchanger extends GadgetGeneric {
      * @param setBlock      the block we need to test against
      * @param originalBlock the block we need to put back on failure
      */
-    private static boolean canPlaceBlockAt(World world, BlockPos pos, IBlockState setBlock, IBlockState originalBlock) {
+    private static boolean canPlaceBlockAt(World world, ChunkCoordinates pos, IBlockState setBlock, IBlockState originalBlock) {
         world.setBlockState(pos, Blocks.AIR.getDefaultState());
         boolean canPlace = setBlock.getBlock().canPlaceBlockAt(world, pos);
         world.setBlockState(pos, originalBlock);

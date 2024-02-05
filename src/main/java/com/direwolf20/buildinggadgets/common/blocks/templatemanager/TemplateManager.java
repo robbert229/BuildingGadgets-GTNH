@@ -23,7 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,7 +52,7 @@ public class TemplateManager extends Block {
     }
 
     @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World worldIn, ChunkCoordinates pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return this.getDefaultState().withProperty(FACING_HORIZ, placer.getHorizontalFacing().getOpposite());
     }
 
@@ -88,7 +88,7 @@ public class TemplateManager extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, ChunkCoordinates pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         // Only execute on the server
         if (world.isRemote) {
             return true;
@@ -116,7 +116,7 @@ public class TemplateManager extends Block {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state)
+    public void breakBlock(World world, ChunkCoordinates pos, IBlockState state)
     {
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof TemplateManagerTileEntity)

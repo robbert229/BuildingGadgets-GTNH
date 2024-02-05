@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,7 +118,7 @@ public class BlockMapIntState {
     }
 
     @Nonnull
-    public static UniqueItem blockStateToUniqueItem(IBlockState state, EntityPlayer player, BlockPos pos) {
+    public static UniqueItem blockStateToUniqueItem(IBlockState state, EntityPlayer player, ChunkCoordinates pos) {
         ItemStack itemStack;
         //if (state.getBlock().canSilkHarvest(player.world, pos, state, player)) {
         //    itemStack = InventoryManipulation.getSilkTouchDrop(state);
@@ -145,7 +145,7 @@ public class BlockMapIntState {
         intStackMap.clear();
         for (Map.Entry<Short, IBlockState> entry : intStateMap.entrySet()) {
             try {
-                intStackMap.put(entry.getValue(), blockStateToUniqueItem(entry.getValue(), player, new BlockPos(0, 0, 0)));
+                intStackMap.put(entry.getValue(), blockStateToUniqueItem(entry.getValue(), player, new ChunkCoordinates(0, 0, 0)));
             } catch (IllegalArgumentException e) {
             }
         }

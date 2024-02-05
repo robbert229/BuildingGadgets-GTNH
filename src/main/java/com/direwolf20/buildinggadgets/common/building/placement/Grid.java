@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -17,17 +17,17 @@ import java.util.Iterator;
  */
 public final class Grid implements IPlacementSequence {
 
-    public static Grid create(BlockPos base, int range, int periodSize) {
+    public static Grid create(ChunkCoordinates base, int range, int periodSize) {
         return new Grid(base, range, periodSize);
     }
 
     private final int periodSize;
     private final Region region;
-    private final BlockPos center;
+    private final ChunkCoordinates center;
     private final int range;
 
     @VisibleForTesting
-    private Grid(BlockPos center, int range, int periodSize) {
+    private Grid(ChunkCoordinates center, int range, int periodSize) {
         this.region = Wall.clickedSide(center, EnumFacing.UP, range).getBoundingBox();
         this.range = range;
         this.center = center;
@@ -38,7 +38,7 @@ public final class Grid implements IPlacementSequence {
      * For {@link #copy()}
      */
     @VisibleForTesting
-    private Grid(Region region, BlockPos center, int range, int periodSize) {
+    private Grid(Region region, ChunkCoordinates center, int range, int periodSize) {
         this.region = region;
         this.center = center;
         this.range = range;
@@ -66,7 +66,7 @@ public final class Grid implements IPlacementSequence {
 
     @Override
     @Nonnull
-    public Iterator<BlockPos> iterator() {
+    public Iterator<ChunkCoordinates> iterator() {
         /* Distance between blocks + block itself
          * arithmetic sequence of [2,7] where -1 for range being 1~15, +2 to shift the sequence from [0,5] to [2,7]
          */
@@ -77,16 +77,16 @@ public final class Grid implements IPlacementSequence {
         // Floor to the nearest multiple of period
         int start = MathTool.floorMultiple(-end, period);
 
-        return new AbstractIterator<BlockPos>() {
+        return new AbstractIterator<ChunkCoordinates>() {
             private int x = start;
             private int z = start;
 
             @Override
-            protected BlockPos computeNext() {
+            protected ChunkCoordinates computeNext() {
                 if (z > end)
                     return endOfData();
 
-                BlockPos pos = new BlockPos(center.getX() + x, center.getY(), center.getZ() + z);
+                ChunkCoordinates pos = new ChunkCoordinates(center.getX() + x, center.getY(), center.getZ() + z);
 
                 x += period;
                 if (x > end) {

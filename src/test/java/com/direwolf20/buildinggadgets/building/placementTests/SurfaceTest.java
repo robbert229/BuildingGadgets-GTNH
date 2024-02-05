@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.Surface;
 import com.direwolf20.buildinggadgets.util.CasedBlockView;
 import com.google.common.collect.Sets;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
@@ -22,10 +22,10 @@ public class SurfaceTest {
     void iteratorShouldIgnoreBaseBlock() {
         Region region = new Region(-2, 0, -2, 2, 0, 2);
         CasedBlockView world = new CasedBlockView(region, CasedBlockView.base, CasedBlockView.target);
-        Surface surface = Surface.create(world, BlockPos.ORIGIN, EnumFacing.UP, 5, false);
+        Surface surface = Surface.create(world, new ChunkCoordinates(0,0,0), EnumFacing.UP, 5, false);
 
-        Set<BlockPos> expected = Sets.newHashSet(region);
-        for (BlockPos pos : surface) {
+        Set<ChunkCoordinates> expected = Sets.newHashSet(region);
+        for (ChunkCoordinates pos : surface) {
             //Search in the area above region
             assertTrue(expected.contains(pos.down()));
         }

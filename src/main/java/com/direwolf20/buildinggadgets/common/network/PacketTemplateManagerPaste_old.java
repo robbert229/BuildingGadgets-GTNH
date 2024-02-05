@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -18,13 +18,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketTemplateManagerPaste_old implements IMessage {
 
     private NBTTagCompound tag = new NBTTagCompound();
-    private BlockPos pos;
+    private ChunkCoordinates pos;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         System.out.println("Buf size: " + buf.readableBytes());
         tag = ByteBufUtils.readTag(buf);
-        pos = BlockPos.fromLong(buf.readLong());
+        pos = ChunkCoordinates.fromLong(buf.readLong());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PacketTemplateManagerPaste_old implements IMessage {
     public PacketTemplateManagerPaste_old() {
     }
 
-    public PacketTemplateManagerPaste_old(NBTTagCompound tagCompound, BlockPos TMpos) {
+    public PacketTemplateManagerPaste_old(NBTTagCompound tagCompound, ChunkCoordinates TMpos) {
         tag = tagCompound.copy();
         pos = TMpos;
     }
@@ -55,7 +55,7 @@ public class PacketTemplateManagerPaste_old implements IMessage {
             }
             EntityPlayerMP player = ctx.getServerHandler().player;
             World world = player.world;
-            BlockPos pos = message.pos;
+            ChunkCoordinates pos = message.pos;
             TileEntity te = world.getTileEntity(pos);
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);

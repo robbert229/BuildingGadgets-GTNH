@@ -19,7 +19,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -31,7 +31,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
 
     private boolean isCopyPaste;
     private Multiset<UniqueItem> cache;
-    private Pair<Integer, BlockPos> loc;
+    private Pair<Integer, ChunkCoordinates> loc;
 
     public PacketSetRemoteInventoryCache() {}
 
@@ -40,7 +40,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
         this.isCopyPaste = isCopyPaste;
     }
 
-    public PacketSetRemoteInventoryCache(Pair<Integer, BlockPos> loc, boolean isCopyPaste) {
+    public PacketSetRemoteInventoryCache(Pair<Integer, ChunkCoordinates> loc, boolean isCopyPaste) {
         this.loc = loc;
         this.isCopyPaste = isCopyPaste;
     }
@@ -49,7 +49,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public void fromBytes(ByteBuf buf) {
         isCopyPaste = buf.readBoolean();
         if (buf.readBoolean()) {
-            loc = new ImmutablePair<>(buf.readInt(), BlockPos.fromLong(buf.readLong()));
+            loc = new ImmutablePair<>(buf.readInt(), ChunkCoordinates.fromLong(buf.readLong()));
             return;
         }
         int len = buf.readInt();

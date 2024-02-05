@@ -2,9 +2,9 @@ package com.direwolf20.buildinggadgets.common.building;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
-class RegionIterator extends AbstractIterator<BlockPos> implements PeekingIterator<BlockPos> {
+class RegionIterator extends AbstractIterator<ChunkCoordinates> implements PeekingIterator<ChunkCoordinates> {
 
     // 'minX' does not exist since it is not needed
     private final int minY;
@@ -36,11 +36,11 @@ class RegionIterator extends AbstractIterator<BlockPos> implements PeekingIterat
     }
 
     @Override
-    protected BlockPos computeNext() {
+    protected ChunkCoordinates computeNext() {
         if (isXOverflowed())
             return endOfData();
 
-        BlockPos pos = new BlockPos(posX, posY, posZ);
+        ChunkCoordinates pos = new ChunkCoordinates(posX, posY, posZ);
 
         posZ++;
         if (isZOverflowed()) {

@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
  * The yielding positions should be inside the {@link #getBoundingBox()}. They do not have to be continuous, or yielding
  * in any order, however it should not yield any repeating positions and have a finite number of possible results.
  */
-public interface IPlacementSequence extends Iterable<BlockPos> {
+public interface IPlacementSequence extends Iterable<ChunkCoordinates> {
 
     /**
      * {@inheritDoc}
@@ -25,7 +25,7 @@ public interface IPlacementSequence extends Iterable<BlockPos> {
      */
     @Nonnull
     @Override
-    Iterator<BlockPos> iterator();
+    Iterator<ChunkCoordinates> iterator();
 
     /**
      * The bounding box containing all positions which may be produced by this {@code IPlacementSequence}.
@@ -52,7 +52,7 @@ public interface IPlacementSequence extends Iterable<BlockPos> {
      *
      * @return The given {@link Collection} but with all Elements represented by this {@code IPlacementSequence} added to it. Will be the same instance as the parameter.
      */
-    default <T extends Collection<? super BlockPos>> T collect(T collection) {
+    default <T extends Collection<? super ChunkCoordinates>> T collect(T collection) {
         iterator().forEachRemaining(collection::add);
         return collection;
     }
@@ -60,14 +60,14 @@ public interface IPlacementSequence extends Iterable<BlockPos> {
     /**
      * Collect the elements into a newly created {@link ImmutableList}
      */
-    default ImmutableList<BlockPos> collect() {
+    default ImmutableList<ChunkCoordinates> collect() {
         return ImmutableList.copyOf(this);
     }
 
     /**
      * @return a {@link Stream} representing all positions in this IPlacementSequence
      */
-    default Stream<BlockPos> stream() {
+    default Stream<ChunkCoordinates> stream() {
         return StreamSupport.stream(this.spliterator(), false);
     }
 

@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.building.coreTests;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.*;
 
 import java.util.Iterator;
@@ -22,63 +22,63 @@ public class RegionIteratorTest {
     @Test
     void iteratorShouldHave1PositionWhenTwoVertexesAreTheSame() {
         Region region = new Region(1, 1, 1, 1, 1, 1);
-        Iterator<BlockPos> it = region.iterator();
-        assertEquals(new BlockPos(1, 1, 1), it.next());
+        Iterator<ChunkCoordinates> it = region.iterator();
+        assertEquals(new ChunkCoordinates(1, 1, 1), it.next());
         assertFalse(it.hasNext());
     }
 
     @Test
     void iteratorShouldGoInAccentingOrderWhereZFirstYSecondXThirdAllPositiveCaseHardcoded() {
         Region region = new Region(1, 1, 1, 2, 2, 2);
-        Iterator<BlockPos> it = region.iterator();
+        Iterator<ChunkCoordinates> it = region.iterator();
 
-        assertEquals(new BlockPos(1, 1, 1), it.next());
-        assertEquals(new BlockPos(1, 1, 2), it.next());
-        assertEquals(new BlockPos(1, 2, 1), it.next());
-        assertEquals(new BlockPos(1, 2, 2), it.next());
-        assertEquals(new BlockPos(2, 1, 1), it.next());
-        assertEquals(new BlockPos(2, 1, 2), it.next());
-        assertEquals(new BlockPos(2, 2, 1), it.next());
-        assertEquals(new BlockPos(2, 2, 2), it.next());
+        assertEquals(new ChunkCoordinates(1, 1, 1), it.next());
+        assertEquals(new ChunkCoordinates(1, 1, 2), it.next());
+        assertEquals(new ChunkCoordinates(1, 2, 1), it.next());
+        assertEquals(new ChunkCoordinates(1, 2, 2), it.next());
+        assertEquals(new ChunkCoordinates(2, 1, 1), it.next());
+        assertEquals(new ChunkCoordinates(2, 1, 2), it.next());
+        assertEquals(new ChunkCoordinates(2, 2, 1), it.next());
+        assertEquals(new ChunkCoordinates(2, 2, 2), it.next());
         assertFalse(it.hasNext());
     }
 
     @Test
     void iteratorShouldGoInAccentingOrderWhereZFirstYSecondXThirdAllNegativeCaseHardcoded() {
         Region region = new Region(-2, -2, -2, -1, -1, -1);
-        Iterator<BlockPos> it = region.iterator();
+        Iterator<ChunkCoordinates> it = region.iterator();
 
-        assertEquals(new BlockPos(-2, -2, -2), it.next());
-        assertEquals(new BlockPos(-2, -2, -1), it.next());
-        assertEquals(new BlockPos(-2, -1, -2), it.next());
-        assertEquals(new BlockPos(-2, -1, -1), it.next());
-        assertEquals(new BlockPos(-1, -2, -2), it.next());
-        assertEquals(new BlockPos(-1, -2, -1), it.next());
-        assertEquals(new BlockPos(-1, -1, -2), it.next());
-        assertEquals(new BlockPos(-1, -1, -1), it.next());
+        assertEquals(new ChunkCoordinates(-2, -2, -2), it.next());
+        assertEquals(new ChunkCoordinates(-2, -2, -1), it.next());
+        assertEquals(new ChunkCoordinates(-2, -1, -2), it.next());
+        assertEquals(new ChunkCoordinates(-2, -1, -1), it.next());
+        assertEquals(new ChunkCoordinates(-1, -2, -2), it.next());
+        assertEquals(new ChunkCoordinates(-1, -2, -1), it.next());
+        assertEquals(new ChunkCoordinates(-1, -1, -2), it.next());
+        assertEquals(new ChunkCoordinates(-1, -1, -1), it.next());
         assertFalse(it.hasNext());
     }
 
     @Test
     void iteratorShouldBehaveSimilarlyInNegativeRegionAsPositiveRegionWhereStartsInMinEndsInMax() {
         Region region = new Region(0, 0, 0, 0, -8, 0);
-        Iterator<BlockPos> it = region.iterator();
+        Iterator<ChunkCoordinates> it = region.iterator();
 
-        assertEquals(new BlockPos(0, -8, 0), it.next());
-        assertEquals(new BlockPos(0, -7, 0), it.next());
-        assertEquals(new BlockPos(0, -6, 0), it.next());
-        assertEquals(new BlockPos(0, -5, 0), it.next());
-        assertEquals(new BlockPos(0, -4, 0), it.next());
-        assertEquals(new BlockPos(0, -3, 0), it.next());
-        assertEquals(new BlockPos(0, -2, 0), it.next());
-        assertEquals(new BlockPos(0, -1, 0), it.next());
-        assertEquals(new BlockPos(0, 0, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -8, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -7, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -6, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -5, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -4, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -3, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -2, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, -1, 0), it.next());
+        assertEquals(new ChunkCoordinates(0, 0, 0), it.next());
         assertFalse(it.hasNext());
     }
 
     private void iteratorYieldingOrderSortedComparisionBase(Region region) {
-        ImmutableList<BlockPos> sorted = ImmutableList.sortedCopyOf(GadgetUtils.POSITION_COMPARATOR, region);
-        ImmutableList<BlockPos> actual = ImmutableList.copyOf(region);
+        ImmutableList<ChunkCoordinates> sorted = ImmutableList.sortedCopyOf(GadgetUtils.POSITION_COMPARATOR, region);
+        ImmutableList<ChunkCoordinates> actual = ImmutableList.copyOf(region);
 
         assertEquals(sorted, actual);
     }

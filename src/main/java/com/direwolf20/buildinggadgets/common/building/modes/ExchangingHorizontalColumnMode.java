@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Horizontal column mode for Exchanging Gadget.
@@ -31,7 +31,7 @@ public class ExchangingHorizontalColumnMode extends AbstractMode {
     }
 
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         int radius = MathTool.floorToOdd(range);
         return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing() : sideHit).rotateY().getAxis(), radius);

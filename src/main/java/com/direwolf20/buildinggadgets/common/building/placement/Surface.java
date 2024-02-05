@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
@@ -26,23 +26,23 @@ public final class Surface implements IPlacementSequence {
      * @param searchingCenter Center of the searching region
      * @param side            Facing to offset from the {@code searchingCenter} to get to the reference region center
      */
-    public static Surface create(IBlockAccess world, BlockPos searchingCenter, EnumFacing side, int range, boolean fuzzy) {
+    public static Surface create(IBlockAccess world, ChunkCoordinates searchingCenter, EnumFacing side, int range, boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range).getBoundingBox();
         return create(world, searchingCenter, searchingRegion, pos -> pos.offset(side), fuzzy);
     }
 
-    public static Surface create(IBlockAccess world, BlockPos center, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, boolean fuzzy) {
+    public static Surface create(IBlockAccess world, ChunkCoordinates center, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, boolean fuzzy) {
         return new Surface(world, center, searchingRegion, searching2referenceMapper, fuzzy);
     }
 
     private final IBlockAccess world;
     private final IBlockState selectedBase;
-    private final Function<BlockPos, BlockPos> searching2referenceMapper;
+    private final Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper;
     private final Region searchingRegion;
     private final boolean fuzzy;
 
     @VisibleForTesting
-    private Surface(IBlockAccess world, BlockPos center, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, boolean fuzzy) {
+    private Surface(IBlockAccess world, ChunkCoordinates center, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, boolean fuzzy) {
         this.world = world;
         this.selectedBase = world.getBlockState(searching2referenceMapper.apply(center));
         this.searchingRegion = searchingRegion;
@@ -53,7 +53,7 @@ public final class Surface implements IPlacementSequence {
     /**
      * For {@link #copy()}
      */
-    private Surface(IBlockAccess world, IBlockState selectedBase, Function<BlockPos, BlockPos> searching2referenceMapper, Region searchingRegion, boolean fuzzy) {
+    private Surface(IBlockAccess world, IBlockState selectedBase, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, Region searchingRegion, boolean fuzzy) {
         this.world = world;
         this.selectedBase = selectedBase;
         this.searching2referenceMapper = searching2referenceMapper;
@@ -82,15 +82,15 @@ public final class Surface implements IPlacementSequence {
 
     @Nonnull
     @Override
-    public Iterator<BlockPos> iterator() {
-        return new AbstractIterator<BlockPos>() {
-            private final Iterator<BlockPos> it = searchingRegion.iterator();
+    public Iterator<ChunkCoordinates> iterator() {
+        return new AbstractIterator<ChunkCoordinates>() {
+            private final Iterator<ChunkCoordinates> it = searchingRegion.iterator();
 
             @Override
-            protected BlockPos computeNext() {
+            protected ChunkCoordinates computeNext() {
                 while (it.hasNext()) {
-                    BlockPos pos = it.next();
-                    BlockPos referencePos = searching2referenceMapper.apply(pos);
+                    ChunkCoordinates pos = it.next();
+                    ChunkCoordinates referencePos = searching2referenceMapper.apply(pos);
                     IBlockState baseBlock = world.getBlockState(referencePos);
                     if ((fuzzy || baseBlock == selectedBase) && !baseBlock.getBlock().isAir(baseBlock, world, referencePos))
                         return pos;

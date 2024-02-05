@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.ExclusiveAxisCha
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
@@ -23,11 +23,11 @@ public class ExclusiveAxisChasingTest {
 
     @Test
     void sequenceShouldNotContainSourceAndTargetPositionRandom() {
-        BlockPos source = new BlockPos(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
-        BlockPos target = new BlockPos(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
+        ChunkCoordinates source = new ChunkCoordinates(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
+        ChunkCoordinates target = new ChunkCoordinates(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
 
         ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(source, target, randomAxis(), Integer.MAX_VALUE);
-        for (BlockPos pos : sequence) {
+        for (ChunkCoordinates pos : sequence) {
             assertNotEquals(source, pos);
             assertNotEquals(target, pos);
         }
@@ -35,8 +35,8 @@ public class ExclusiveAxisChasingTest {
 
     @Test
     void sequenceShouldHaveDifferenceAndMinimum0AsSizeCaseRandom() {
-        BlockPos source = new BlockPos(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
-        BlockPos target = new BlockPos(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
+        ChunkCoordinates source = new ChunkCoordinates(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
+        ChunkCoordinates target = new ChunkCoordinates(random.nextInt(3) - 2, random.nextInt(3) - 2, random.nextInt(3) - 2);
         Axis axis = randomAxis();
         int difference = VectorTools.getAxisValue(source, axis) - VectorTools.getAxisValue(target, axis);
         int expected = difference <= 1 ? 0 : Math.abs(difference);
@@ -49,7 +49,7 @@ public class ExclusiveAxisChasingTest {
     void sequenceShouldHaveDifferenceMinus1AndMinimum0SizeCaseSourceAndTargetOffsetBy1HardCoded() {
         for (EnumFacing facing : EnumFacing.VALUES) {
             //X changed by 1
-            ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(new BlockPos(13, 43, - 424), new BlockPos(14, 43, - 424), facing, Integer.MAX_VALUE);
+            ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(new ChunkCoordinates(13, 43, - 424), new ChunkCoordinates(14, 43, - 424), facing, Integer.MAX_VALUE);
             assertEquals(0, sequence.collect().size());
         }
     }
@@ -57,7 +57,7 @@ public class ExclusiveAxisChasingTest {
     @Test
     void sequenceShouldHaveDifferenceMinus1AndMinimum0SizeCaseSourceAndTargetOffsetBy1Random() {
         EnumFacing facing = EnumFacing.random(random);
-        ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(BlockPos.ORIGIN, BlockPos.ORIGIN.offset(facing), facing, Integer.MAX_VALUE);
+        ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(new ChunkCoordinates(0,0,0), new ChunkCoordinates(0,0,0).offset(facing), facing, Integer.MAX_VALUE);
         assertEquals(0, sequence.collect().size());
     }
 
@@ -65,7 +65,7 @@ public class ExclusiveAxisChasingTest {
     void sequenceShouldHaveDifferenceMinus1AndMinimum0SizeCaseSameSourceAndTargetRandom() {
         EnumFacing facing = EnumFacing.random(random);
         int i = random.nextInt(32);
-        BlockPos pos = BlockPos.ORIGIN.offset(facing, i);
+        ChunkCoordinates pos = new ChunkCoordinates(0,0,0).offset(facing, i);
         ExclusiveAxisChasing sequence = ExclusiveAxisChasing.create(pos, pos, facing, Integer.MAX_VALUE);
         assertEquals(0, sequence.collect().size());
     }

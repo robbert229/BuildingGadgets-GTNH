@@ -4,7 +4,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
@@ -16,13 +16,13 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 public class FakeBuilderWorld implements IBlockAccess {
-    private Set<BlockPos> positions;
+    private Set<ChunkCoordinates> positions;
     private IBlockState state;
     private World realWorld;
     private final IBlockState AIR = Blocks.AIR.getDefaultState();
 
 
-    public void setWorldAndState(World rWorld, IBlockState setBlock, Set<BlockPos> coordinates) {
+    public void setWorldAndState(World rWorld, IBlockState setBlock, Set<ChunkCoordinates> coordinates) {
         this.state = setBlock;
         this.realWorld = rWorld;
         positions = coordinates;
@@ -30,34 +30,34 @@ public class FakeBuilderWorld implements IBlockAccess {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public int getCombinedLight(BlockPos pos, int lightValue) {
+    public int getCombinedLight(ChunkCoordinates pos, int lightValue) {
         return realWorld.getCombinedLight(pos, lightValue);
     }
 
     @Nullable
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public TileEntity getTileEntity(ChunkCoordinates pos) {
         return null;
     }
 
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public IBlockState getBlockState(ChunkCoordinates pos) {
         return positions.contains(pos) ? state : AIR;
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
+    public boolean isAirBlock(ChunkCoordinates pos) {
         return !positions.contains(pos);
     }
 
     @Override
-    public Biome getBiome(BlockPos pos) {
+    public Biome getBiome(ChunkCoordinates pos) {
         return realWorld.getBiome(pos);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(ChunkCoordinates pos, EnumFacing direction) {
         return 0;
     }
 
@@ -67,7 +67,7 @@ public class FakeBuilderWorld implements IBlockAccess {
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(ChunkCoordinates pos, EnumFacing side, boolean _default) {
         return getBlockState(pos).isSideSolid(this, pos, side);
     }
 }

@@ -7,7 +7,7 @@ import com.google.common.collect.Multiset;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -56,21 +56,21 @@ public interface ITemplate {
         stack.setTagCompound(tagCompound);
     }
 
-    default void setStartPos(ItemStack stack, BlockPos startPos) {
+    default void setStartPos(ItemStack stack, ChunkCoordinates startPos) {
         GadgetUtils.writePOSToNBT(stack, startPos, "startPos");
     }
 
     @Nullable
-    default BlockPos getStartPos(ItemStack stack) {
+    default ChunkCoordinates getStartPos(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "startPos");
     }
 
-    default void setEndPos(ItemStack stack, BlockPos startPos) {
+    default void setEndPos(ItemStack stack, ChunkCoordinates startPos) {
         GadgetUtils.writePOSToNBT(stack, startPos, "endPos");
     }
 
     @Nullable
-    default BlockPos getEndPos(ItemStack stack) {
+    default ChunkCoordinates getEndPos(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "endPos");
     }
 

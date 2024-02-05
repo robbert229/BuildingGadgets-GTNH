@@ -31,7 +31,6 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -76,7 +75,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return SyncedConfig.damageCostCopyPaste;
     }
 
-    private static void setAnchor(ItemStack stack, BlockPos anchorPos) {
+    private static void setAnchor(ItemStack stack, ChunkCoordinates anchorPos) {
         GadgetUtils.writePOSToNBT(stack, anchorPos, "anchor");
     }
 
@@ -108,7 +107,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return GadgetUtils.getIntFromNBT(stack, "Z");
     }
 
-    public static BlockPos getAnchor(ItemStack stack) {
+    public static ChunkCoordinates getAnchor(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "anchor");
     }
 
@@ -147,11 +146,11 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         stack.setTagCompound(tagCompound);
     }
 
-    private static void setLastBuild(ItemStack stack, BlockPos anchorPos, Integer dim) {
+    private static void setLastBuild(ItemStack stack, ChunkCoordinates anchorPos, Integer dim) {
         GadgetUtils.writePOSToNBT(stack, anchorPos, "lastBuild", dim);
     }
 
-    private static BlockPos getLastBuild(ItemStack stack) {
+    private static ChunkCoordinates getLastBuild(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "lastBuild");
     }
 
@@ -163,7 +162,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, "startPos"));
     }
 
-    private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, BlockPos startBlock) {
+    private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
         List<BlockMap> blockMap = new ArrayList<BlockMap>();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -178,7 +177,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         int[] stateIntArray = tagCompound.getIntArray("stateIntArray");
         for (int i = 0; i < posIntArray.length; i++) {
             int p = posIntArray[i];
-            BlockPos pos = GadgetUtils.relIntToPos(startBlock, p);
+            ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
             short IntState = (short) stateIntArray[i];
             blockMap.add(new BlockMap(pos, MapIntState.getStateFromSlot(IntState), (byte) ((p & 0xff0000) >> 16), (byte) ((p & 0x00ff00) >> 8), (byte) (p & 0x0000ff)));
         }
@@ -246,7 +245,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         player.setActiveHand(hand);
-        BlockPos pos = VectorTools.getPosLookingAt(player, stack);
+        ChunkCoordinates pos = VectorTools.getPosLookingAt(player, stack);
         if (!world.isRemote) {
             if (pos != null && player.isSneaking() && GadgetUtils.setRemoteInventory(stack, player, world, pos, false) == EnumActionResult.SUCCESS)
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
@@ -275,7 +274,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                         if (pos == null) return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
                         buildBlockMap(world, pos, stack, player);
                     } else {
-                        BlockPos startPos = getAnchor(stack);
+                        ChunkCoordinates startPos = getAnchor(stack);
                         buildBlockMap(world, startPos, stack, player);
                     }
                 }
@@ -306,7 +305,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         List<BlockMap> blockMapList = new ArrayList<BlockMap>();
         WorldSave worldSave = WorldSave.getWorldSave(player.world);
         NBTTagCompound tagCompound = worldSave.getCompoundFromUUID(tool.getUUID(stack));
-        BlockPos startPos = tool.getStartPos(stack);
+        ChunkCoordinates startPos = tool.getStartPos(stack);
         if (startPos == null) return;
         blockMapList = getBlockMapList(tagCompound);
         List<Integer> posIntArrayList = new ArrayList<Integer>();
@@ -314,7 +313,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         BlockMapIntState blockMapIntState = new BlockMapIntState();
 
         for (BlockMap blockMap : blockMapList) {
-            BlockPos tempPos = blockMap.pos;
+            ChunkCoordinates tempPos = blockMap.pos;
 
             int px = (tempPos.getX() - startPos.getX());
             int pz = (tempPos.getZ() - startPos.getZ());
@@ -332,7 +331,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 nx = -pz;
                 nz = px;
             }
-            BlockPos newPos = new BlockPos(startPos.getX() + nx, tempPos.getY(), startPos.getZ() + nz);
+            ChunkCoordinates newPos = new ChunkCoordinates(startPos.getX() + nx, tempPos.getY(), startPos.getZ() + nz);
             posIntArrayList.add(GadgetUtils.relPosToInt(startPos, newPos));
             blockMapIntState.addToMap(alteredState);
             stateIntArrayList.add((int) blockMapIntState.findSlot(alteredState));
@@ -354,7 +353,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 + new TextComponentTranslation("message.gadget." + (player.isSneaking() ? "mirrored" : "rotated")).getUnformattedComponentText()), true);
     }
 
-    public static void copyBlocks(ItemStack stack, EntityPlayer player, World world, BlockPos startPos, BlockPos endPos) {
+    public static void copyBlocks(ItemStack stack, EntityPlayer player, World world, ChunkCoordinates startPos, ChunkCoordinates endPos) {
         if (startPos != null && endPos != null) {
             GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
             if (findBlocks(world, startPos, endPos, stack, player, tool)) {
@@ -364,7 +363,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
     }
 
-    private static boolean findBlocks(World world, BlockPos start, BlockPos end, ItemStack stack, EntityPlayer player, GadgetCopyPaste tool) {
+    private static boolean findBlocks(World world, ChunkCoordinates start, ChunkCoordinates end, ItemStack stack, EntityPlayer player, GadgetCopyPaste tool) {
         setLastBuild(stack, null, 0);
         int foundTE = 0;
         int startX = start.getX();
@@ -398,7 +397,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         for (int x = iStartX; x <= iEndX; x++) {
             for (int y = iStartY; y <= iEndY; y++) {
                 for (int z = iStartZ; z <= iEndZ; z++) {
-                    BlockPos tempPos = new BlockPos(x, y, z);
+                    ChunkCoordinates tempPos = new ChunkCoordinates(x, y, z);
                     IBlockState tempState = world.getBlockState(tempPos);
                     if (!(tempState.getBlock() instanceof EffectBlock) && tempState != Blocks.AIR.getDefaultState() && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
                         TileEntity te = world.getTileEntity(tempPos);
@@ -422,7 +421,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                                 }
                                 NonNullList<ItemStack> drops = NonNullList.create();
                                 if (actualState != null)
-                                    actualState.getBlock().getDrops(drops, world, new BlockPos(0, 0, 0), actualState, 0);
+                                    actualState.getBlock().getDrops(drops, world, new ChunkCoordinates(0, 0, 0), actualState, 0);
 
                                 int neededItems = 0;
                                 for (ItemStack drop : drops) {
@@ -470,11 +469,11 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return true;
     }
 
-    private void buildBlockMap(World world, BlockPos startPos, ItemStack stack, EntityPlayer player) {
+    private void buildBlockMap(World world, ChunkCoordinates startPos, ItemStack stack, EntityPlayer player) {
 //        long time = System.nanoTime();
 
-        BlockPos anchorPos = getAnchor(stack);
-        BlockPos pos = anchorPos == null ? startPos : anchorPos;
+        ChunkCoordinates anchorPos = getAnchor(stack);
+        ChunkCoordinates pos = anchorPos == null ? startPos : anchorPos;
         NBTTagCompound tagCompound = WorldSave.getWorldSave(world).getCompoundFromUUID(getUUID(stack));
 
         pos = pos.up(GadgetCopyPaste.getY(stack));
@@ -492,7 +491,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         //System.out.printf("Built %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
     }
 
-    private void placeBlock(World world, BlockPos pos, EntityPlayer player, IBlockState state, Map<IBlockState, UniqueItem> IntStackMap) {
+    private void placeBlock(World world, ChunkCoordinates pos, EntityPlayer player, IBlockState state, Map<IBlockState, UniqueItem> IntStackMap) {
         if( world.isOutsideBuildHeight(pos) )
             return;
 
@@ -560,7 +559,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
-        BlockPos currentAnchor = getAnchor(stack);
+        ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
             RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {
@@ -582,7 +581,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         if (world.isRemote) {
             return;
         }
-        BlockPos startPos = getLastBuild(heldItem);
+        ChunkCoordinates startPos = getLastBuild(heldItem);
         if (startPos == null)
             return;
 

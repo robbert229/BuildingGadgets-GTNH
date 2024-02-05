@@ -16,7 +16,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -140,21 +139,21 @@ public class GadgetBuilding extends GadgetGeneric {
     private boolean build(EntityPlayer player, ItemStack stack) {
         //Build the blocks as shown in the visual render
         World world = player.world;
-        List<BlockPos> coords = getAnchor(stack);
+        List<ChunkCoordinates> coords = getAnchor(stack);
 
         if (coords.size() == 0) {  //If we don't have an anchor, build in the current spot
             RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) { //If we aren't looking at anything, exit
                 return false;
             }
-            BlockPos startBlock = lookingAt.getBlockPos();
+            ChunkCoordinates startBlock = lookingAt.getBlockPos();
             EnumFacing sideHit = lookingAt.sideHit;
             coords = BuildingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock);
         } else { //If we do have an anchor, erase it (Even if the build fails)
-            setAnchor(stack, new ArrayList<BlockPos>());
+            setAnchor(stack, new ArrayList<ChunkCoordinates>());
         }
-        List<BlockPos> undoCoords = new ArrayList<BlockPos>();
-        Set<BlockPos> coordinates = new HashSet<BlockPos>(coords);
+        List<ChunkCoordinates> undoCoords = new ArrayList<ChunkCoordinates>();
+        Set<ChunkCoordinates> coordinates = new HashSet<ChunkCoordinates>(coords);
 
         ItemStack heldItem = getGadget(player);
         if (heldItem.isEmpty())
@@ -165,7 +164,7 @@ public class GadgetBuilding extends GadgetGeneric {
         if (blockState != Blocks.AIR.getDefaultState()) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
             IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.world, blockState, coordinates); // Initialize the fake world's blocks
-            for (BlockPos coordinate : coords) {
+            for (ChunkCoordinates coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try { //Get the state of the block in the fake world (This lets fences be connected, etc)
                         state = blockState.getActualState(fakeWorld, coordinate);
@@ -203,12 +202,12 @@ public class GadgetBuilding extends GadgetGeneric {
         World world = player.world;
         if (!world.isRemote) {
             IBlockState currentBlock = Blocks.AIR.getDefaultState();
-            List<BlockPos> undoCoords = undoState.coordinates; //Get the Coords to undo
+            List<ChunkCoordinates> undoCoords = undoState.coordinates; //Get the Coords to undo
             int dimension = undoState.dimension; //Get the Dimension to undo
-            List<BlockPos> failedRemovals = new ArrayList<BlockPos>(); //Build a list of removals that fail
+            List<ChunkCoordinates> failedRemovals = new ArrayList<ChunkCoordinates>(); //Build a list of removals that fail
             ItemStack silkTool = heldItem.copy(); //Setup a Silk Touch version of the tool so we can return stone instead of cobblestone, etc.
             silkTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-            for (BlockPos coord : undoCoords) {
+            for (ChunkCoordinates coord : undoCoords) {
                 currentBlock = world.getBlockState(coord);
 //                ItemStack itemStack = currentBlock.getBlock().getPickBlock(currentBlock, null, world, coord, player);
                 double distance = coord.getDistance(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
@@ -236,7 +235,7 @@ public class GadgetBuilding extends GadgetGeneric {
         return true;
     }
 
-    private boolean placeBlock(World world, EntityPlayer player, BlockPos pos, IBlockState setBlock) {
+    private boolean placeBlock(World world, EntityPlayer player, ChunkCoordinates pos, IBlockState setBlock) {
         if (!player.isAllowEdit())
             return false;
 

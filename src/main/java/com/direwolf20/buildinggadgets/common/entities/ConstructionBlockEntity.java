@@ -12,17 +12,17 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 public class ConstructionBlockEntity extends Entity {
 
-    private static final DataParameter<BlockPos> FIXED = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BLOCK_POS);
+    private static final DataParameter<ChunkCoordinates> FIXED = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BLOCK_POS);
     private static final DataParameter<Boolean> MAKING = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BOOLEAN);
 
     private int despawning = -1;
     public int maxLife = 80;
-    private BlockPos setPos;
+    private ChunkCoordinates setPos;
     //    private EntityLivingBase spawnedBy;
     private World world;
 
@@ -32,7 +32,7 @@ public class ConstructionBlockEntity extends Entity {
         world = worldIn;
     }
 
-    public ConstructionBlockEntity(World worldIn, BlockPos spawnPos, boolean makePaste) {
+    public ConstructionBlockEntity(World worldIn, ChunkCoordinates spawnPos, boolean makePaste) {
         super(worldIn);
         setSize(0.1F, 0.1F);
         world = worldIn;
@@ -74,7 +74,7 @@ public class ConstructionBlockEntity extends Entity {
             despawning = 0;
             if (setPos != null) {
                 if (!getMakingPaste()) {
-                    TileEntity te = world.getTileEntity(setPos);
+                    TileEntity te = world.getTileEntity(setPos.posX, setPos.posY, setPos.posZ);
                     if (te instanceof ConstructionBlockTileEntity) {
                         IBlockState tempState = ((ConstructionBlockTileEntity) te).getBlockState();
                         if (tempState == null)
@@ -141,7 +141,7 @@ public class ConstructionBlockEntity extends Entity {
 
     @Override
     protected void entityInit() {
-        this.dataManager.register(FIXED, BlockPos.ORIGIN);
+        this.dataManager.register(FIXED, new ChunkCoordinates(0,0,0));
         this.dataManager.register(MAKING, false);
     }
 

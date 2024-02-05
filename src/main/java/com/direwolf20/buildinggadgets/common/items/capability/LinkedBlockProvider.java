@@ -7,7 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Block provider that reads block state from a gadget item. No snapshots will be created therefore it will always be
@@ -26,12 +26,12 @@ public class LinkedBlockProvider implements IBlockProvider {
     }
 
     @Override
-    public IBlockProvider translate(BlockPos origin) {
+    public IBlockProvider translate(ChunkCoordinates origin) {
         return new TranslationWrapper(this, origin);
     }
 
     @Override
-    public IBlockState at(BlockPos pos) {
+    public IBlockState at(ChunkCoordinates pos) {
         return GadgetUtils.getToolBlock(stack);
     }
 

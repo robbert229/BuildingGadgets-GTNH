@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -74,7 +74,7 @@ public class PasteToolBufferBuilder {
             IBlockState renderBlockState = blockMap.state;
             if (!(renderBlockState.equals(Blocks.AIR.getDefaultState()))) {
                 IBakedModel model = dispatcher.getModelForState(renderBlockState);
-                dispatcher.getBlockModelRenderer().renderModelFlat(Minecraft.getMinecraft().world, model, renderBlockState, new BlockPos(blockMap.xOffset, blockMap.yOffset, blockMap.zOffset), bufferBuilder, false, 0L);
+                dispatcher.getBlockModelRenderer().renderModelFlat(Minecraft.getMinecraft().world, model, renderBlockState, new ChunkCoordinates(blockMap.xOffset, blockMap.yOffset, blockMap.zOffset), bufferBuilder, false, 0L);
             }
         }
         bufferBuilder.finishDrawing();
@@ -82,7 +82,7 @@ public class PasteToolBufferBuilder {
         //System.out.printf("Created %d Vertexes for %d blocks in %.2f ms%n", bufferBuilder.getVertexCount(), blockMapList.size(), (System.nanoTime() - time) * 1e-6);
     }
 
-    public static void draw(EntityPlayer player, double x, double y, double z, BlockPos startPos, String UUID) {
+    public static void draw(EntityPlayer player, double x, double y, double z, ChunkCoordinates startPos, String UUID) {
 //        long time = System.nanoTime();
         ToolDireBuffer bufferBuilder = bufferMap.get(UUID);
         bufferBuilder.sortVertexData((float) (x - startPos.getX()), (float) ((y + player.getEyeHeight()) - startPos.getY()), (float) (z - startPos.getZ()));

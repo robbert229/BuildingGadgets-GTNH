@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.SingleTypeProvid
 import com.direwolf20.buildinggadgets.util.UniqueBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
@@ -25,16 +25,16 @@ public class SingleTypeProviderTest {
     void stateAfterSerializationShouldRemainSameAsBeforeSerialization() {
         NBTTagCompound serialized = provider.serialize();
         SingleTypeProvider deserialized = new SingleTypeProvider(null).deserialize(serialized);
-        assertEquals(provider.at(BlockPos.ORIGIN), deserialized.at(BlockPos.ORIGIN));
+        assertEquals(provider.at(new ChunkCoordinates(0,0,0)), deserialized.at(new ChunkCoordinates(0,0,0)));
     }
 
     @Test
     void accessResultsShouldRemainConstantHardcoded() {
-        assertEquals(state, provider.at(new BlockPos(0, 0, 0)));
-        assertEquals(state, provider.at(new BlockPos(-0, -0, -0)));
-        assertEquals(state, provider.at(new BlockPos(64, 64, 64)));
-        assertEquals(state, provider.at(new BlockPos(512, -512, 512)));
-        assertEquals(state, provider.at(new BlockPos(-512, 512, -512)));
+        assertEquals(state, provider.at(new ChunkCoordinates(0, 0, 0)));
+        assertEquals(state, provider.at(new ChunkCoordinates(-0, -0, -0)));
+        assertEquals(state, provider.at(new ChunkCoordinates(64, 64, 64)));
+        assertEquals(state, provider.at(new ChunkCoordinates(512, -512, 512)));
+        assertEquals(state, provider.at(new ChunkCoordinates(-512, 512, -512)));
     }
 
     @RepeatedTest(16)
@@ -42,7 +42,7 @@ public class SingleTypeProviderTest {
         int x = random.nextInt();
         int y = random.nextInt();
         int z = random.nextInt();
-        assertEquals(state, provider.at(new BlockPos(x, y, z)));
+        assertEquals(state, provider.at(new ChunkCoordinates(x, y, z)));
     }
 
 }

@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -64,7 +63,7 @@ public class Template extends ItemModBase implements ITemplate {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, ChunkCoordinates pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         // Open GUI
         onItemRightClick(world, player, hand);
         return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);

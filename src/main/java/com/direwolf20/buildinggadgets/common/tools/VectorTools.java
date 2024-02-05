@@ -4,9 +4,9 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -31,7 +31,7 @@ public class VectorTools {
     }
 
     @Nullable
-    public static BlockPos getPosLookingAt(EntityPlayer player, ItemStack tool) {
+    public static ChunkCoordinates getPosLookingAt(EntityPlayer player, ItemStack tool) {
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, tool);
         if (lookingAt == null)
             return null;
@@ -39,7 +39,7 @@ public class VectorTools {
         return lookingAt.getBlockPos();
     }
 
-    public static int getAxisValue(BlockPos pos, Axis axis) {
+    public static int getAxisValue(ChunkCoordinates pos, Axis axis) {
         switch (axis) {
             case X:
                 return pos.getX();
@@ -63,11 +63,11 @@ public class VectorTools {
         throw new IllegalArgumentException("Trying to find the value an imaginary axis of a set of 3 values");
     }
 
-    public static BlockPos perpendicularSurfaceOffset(BlockPos pos, EnumFacing intersector, int i, int j) {
+    public static ChunkCoordinates perpendicularSurfaceOffset(ChunkCoordinates pos, EnumFacing intersector, int i, int j) {
         return perpendicularSurfaceOffset(pos, intersector.getAxis(), i, j);
     }
 
-    public static BlockPos perpendicularSurfaceOffset(BlockPos pos, Axis intersector, int i, int j) {
+    public static ChunkCoordinates perpendicularSurfaceOffset(ChunkCoordinates pos, Axis intersector, int i, int j) {
         switch (intersector) {
             case X:
                 return pos.add(0, i, j);

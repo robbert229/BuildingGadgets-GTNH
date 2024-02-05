@@ -10,7 +10,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,18 +37,18 @@ public class ConstructionBlockPowder extends BlockFalling {
     }
 
     @Override
-    public void onEndFalling(World worldIn, BlockPos pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {
+    public void onEndFalling(World worldIn, ChunkCoordinates pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {
         if (p_176502_4_.getMaterial().isLiquid()) {
             worldIn.spawnEntity(new ConstructionBlockEntity(worldIn, pos, true));
         }
     }
 
-    private boolean tryTouchWater(World worldIn, BlockPos pos) {
+    private boolean tryTouchWater(World worldIn, ChunkCoordinates pos) {
         boolean flag = false;
 
         for (EnumFacing enumfacing : EnumFacing.values()) {
             if (enumfacing != EnumFacing.DOWN) {
-                BlockPos blockpos = pos.offset(enumfacing);
+                ChunkCoordinates blockpos = pos.offset(enumfacing);
 
                 if (worldIn.getBlockState(blockpos).getMaterial() == Material.WATER) {
                     flag = true;
@@ -72,7 +72,7 @@ public class ConstructionBlockPowder extends BlockFalling {
      * block, etc.
      */
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(IBlockState state, World worldIn, ChunkCoordinates pos, Block blockIn, ChunkCoordinates fromPos) {
         if (!this.tryTouchWater(worldIn, pos)) {
             super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         }
@@ -82,7 +82,7 @@ public class ConstructionBlockPowder extends BlockFalling {
      * Called after the block is set in the Chunk data, but before the Tile Entity is set
      */
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(World worldIn, ChunkCoordinates pos, IBlockState state) {
         if (!this.tryTouchWater(worldIn, pos)) {
             super.onBlockAdded(worldIn, pos, state);
         }

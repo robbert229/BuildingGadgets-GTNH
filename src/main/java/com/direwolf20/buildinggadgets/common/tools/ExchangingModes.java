@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -74,12 +74,12 @@ public enum ExchangingModes {
         return ICONS;
     }
 
-    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool, BlockPos initial) {
+    public static List<ChunkCoordinates> collectPlacementPos(World world, EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool, ChunkCoordinates initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
         return mode.createExecutionContext(player, hit, sideHit, tool).collectFilteredSequence(world, tool, player, initial);
     }
 
-    public static BiPredicate<BlockPos, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, BlockPos initial) {
+    public static BiPredicate<ChunkCoordinates, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
         IBlockState initialBlockState = world.getBlockState(initial);
         IBlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
@@ -105,7 +105,7 @@ public enum ExchangingModes {
             if( SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock().getDefaultState().getBlock()) )
                 return false;
 
-            TileEntity tile = world.getTileEntity(pos);
+            TileEntity tile = world.getTileEntity(pos.posX, pos.posY,pos.posZ);
             // Only replace construction block with same block state
             if (tile instanceof ConstructionBlockTileEntity && ((ConstructionBlockTileEntity) tile).getBlockState() == state)
                 return false;

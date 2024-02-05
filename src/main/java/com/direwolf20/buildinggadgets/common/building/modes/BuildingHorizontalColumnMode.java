@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Horizontal column mode for Building Gadget.
@@ -28,7 +28,7 @@ public class BuildingHorizontalColumnMode extends AtopSupportedMode {
     }
 
     @Override
-    public IPlacementSequence computeWithTransformed(EntityPlayer player, BlockPos transformed, BlockPos original, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         if (sideHit.getAxis().isVertical())
             return Column.extendFrom(transformed, player.getHorizontalFacing(), range);
@@ -36,7 +36,7 @@ public class BuildingHorizontalColumnMode extends AtopSupportedMode {
     }
 
     @Override
-    public BlockPos transformAtop(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         return sideHit.getAxis().isVertical() ? hit.offset(player.getHorizontalFacing()) : hit.offset(sideHit.getOpposite());
     }
 

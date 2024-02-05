@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateMana
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,12 +16,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketTemplateManagerSave implements IMessage {
 
-    private BlockPos pos;
+    private ChunkCoordinates pos;
     private String name;
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        pos = BlockPos.fromLong(buf.readLong());
+        pos = ChunkCoordinates.fromLong(buf.readLong());
         name = ByteBufUtils.readUTF8String(buf);
     }
 
@@ -34,7 +34,7 @@ public class PacketTemplateManagerSave implements IMessage {
     public PacketTemplateManagerSave() {
     }
 
-    public PacketTemplateManagerSave(BlockPos blockPos, String TemplateName) {
+    public PacketTemplateManagerSave(ChunkCoordinates blockPos, String TemplateName) {
         pos = blockPos;
         name = TemplateName;
     }
@@ -49,7 +49,7 @@ public class PacketTemplateManagerSave implements IMessage {
         private void handle(PacketTemplateManagerSave message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
             World world = player.world;
-            BlockPos pos = message.pos;
+            ChunkCoordinates pos = message.pos;
             TileEntity te = world.getTileEntity(pos);
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);

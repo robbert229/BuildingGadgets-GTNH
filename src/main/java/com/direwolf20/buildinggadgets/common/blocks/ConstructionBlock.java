@@ -18,10 +18,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -72,7 +72,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public boolean canSilkHarvest(World world, ChunkCoordinates pos, IBlockState state, EntityPlayer player) {
         return false;
     }
 
@@ -106,7 +106,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }*/
 
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, ChunkCoordinates pos) {
         IExtendedBlockState extendedBlockState = (IExtendedBlockState) super.getExtendedState(state, world, pos);
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
         if (mimicBlock != null) {
@@ -120,7 +120,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Nullable
-    private IBlockState getActualMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
+    private IBlockState getActualMimicBlock(IBlockAccess blockAccess, ChunkCoordinates pos) {
         try {
             TileEntity te = blockAccess.getTileEntity(pos);
             if (te instanceof ConstructionBlockTileEntity) {
@@ -171,7 +171,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public int getLightOpacity(IBlockState state, IBlockAccess world, ChunkCoordinates pos) {
         Boolean bright = state.getValue(ConstructionBlock.BRIGHT);
         if (bright) {
             return 0;
@@ -180,7 +180,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
+    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, ChunkCoordinates pos, EnumFacing face) {
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
         return mimicBlock == null ? true : mimicBlock.getBlock().doesSideBlockRendering(mimicBlock, world, pos, face);
     }
@@ -195,7 +195,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
 
     @Override
     @Deprecated
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, ChunkCoordinates pos, EnumFacing face) {
         IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
         try {
             return mimicBlock == null ? BlockFaceShape.SOLID : mimicBlock.getBlock().getBlockFaceShape(worldIn, mimicBlock, pos, face);
@@ -206,7 +206,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
 
     @Override
     @Deprecated
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+    public void addCollisionBoxToList(IBlockState state, World worldIn, ChunkCoordinates pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
         if (mimicBlock == null) {
             super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
@@ -222,7 +222,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     @Nullable
     @Deprecated
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, ChunkCoordinates pos) {
         IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
         if (mimicBlock == null) {
             return super.getBoundingBox(blockState, worldIn, pos);
@@ -237,7 +237,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     @Deprecated
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, ChunkCoordinates pos, EnumFacing side) {
         FakeRenderWorld fakeWorld = new FakeRenderWorld();
 
         IBlockState mimicBlock = getActualMimicBlock(blockAccess, pos);
@@ -263,7 +263,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
 
     @Override
     @Deprecated
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, ChunkCoordinates pos) {
         IBlockState mimicBlock = getActualMimicBlock(source, pos);
         if (mimicBlock == null) {
             return super.getBoundingBox(state, source, pos);
@@ -278,7 +278,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     @Deprecated
     @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, ChunkCoordinates pos) {
         IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
         if (mimicBlock == null) {
             return super.getSelectedBoundingBox(state, worldIn, pos);
@@ -291,7 +291,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, ChunkCoordinates pos) {
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
         if (mimicBlock == null) {
             return super.isNormalCube(state, world, pos);
@@ -339,16 +339,16 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
      * The below implements support for CTM's Connected Textures to work properly
      *
      * @param world IBlockAccess
-     * @param pos BlockPos
+     * @param pos ChunkCoordinates
      * @param side EnumFacing
      * @return IBlockState
      *
-     * @deprecated see {@link IFacade#getFacade(IBlockAccess, BlockPos, EnumFacing, BlockPos)}
+     * @deprecated see {@link IFacade#getFacade(IBlockAccess, ChunkCoordinates, EnumFacing, ChunkCoordinates)}
      */
     @Override
     @Nonnull
     @Deprecated
-    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+    public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull ChunkCoordinates pos, @Nullable EnumFacing side) {
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
         return mimicBlock != null ? mimicBlock : world.getBlockState(pos);
         //return mimicBlock;

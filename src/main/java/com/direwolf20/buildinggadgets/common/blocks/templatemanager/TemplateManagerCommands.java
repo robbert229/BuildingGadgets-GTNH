@@ -20,12 +20,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +47,8 @@ public class TemplateManagerCommands {
         if (itemStack1.getItem().equals(Items.PAPER)) return;
         World world = player.world;
 
-        BlockPos startPos = template.getStartPos(itemStack1);
-        BlockPos endPos = template.getEndPos(itemStack1);
+        ChunkCoordinates startPos = template.getStartPos(itemStack1);
+        ChunkCoordinates endPos = template.getEndPos(itemStack1);
         Multiset<UniqueItem> tagMap = template.getItemCountMap(itemStack1);
         String UUIDTemplate = ModItems.template.getUUID(itemStack1);
         if (UUIDTemplate == null) return;
@@ -120,8 +119,8 @@ public class TemplateManagerCommands {
         templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
 
         templateWorldSave.addToMap(UUIDTemplate, templateTagCompound);
-        BlockPos startPos = template.getStartPos(itemStack0);
-        BlockPos endPos = template.getEndPos(itemStack0);
+        ChunkCoordinates startPos = template.getStartPos(itemStack0);
+        ChunkCoordinates endPos = template.getEndPos(itemStack0);
         Multiset<UniqueItem> tagMap = template.getItemCountMap(itemStack0);
         template.setStartPos(templateStack, startPos);
         template.setEndPos(templateStack, endPos);
@@ -163,8 +162,8 @@ public class TemplateManagerCommands {
         NBTTagCompound templateTagCompound;
 
         templateTagCompound = sentTagCompound.copy();
-        BlockPos startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "startPos");
-        BlockPos endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "endPos");
+        ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "startPos");
+        ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "endPos");
         template.incrementCopyCounter(templateStack);
         templateTagCompound.setInteger("copycounter", template.getCopyCounter(templateStack));
         templateTagCompound.setString("UUID", template.getUUID(templateStack));
@@ -188,7 +187,7 @@ public class TemplateManagerCommands {
             UniqueItem uniqueItem = intStackMap.get(blockMap.state);
             if (!(uniqueItem == null)) {
                 NonNullList<ItemStack> drops = NonNullList.create();
-                blockMap.state.getBlock().getDrops(drops, world, new BlockPos(0, 0, 0), blockMap.state, 0);
+                blockMap.state.getBlock().getDrops(drops, world, new ChunkCoordinates(0, 0, 0), blockMap.state, 0);
                 int neededItems = 0;
                 for (ItemStack drop : drops) {
                     if (drop.getItem().equals(uniqueItem.item)) {

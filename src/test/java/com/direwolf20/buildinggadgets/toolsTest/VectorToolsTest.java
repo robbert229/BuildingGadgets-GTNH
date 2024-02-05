@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.toolsTest;
 
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
@@ -18,35 +18,35 @@ public class VectorToolsTest {
         int x = random.nextInt();
         int y = random.nextInt();
         int z = random.nextInt();
-        BlockPos pos = new BlockPos(x, y, z);
+        ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
 
-        assertEquals(pos.getX(), VectorTools.getAxisValue(pos, Axis.X));
-        assertEquals(pos.getY(), VectorTools.getAxisValue(pos, Axis.Y));
-        assertEquals(pos.getZ(), VectorTools.getAxisValue(pos, Axis.Z));
+        assertEquals(pos.posX, VectorTools.getAxisValue(pos, Axis.X));
+        assertEquals(pos.posY, VectorTools.getAxisValue(pos, Axis.Y));
+        assertEquals(pos.posZ, VectorTools.getAxisValue(pos, Axis.Z));
     }
 
     @RepeatedTest(2)
     void perpendicularSurfaceOffsetShouldChangeXAndZWithAxisY() {
         int i = random.nextInt();
         int j = random.nextInt();
-        BlockPos offset = VectorTools.perpendicularSurfaceOffset(BlockPos.ORIGIN, Axis.Y, i, j);
-        assertEquals(BlockPos.ORIGIN.add(i, 0, j), offset);
+        ChunkCoordinates offset = VectorTools.perpendicularSurfaceOffset(new ChunkCoordinates(0,0,0), Axis.Y, i, j);
+        assertEquals(new ChunkCoordinates(0,0,0).add(i, 0, j), offset);
     }
 
     @RepeatedTest(2)
     void perpendicularSurfaceOffsetShouldChangeYAndZWithAxisX() {
         int i = random.nextInt();
         int j = random.nextInt();
-        BlockPos offset = VectorTools.perpendicularSurfaceOffset(BlockPos.ORIGIN, Axis.X, i, j);
-        assertEquals(BlockPos.ORIGIN.add(0, i, j), offset);
+        ChunkCoordinates offset = VectorTools.perpendicularSurfaceOffset(new ChunkCoordinates(0,0,0), Axis.X, i, j);
+        assertEquals(new ChunkCoordinates(0,0,0).add(0, i, j), offset);
     }
 
     @RepeatedTest(2)
     void perpendicularSurfaceOffsetShouldChangeXAndYWithAxisZ() {
         int i = random.nextInt();
         int j = random.nextInt();
-        BlockPos offset = VectorTools.perpendicularSurfaceOffset(BlockPos.ORIGIN, Axis.Z, i, j);
-        assertEquals(BlockPos.ORIGIN.add(i, j, 0), offset);
+        ChunkCoordinates offset = VectorTools.perpendicularSurfaceOffset(new ChunkCoordinates(0,0,0), Axis.Z, i, j);
+        assertEquals(new ChunkCoordinates(0,0,0).add(i, j, 0), offset);
     }
 
 }

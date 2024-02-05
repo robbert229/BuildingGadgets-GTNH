@@ -13,7 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Surface mode for Exchanging Gadget.
@@ -32,7 +32,7 @@ public class ExchangingSurfaceMode extends AbstractMode {
     }
 
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool) / 2;
         boolean fuzzy = GadgetGeneric.getFuzzy(tool);
         Region region = Wall.clickedSide(hit, sideHit, range).getBoundingBox();

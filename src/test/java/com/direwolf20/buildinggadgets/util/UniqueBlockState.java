@@ -15,7 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -125,12 +125,12 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public boolean onBlockEventReceived(World world, BlockPos blockPos, int i, int i1) {
+    public boolean onBlockEventReceived(World world, ChunkCoordinates blockPos, int i, int i1) {
         return false;
     }
 
     @Override
-    public void neighborChanged(World world, BlockPos blockPos, Block block, BlockPos blockPos1) {
+    public void neighborChanged(World world, ChunkCoordinates blockPos, Block block, ChunkCoordinates blockPos1) {
 
     }
 
@@ -150,7 +150,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public int getLightOpacity(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return 0;
     }
 
@@ -160,7 +160,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public int getLightValue(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public int getLightValue(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return 0;
     }
 
@@ -175,7 +175,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public MapColor getMapColor(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public MapColor getMapColor(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 
@@ -205,7 +205,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public int getPackedLightmapCoords(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public int getPackedLightmapCoords(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return 0;
     }
 
@@ -230,7 +230,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public int getWeakPower(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public int getWeakPower(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return 0;
     }
 
@@ -240,22 +240,22 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public int getComparatorInputOverride(World world, BlockPos blockPos) {
+    public int getComparatorInputOverride(World world, ChunkCoordinates blockPos) {
         return 0;
     }
 
     @Override
-    public float getBlockHardness(World world, BlockPos blockPos) {
+    public float getBlockHardness(World world, ChunkCoordinates blockPos) {
         return 0;
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(EntityPlayer entityPlayer, World world, BlockPos blockPos) {
+    public float getPlayerRelativeBlockHardness(EntityPlayer entityPlayer, World world, ChunkCoordinates blockPos) {
         return 0;
     }
 
     @Override
-    public int getStrongPower(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public int getStrongPower(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return 0;
     }
 
@@ -265,17 +265,17 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public IBlockState getActualState(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public IBlockState getActualState(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos blockPos) {
+    public AxisAlignedBB getSelectedBoundingBox(World world, ChunkCoordinates blockPos) {
         return null;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public boolean shouldSideBeRendered(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return false;
     }
 
@@ -286,22 +286,22 @@ public class UniqueBlockState implements IBlockState {
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 
     @Override
-    public void addCollisionBoxToList(World world, BlockPos blockPos, AxisAlignedBB axisAlignedBB, List<AxisAlignedBB> list, @Nullable Entity entity, boolean b) {
+    public void addCollisionBoxToList(World world, ChunkCoordinates blockPos, AxisAlignedBB axisAlignedBB, List<AxisAlignedBB> list, @Nullable Entity entity, boolean b) {
 
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public AxisAlignedBB getBoundingBox(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 
     @Override
-    public RayTraceResult collisionRayTrace(World world, BlockPos blockPos, Vec3d vec3d, Vec3d vec3d1) {
+    public RayTraceResult collisionRayTrace(World world, ChunkCoordinates blockPos, Vec3d vec3d, Vec3d vec3d1) {
         return null;
     }
 
@@ -311,22 +311,22 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public boolean doesSideBlockRendering(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public boolean doesSideBlockRendering(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return false;
     }
 
     @Override
-    public boolean isSideSolid(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public boolean isSideSolid(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return false;
     }
 
     @Override
-    public boolean doesSideBlockChestOpening(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public boolean doesSideBlockChestOpening(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return false;
     }
 
     @Override
-    public Vec3d getOffset(IBlockAccess iBlockAccess, BlockPos blockPos) {
+    public Vec3d getOffset(IBlockAccess iBlockAccess, ChunkCoordinates blockPos) {
         return null;
     }
 
@@ -336,7 +336,7 @@ public class UniqueBlockState implements IBlockState {
     }
 
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess iBlockAccess, BlockPos blockPos, EnumFacing enumFacing) {
+    public BlockFaceShape getBlockFaceShape(IBlockAccess iBlockAccess, ChunkCoordinates blockPos, EnumFacing enumFacing) {
         return null;
     }
 

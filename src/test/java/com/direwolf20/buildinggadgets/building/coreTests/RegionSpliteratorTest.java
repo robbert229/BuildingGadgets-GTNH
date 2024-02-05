@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import org.junit.jupiter.api.*;
 
 import java.util.Iterator;
@@ -37,7 +37,7 @@ public class RegionSpliteratorTest {
     @Test
     void estimateSizeShouldBeSameAsActualSize() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
         long estimate = spliterator.estimateSize();
         long spliteratorSize = region.stream().toArray().length;
 
@@ -47,7 +47,7 @@ public class RegionSpliteratorTest {
     @Test
     void spliteratorShouldHaveSameSizeAsIterator() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Iterator<BlockPos> iterator = region.iterator();
+        Iterator<ChunkCoordinates> iterator = region.iterator();
 
         //Use collect to ignore potentially exceeding fixed limit
         assertEquals(ImmutableList.copyOf(iterator).size(), region.stream().collect(ImmutableList.toImmutableList()).size());
@@ -56,11 +56,11 @@ public class RegionSpliteratorTest {
     @Test
     void spliteratorShouldHaveSameOrderAsIterator() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Iterator<BlockPos> iterator = region.iterator();
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Iterator<ChunkCoordinates> iterator = region.iterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
 
         spliterator.forEachRemaining(actual -> {
-            BlockPos expected = iterator.next();
+            ChunkCoordinates expected = iterator.next();
             assertEquals(expected, actual);
         });
     }
@@ -68,15 +68,15 @@ public class RegionSpliteratorTest {
     @Test
     void spliteratorShouldHaveSameOrderAsIteratorAfterSplittingInHalf() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Iterator<BlockPos> it = region.iterator();
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Iterator<ChunkCoordinates> it = region.iterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
 
         //Iteration 1, including the original one
-        Spliterator<BlockPos> sp1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1 = spliterator.trySplit();
 
         //Iteration 2, produces 2 more + 2 from iteration 1
-        Spliterator<BlockPos> sp1_1 = sp1.trySplit();
-        Spliterator<BlockPos> sp0_1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1_1 = sp1.trySplit();
+        Spliterator<ChunkCoordinates> sp0_1 = spliterator.trySplit();
 
         //Yielding spliterator inherits the state from parent, and parent starts working somewhere else
         //Yielding spliterator always have smaller coordinates than parent
@@ -89,7 +89,7 @@ public class RegionSpliteratorTest {
     @Test
     void doesNotProduceSamePosition() {
         Region region = new Region(-4, -4, -4, 4, 4, 4);
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
         LongSet visited = new LongOpenHashSet();
 
         spliterator.forEachRemaining(pos -> {
@@ -102,17 +102,17 @@ public class RegionSpliteratorTest {
     @Test
     void splittingDoesNotProduceSamePositionCaseSplitting2Times() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
         LongSet visited = new LongOpenHashSet();
 
-        Consumer<BlockPos> test = pos -> {
+        Consumer<ChunkCoordinates> test = pos -> {
             long actual = pos.toLong();
             assertFalse(visited.contains(actual));
             visited.add(actual);
         };
 
-        Spliterator<BlockPos> sp1 = spliterator.trySplit();
-        Spliterator<BlockPos> sp2 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp2 = spliterator.trySplit();
 
         spliterator.forEachRemaining(test);
         sp1.forEachRemaining(test);
@@ -122,21 +122,21 @@ public class RegionSpliteratorTest {
     @Test
     void splittingDoesNotProduceSamePositionCaseSplittingInHalf() {
         Region region = new Region(-8, -8, -8, 8, 8, 8);
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
         LongSet visited = new LongOpenHashSet();
 
-        Consumer<BlockPos> test = pos -> {
+        Consumer<ChunkCoordinates> test = pos -> {
             long actual = pos.toLong();
             assertFalse(visited.contains(actual));
             visited.add(actual);
         };
 
         //Iteration 1, including the original one
-        Spliterator<BlockPos> sp1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1 = spliterator.trySplit();
 
         //Iteration 2, produces 2 more + 2 from iteration 1
-        Spliterator<BlockPos> sp1_1 = sp1.trySplit();
-        Spliterator<BlockPos> sp0_1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1_1 = sp1.trySplit();
+        Spliterator<ChunkCoordinates> sp0_1 = spliterator.trySplit();
 
         sp1.forEachRemaining(test);
         spliterator.forEachRemaining(test);
@@ -148,16 +148,16 @@ public class RegionSpliteratorTest {
     @Test
     void splittingDoesNotChangeTheOverallSizeCaseSplittingInHalf() {
         Region region = new Region(-16, -6, -18, 17, 8, 20);
-        Spliterator<BlockPos> spliterator = region.spliterator();
+        Spliterator<ChunkCoordinates> spliterator = region.spliterator();
 
         long originalSize = spliterator.estimateSize();
 
         //Iteration 1, including the original one
-        Spliterator<BlockPos> sp1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1 = spliterator.trySplit();
 
         //Iteration 2, produces 2 more + 2 from iteration 1
-        Spliterator<BlockPos> sp1_1 = sp1.trySplit();
-        Spliterator<BlockPos> sp0_1 = spliterator.trySplit();
+        Spliterator<ChunkCoordinates> sp1_1 = sp1.trySplit();
+        Spliterator<ChunkCoordinates> sp0_1 = spliterator.trySplit();
 
         long actualSize = sp1.estimateSize() +
                 spliterator.estimateSize() +

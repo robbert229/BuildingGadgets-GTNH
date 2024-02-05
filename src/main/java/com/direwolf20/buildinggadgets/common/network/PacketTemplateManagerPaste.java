@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -22,14 +22,14 @@ import java.io.ByteArrayOutputStream;
 public class PacketTemplateManagerPaste implements IMessage {
 
     //ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    private BlockPos pos;
+    private ChunkCoordinates pos;
     private byte[] data;
     private String templateName;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         //System.out.println("Buf size: " + buf.readableBytes());
-        pos = BlockPos.fromLong(buf.readLong());
+        pos = ChunkCoordinates.fromLong(buf.readLong());
         templateName = ByteBufUtils.readUTF8String(buf);
         data = new byte[buf.readableBytes()];
         buf.readBytes(data);
@@ -48,7 +48,7 @@ public class PacketTemplateManagerPaste implements IMessage {
     public PacketTemplateManagerPaste() {
     }
 
-    public PacketTemplateManagerPaste(ByteArrayOutputStream pasteStream, BlockPos TMpos, String name) {
+    public PacketTemplateManagerPaste(ByteArrayOutputStream pasteStream, ChunkCoordinates TMpos, String name) {
         pos = TMpos;
         data = pasteStream.toByteArray();
         templateName = name;
@@ -69,7 +69,7 @@ public class PacketTemplateManagerPaste implements IMessage {
 
                 EntityPlayerMP player = ctx.getServerHandler().player;
                 World world = player.world;
-                BlockPos pos = message.pos;
+                ChunkCoordinates pos = message.pos;
                 TileEntity te = world.getTileEntity(pos);
                 if (!(te instanceof TemplateManagerTileEntity)) return;
                 TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);

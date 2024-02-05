@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nullable;
 
@@ -21,17 +21,17 @@ public class BlockPosState {
     private static final String NBT_BLOCK_STATE = "block_state";
     private static final String NBT_BLOCK_PASTE = "block_is_paste";
 
-    private BlockPos pos;
+    private ChunkCoordinates pos;
     private IBlockState state;
     private boolean isPaste;
 
-    public BlockPosState(BlockPos pos, IBlockState state, boolean isPaste) {
+    public BlockPosState(ChunkCoordinates pos, IBlockState state, boolean isPaste) {
         this.pos = pos;
         this.state = state;
         this.isPaste = isPaste;
     }
 
-    public BlockPos getPos() {
+    public ChunkCoordinates getPos() {
         return pos;
     }
 

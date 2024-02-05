@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ public final class Wall implements IPlacementSequence {
      * @param side   front face of the wall
      * @param radius radius of the wall
      */
-    public static Wall clickedSide(BlockPos center, EnumFacing side, int radius) {
+    public static Wall clickedSide(ChunkCoordinates center, EnumFacing side, int radius) {
         return new Wall(center, side, radius, null, 0);
     }
 
@@ -40,7 +40,7 @@ public final class Wall implements IPlacementSequence {
      * @param radius    radius of the wall.
      * @param extra     amount of blocks to add beyond the radius
      */
-    public static Wall extendingFrom(BlockPos posHit, EnumFacing extension, EnumFacing flatSide, int radius, int extra) {
+    public static Wall extendingFrom(ChunkCoordinates posHit, EnumFacing extension, EnumFacing flatSide, int radius, int extra) {
         Preconditions.checkArgument(extension != flatSide, "Cannot have a wall extending to " + extension + " and flat at " + flatSide);
         return new Wall(posHit.offset(extension, radius + 1), flatSide, radius, extension, extra);
     }
@@ -48,7 +48,7 @@ public final class Wall implements IPlacementSequence {
     private Region region;
 
     @VisibleForTesting
-    private Wall(BlockPos posHit, EnumFacing side, int radius, EnumFacing extendingSide, int extendingSize) {
+    private Wall(ChunkCoordinates posHit, EnumFacing side, int radius, EnumFacing extendingSide, int extendingSize) {
         this.region = new Region(posHit).expand(
                 radius * (1 - Math.abs(side.getFrontOffsetX())),
                 radius * (1 - Math.abs(side.getFrontOffsetY())),
@@ -87,12 +87,12 @@ public final class Wall implements IPlacementSequence {
 
     @Override
     @Nonnull
-    public Iterator<BlockPos> iterator() {
+    public Iterator<ChunkCoordinates> iterator() {
         return region.iterator();
     }
 
     @Override
-    public Spliterator<BlockPos> spliterator() {
+    public Spliterator<ChunkCoordinates> spliterator() {
         return region.spliterator();
     }
 

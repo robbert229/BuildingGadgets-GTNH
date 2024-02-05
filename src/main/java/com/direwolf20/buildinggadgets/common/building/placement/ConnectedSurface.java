@@ -7,7 +7,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
@@ -30,28 +30,28 @@ public final class ConnectedSurface implements IPlacementSequence {
      * @param searchingCenter Center of the searching region
      * @param side            Facing to offset from the {@code searchingCenter} to get to the reference region center
      */
-    public static ConnectedSurface create(IBlockAccess world, BlockPos searchingCenter, EnumFacing side, int range, boolean fuzzy) {
+    public static ConnectedSurface create(IBlockAccess world, ChunkCoordinates searchingCenter, EnumFacing side, int range, boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range).getBoundingBox();
         return create(world, searchingRegion, pos -> pos.offset(side), searchingCenter, side, fuzzy);
     }
 
-    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, BlockPos searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
+    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
         return new ConnectedSurface(world, searchingRegion, searching2referenceMapper, searchingCenter, side, fuzzy);
     }
 
-    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, BlockPos searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, BlockPos> predicate) {
+    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, ChunkCoordinates> predicate) {
         return new ConnectedSurface(world, searchingRegion, searching2referenceMapper, searchingCenter, side, predicate);
     }
 
     private final IBlockAccess world;
     private final Region searchingRegion;
-    private final Function<BlockPos, BlockPos> searching2referenceMapper;
-    private final BlockPos searchingCenter;
+    private final Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper;
+    private final ChunkCoordinates searchingCenter;
     private final EnumFacing side;
-    private final BiPredicate<IBlockState, BlockPos> predicate;
+    private final BiPredicate<IBlockState, ChunkCoordinates> predicate;
 
     @VisibleForTesting
-    private ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, BlockPos searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
+    private ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
         this(world, searchingRegion, searching2referenceMapper, searchingCenter, side,
                 (filter, pos) -> {
                     IBlockState reference = world.getBlockState(searching2referenceMapper.apply(pos));
@@ -61,7 +61,7 @@ public final class ConnectedSurface implements IPlacementSequence {
                 });
     }
 
-    ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, BlockPos searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, BlockPos> predicate) {
+    ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, ChunkCoordinates> predicate) {
         this.world = world;
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
@@ -102,12 +102,12 @@ public final class ConnectedSurface implements IPlacementSequence {
      */
     @Nonnull
     @Override
-    public Iterator<BlockPos> iterator() {
+    public Iterator<ChunkCoordinates> iterator() {
         IBlockState selectedBlock = getReferenceFor(searchingCenter);
 
-        return new AbstractIterator<BlockPos>() {
-            private Queue<BlockPos> queue = new LinkedList<>();
-            private Set<BlockPos> searched = new HashSet<>(searchingRegion.size());
+        return new AbstractIterator<ChunkCoordinates>() {
+            private Queue<ChunkCoordinates> queue = new LinkedList<>();
+            private Set<ChunkCoordinates> searched = new HashSet<>(searchingRegion.size());
 
             {
                 if (isValid(searchingCenter)) { //The destruction Gadget might be facing Bedrock or something similar - this would not be valid!
@@ -117,20 +117,20 @@ public final class ConnectedSurface implements IPlacementSequence {
             }
 
             @Override
-            protected BlockPos computeNext() {
+            protected ChunkCoordinates computeNext() {
                 if (queue.isEmpty())
                     return endOfData();
 
                 // The position is guaranteed to be valid
-                BlockPos current = queue.remove();
+                ChunkCoordinates current = queue.remove();
                 for (int i = -1; i <= 1; i++) {
                     for (int j = -1; j <= 1; j++) {
                         if (side != null) {
-                            BlockPos neighbor = VectorTools.perpendicularSurfaceOffset(current, side, i, j);
+                            ChunkCoordinates neighbor = VectorTools.perpendicularSurfaceOffset(current, side, i, j);
                             addNeighbour(neighbor);
                         } else {
                             for (int k = - 1; k <= 1; k++) {
-                                BlockPos neighbor = current.add(i, j, k);
+                                ChunkCoordinates neighbor = current.add(i, j, k);
                                 addNeighbour(neighbor);
                             }
                         }
@@ -140,20 +140,20 @@ public final class ConnectedSurface implements IPlacementSequence {
                 return current;
             }
 
-            private void addNeighbour(BlockPos neighbor) {
+            private void addNeighbour(ChunkCoordinates neighbor) {
                 boolean isSearched = ! searched.add(neighbor);
                 if (isSearched || ! isValid(neighbor))
                     return;
                 queue.add(neighbor);
             }
 
-            private boolean isValid(BlockPos pos) {
+            private boolean isValid(ChunkCoordinates pos) {
                 return searchingRegion.contains(pos) && predicate.test(selectedBlock, pos);
             }
         };
     }
 
-    private IBlockState getReferenceFor(BlockPos pos) {
+    private IBlockState getReferenceFor(ChunkCoordinates pos) {
         return world.getBlockState(searching2referenceMapper.apply(pos));
     }
 

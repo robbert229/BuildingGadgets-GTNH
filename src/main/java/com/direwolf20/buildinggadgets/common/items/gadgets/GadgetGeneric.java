@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -196,8 +196,8 @@ public abstract class GadgetGeneric extends ItemModBase {
     }
 
     public static class EmitEvent {
-        protected static boolean breakBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, player);
+        protected static boolean breakBlock(World world, ChunkCoordinates pos, IBlockState state, EntityPlayer player) {
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(pos.posX, pos.posY,pos.posZ, world, state, player);
             MinecraftForge.EVENT_BUS.post(breakEvent);
 
             return !breakEvent.isCanceled();

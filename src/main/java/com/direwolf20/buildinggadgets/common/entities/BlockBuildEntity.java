@@ -15,7 +15,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -24,7 +24,7 @@ public class BlockBuildEntity extends Entity {
 
     private static final DataParameter<Integer> toolMode = EntityDataManager.<Integer>createKey(BlockBuildEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Optional<IBlockState>> SET_BLOCK = EntityDataManager.<Optional<IBlockState>>createKey(BlockBuildEntity.class, DataSerializers.OPTIONAL_BLOCK_STATE);
-    private static final DataParameter<BlockPos> FIXED = EntityDataManager.createKey(BlockBuildEntity.class, DataSerializers.BLOCK_POS);
+    private static final DataParameter<ChunkCoordinates> FIXED = EntityDataManager.createKey(BlockBuildEntity.class, DataSerializers.BLOCK_POS);
     private static final DataParameter<Boolean> usePaste = EntityDataManager.createKey(BlockBuildEntity.class, DataSerializers.BOOLEAN);
 
 
@@ -34,7 +34,7 @@ public class BlockBuildEntity extends Entity {
     private IBlockState setBlock;
     private IBlockState originalSetBlock;
     private IBlockState actualSetBlock;
-    private BlockPos setPos;
+    private ChunkCoordinates setPos;
     private EntityLivingBase spawnedBy;
     private boolean useConstructionPaste;
 
@@ -46,7 +46,7 @@ public class BlockBuildEntity extends Entity {
         world = worldIn;
     }
 
-    public BlockBuildEntity(World worldIn, BlockPos spawnPos, EntityLivingBase player, IBlockState spawnBlock, int toolMode, IBlockState actualSpawnBlock, boolean constrPaste) {
+    public BlockBuildEntity(World worldIn, ChunkCoordinates spawnPos, EntityLivingBase player, IBlockState spawnBlock, int toolMode, IBlockState actualSpawnBlock, boolean constrPaste) {
         super(worldIn);
         setSize(0.1F, 0.1F);
         setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
@@ -218,7 +218,7 @@ public class BlockBuildEntity extends Entity {
 
     @Override
     protected void entityInit() {
-        this.dataManager.register(FIXED, BlockPos.ORIGIN);
+        this.dataManager.register(FIXED, new ChunkCoordinates(0,0,0));
         this.dataManager.register(toolMode, 1);
         this.dataManager.register(SET_BLOCK, Optional.absent());
         this.dataManager.register(usePaste, useConstructionPaste);

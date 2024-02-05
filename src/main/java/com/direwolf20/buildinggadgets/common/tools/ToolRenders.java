@@ -21,9 +21,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -50,7 +50,7 @@ public class ToolRenders {
 
     private static Minecraft mc = Minecraft.getMinecraft();
     private static RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
-    private static Cache<Triple<UniqueItemStack, BlockPos, Integer>, Integer> cacheDestructionOverlay = CacheBuilder.newBuilder().maximumSize(1).
+    private static Cache<Triple<UniqueItemStack, ChunkCoordinates, Integer>, Integer> cacheDestructionOverlay = CacheBuilder.newBuilder().maximumSize(1).
             expireAfterWrite(1, TimeUnit.SECONDS).removalListener(removal -> GLAllocation.deleteDisplayLists((int) removal.getValue())).build();
 
     // We use these as highlighters
@@ -75,7 +75,7 @@ public class ToolRenders {
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
-        List<BlockPos> coordinates = getAnchor(heldItem);
+        List<ChunkCoordinates> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
             return;
@@ -105,7 +105,7 @@ public class ToolRenders {
         int hasEnergy = SyncedConfig.energyMax == 0 ? Integer.MAX_VALUE : ToolRenders.Utils.getStackEnergy(heldItem, player);
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
-        Set<BlockPos> coords =  new HashSet<>(coordinates);
+        Set<ChunkCoordinates> coords =  new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.world, renderBlockState, coords);
 
         GlStateManager.pushMatrix();
@@ -126,7 +126,7 @@ public class ToolRenders {
         });
 
         // Render if the block can be built or not
-        for (BlockPos coordinate : coordinates) {
+        for (ChunkCoordinates coordinate : coordinates) {
             GlStateManager.pushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.01f);
             GlStateManager.scale(1.006f, 1.006f, 1.006f);
@@ -163,7 +163,7 @@ public class ToolRenders {
 
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
         IBlockState state = Blocks.AIR.getDefaultState();
-        List<BlockPos> coordinates = getAnchor(heldItem);
+        List<ChunkCoordinates> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
             return;
@@ -190,13 +190,13 @@ public class ToolRenders {
         int hasEnergy = SyncedConfig.energyMax == 0 ? Integer.MAX_VALUE : ToolRenders.Utils.getStackEnergy(heldItem, player);
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
-        Set<BlockPos> coords =  new HashSet<>(coordinates);
+        Set<ChunkCoordinates> coords =  new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.world, renderBlockState, coords);
 
         GlStateManager.pushMatrix();
         ToolRenders.Utils.stateManagerPrepareBlend();
 
-        for (BlockPos coordinate : coordinates) {
+        for (ChunkCoordinates coordinate : coordinates) {
             GlStateManager.pushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.001f);
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
@@ -252,7 +252,7 @@ public class ToolRenders {
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
         if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) return;
         World world = player.world;
-        BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
+        ChunkCoordinates startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
         EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
         if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
 
@@ -277,21 +277,21 @@ public class ToolRenders {
         GlStateManager.popMatrix();
     }
 
-    private static void renderDestructionOverlay(EntityPlayer player, World world, BlockPos startBlock, EnumFacing facing, ItemStack heldItem) {
+    private static void renderDestructionOverlay(EntityPlayer player, World world, ChunkCoordinates startBlock, EnumFacing facing, ItemStack heldItem) {
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-        Set<BlockPos> coordinates = GadgetDestruction.getArea(world, startBlock, facing, player, heldItem);
+        Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlock, facing, player, heldItem);
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-        List<BlockPos> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); //Sort the coords by distance to player.
+        List<ChunkCoordinates> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); //Sort the coords by distance to player.
 
         Tessellator t = Tessellator.getInstance();
         BufferBuilder bufferBuilder = t.getBuffer();
 
-        for (BlockPos coordinate : sortedCoordinates) {
+        for (ChunkCoordinates coordinate : sortedCoordinates) {
             boolean invisible = true;
             IBlockState state = world.getBlockState(coordinate);
             for (EnumFacing side : EnumFacing.values()) {
@@ -340,7 +340,7 @@ public class ToolRenders {
         World world = player.world;
         if (GadgetCopyPaste.getToolMode(stack) == GadgetCopyPaste.ToolMode.Paste) {
             //First check if we have an anchor, if not check if we're looking at a block, if not, exit
-            BlockPos startPos = GadgetCopyPaste.getAnchor(stack);
+            ChunkCoordinates startPos = GadgetCopyPaste.getAnchor(stack);
             if (startPos == null) {
                 startPos = VectorTools.getPosLookingAt(player, stack);
                 if (startPos == null) return;
@@ -392,9 +392,9 @@ public class ToolRenders {
             GlStateManager.popMatrix();
 
         } else {
-            BlockPos startPos = ModItems.gadgetCopyPaste.getStartPos(stack);
-            BlockPos endPos = ModItems.gadgetCopyPaste.getEndPos(stack);
-            BlockPos blankPos = new BlockPos(0, 0, 0);
+            ChunkCoordinates startPos = ModItems.gadgetCopyPaste.getStartPos(stack);
+            ChunkCoordinates endPos = ModItems.gadgetCopyPaste.getEndPos(stack);
+            ChunkCoordinates blankPos = new ChunkCoordinates(0, 0, 0);
             if (startPos == null || endPos == null || startPos.equals(blankPos) || endPos.equals(blankPos)) {
                 return;
             }
@@ -436,7 +436,7 @@ public class ToolRenders {
 
     private static void renderLinkedInventoryOutline(ItemStack item, Vec3d playerPos, EntityPlayer player) {
         Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
-        BlockPos pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
+        ChunkCoordinates pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
 
         if (dim == null || pos == null)
             return;
@@ -558,12 +558,12 @@ public class ToolRenders {
          */
         private static ItemStack getSilkDropIfPresent(World world, IBlockState state, EntityPlayer player) {
             ItemStack itemStack = ItemStack.EMPTY;
-            if (state.getBlock().canSilkHarvest(world, BlockPos.ORIGIN, state, player))
+            if (state.getBlock().canSilkHarvest(world, new ChunkCoordinates(0,0,0), state, player))
                 itemStack = InventoryManipulation.getSilkTouchDrop(state);
 
             if (itemStack.isEmpty()) {
                 try {
-                    itemStack = state.getBlock().getPickBlock(state, null, world, BlockPos.ORIGIN, player);
+                    itemStack = state.getBlock().getPickBlock(state, null, world, new ChunkCoordinates(0,0,0), player);
                 } catch (Exception ignored) {
                     // This may introduce issues. I hope it doesn't
                     itemStack = InventoryManipulation.getSilkTouchDrop(state);
@@ -581,8 +581,8 @@ public class ToolRenders {
         /**
          * Prepares our render using base properties
          */
-        private static void stateManagerPrepare(Vec3d playerPos, BlockPos blockPos, Float shift) {
-            GlStateManager.translate(blockPos.getX()-playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+        private static void stateManagerPrepare(Vec3d playerPos, ChunkCoordinates blockPos, Float shift) {
+            GlStateManager.translate(blockPos.posX-playerPos.x, blockPos.posY - playerPos.y, blockPos.posZ - playerPos.z);//Now move the render position to the coordinates we want to render at
             // Rotate it because i'm not sure why but we need to
             GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
             GlStateManager.scale(1f, 1f, 1f);

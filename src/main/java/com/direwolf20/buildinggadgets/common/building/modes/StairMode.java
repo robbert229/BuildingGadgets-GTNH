@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Stair mode for Building Gadget.
@@ -29,7 +29,7 @@ public class StairMode extends AtopSupportedMode {
     }
 
     @Override
-    public IPlacementSequence computeWithTransformed(EntityPlayer player, BlockPos transformed, BlockPos original, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getOpposite() : sideHit;
 
@@ -41,7 +41,7 @@ public class StairMode extends AtopSupportedMode {
     }
 
     @Override
-    public BlockPos transformAtop(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         if (hit.getY() > player.posY + 1) {
             EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing() : sideHit;
             return hit.down().offset(side);

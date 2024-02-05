@@ -1,13 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Comparator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-class RegionSpliterator implements Spliterator<BlockPos> {
+class RegionSpliterator implements Spliterator<ChunkCoordinates> {
 
     private int minX;
     private int minY;
@@ -49,12 +49,12 @@ class RegionSpliterator implements Spliterator<BlockPos> {
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super BlockPos> action) {
+    public boolean tryAdvance(Consumer<? super ChunkCoordinates> action) {
         if (isXOverflowed())
             return false;
 
         this.allowYZSplit = false;
-        BlockPos pos = new BlockPos(nextPosX, nextPosY, nextPosZ);
+        ChunkCoordinates pos = new ChunkCoordinates(nextPosX, nextPosY, nextPosZ);
 
         nextPosZ++;
         if (isZOverflowed()) {
@@ -82,7 +82,7 @@ class RegionSpliterator implements Spliterator<BlockPos> {
      * @return A part of this {@link Spliterator}, if splitting is possible
      */
     @Override
-    public Spliterator<BlockPos> trySplit() {
+    public Spliterator<ChunkCoordinates> trySplit() {
         int oldMinX = minX;
         int oldMinY = minY;
         int oldMinZ = minZ;
@@ -124,7 +124,7 @@ class RegionSpliterator implements Spliterator<BlockPos> {
      * @return {@link GadgetUtils#POSITION_COMPARATOR}
      */
     @Override
-    public Comparator<? super BlockPos> getComparator() {
+    public Comparator<? super ChunkCoordinates> getComparator() {
         return GadgetUtils.POSITION_COMPARATOR;
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.function.BiPredicate;
@@ -19,7 +19,7 @@ public interface IBuildingMode {
     /**
      * Iterator that supplies raw coordinates that haven't been filtered yet.
      */
-    IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool);
+    IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool);
 
     /**
      * <p>Get the the block provider that can be accessed by using ItemStack capability system.</p>
@@ -31,12 +31,12 @@ public interface IBuildingMode {
         return CapabilityBlockProvider.DEFAULT_AIR_PROVIDER;
     }
 
-    BiPredicate<BlockPos, IBlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, BlockPos initial);
+    BiPredicate<ChunkCoordinates, IBlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial);
 
     /**
      * @see Context#getPositionSequence()
      */
-    default Context createExecutionContext(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    default Context createExecutionContext(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         return new Context(computeCoordinates(player, hit, sideHit, tool), getBlockProvider(tool), this::createValidatorFor);
     }
 

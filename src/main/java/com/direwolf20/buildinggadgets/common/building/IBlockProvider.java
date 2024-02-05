@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Abstract representation mapping from position to block state.
@@ -18,17 +18,17 @@ public interface IBlockProvider<T extends IBlockProvider<T>> {
 
     /**
      * @param origin the new origin
-     * @return A block provider with all calls to {@link #at(BlockPos)} translated by the parameter.
+     * @return A block provider with all calls to {@link #at(ChunkCoordinates)} translated by the parameter.
      * @implSpec {@code pos.add(this.getTranslation())} should be applied when accessing the current object.
      */
-    IBlockProvider translate(BlockPos origin);
+    IBlockProvider translate(ChunkCoordinates origin);
 
     /**
-     * @return the translation used as translation of the parameter of {@link #at(BlockPos)}
+     * @return the translation used as translation of the parameter of {@link #at(ChunkCoordinates)}
      * @implSpec the value should remain constant in the whole life of the object
      */
-    default BlockPos getTranslation() {
-        return BlockPos.ORIGIN;
+    default ChunkCoordinates getTranslation() {
+        return new ChunkCoordinates(0,0,0);
     }
 
     /**
@@ -37,7 +37,7 @@ public interface IBlockProvider<T extends IBlockProvider<T>> {
      * @return block that should be placed at the position
      * @implNote In most cases, {@code pos.add(this.getTranslation())} should be sufficient.
      */
-    IBlockState at(BlockPos pos);
+    IBlockState at(ChunkCoordinates pos);
 
     /**
      * Write the containing data into the given tag.

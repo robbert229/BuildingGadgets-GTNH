@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.util;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * A fake world that has a finite set of positions filled with a certain type of block and others, which can be specified
- * with {@link #setOtherAt(BlockPos)}, to be another type of block.
+ * with {@link #setOtherAt(ChunkCoordinates)}, to be another type of block.
  */
 public class CasedBlockView extends RegionBlockView {
 
@@ -26,14 +26,14 @@ public class CasedBlockView extends RegionBlockView {
         for (Iterator<Integer> it = random.ints(amountTargets, 0, size + 1).iterator(); it.hasNext(); ) {
             int x = it.next() - radius - 1;
             int z = it.next() - radius - 1;
-            world.setOtherAt(new BlockPos(x, 0, z));
+            world.setOtherAt(new ChunkCoordinates(x, 0, z));
         }
 
         return world;
     }
 
     private IBlockState otherState;
-    private Set<BlockPos> otherPositions;
+    private Set<ChunkCoordinates> otherPositions;
 
     public CasedBlockView(Region region, IBlockState state, IBlockState otherState) {
         super(region, state);
@@ -41,13 +41,13 @@ public class CasedBlockView extends RegionBlockView {
         this.otherPositions = new ObjectOpenHashSet<>();
     }
 
-    public CasedBlockView setOtherAt(BlockPos pos) {
+    public CasedBlockView setOtherAt(ChunkCoordinates pos) {
         otherPositions.add(pos);
         return this;
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public IBlockState getBlockState(ChunkCoordinates pos) {
         if (otherPositions.contains(pos)) {
             return otherState;
         }

@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import it.unimi.dsi.fastutil.doubles.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import java.util.*;
 
@@ -20,14 +20,14 @@ public class Sorter {
     public static class Blocks {
 
         /**
-         * @param list   an unsorted {@link BlockPos} Collection
+         * @param list   an unsorted {@link ChunkCoordinates} Collection
          * @param player the player
-         * @return a sorted by distance {@link List} of {@link BlockPos}
+         * @return a sorted by distance {@link List} of {@link ChunkCoordinates}
          */
-        public static List<BlockPos> byDistance(Collection<BlockPos> list, EntityPlayer player) {
-            List<BlockPos> sortedList = new ArrayList<>();
+        public static List<ChunkCoordinates> byDistance(Collection<ChunkCoordinates> list, EntityPlayer player) {
+            List<ChunkCoordinates> sortedList = new ArrayList<>();
 
-            Double2ObjectMap<BlockPos> rangeMap = new Double2ObjectArrayMap<>(list.size());
+            Double2ObjectMap<ChunkCoordinates> rangeMap = new Double2ObjectArrayMap<>(list.size());
             DoubleSortedSet distances = new DoubleRBTreeSet();
 
             double x = player.posX,

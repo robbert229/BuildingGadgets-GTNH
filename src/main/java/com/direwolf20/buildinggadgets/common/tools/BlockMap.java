@@ -1,22 +1,23 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.block.Block;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
 
 public class BlockMap {
 
-    public final BlockPos pos;
-    public final IBlockState state;
+    public final ChunkCoordinates pos;
+    public final Block state;
     public int xOffset = 0;
     public int yOffset = 0;
     public int zOffset = 0;
 
-    public BlockMap(BlockPos blockPos, IBlockState iBlockState) {
+    public BlockMap(ChunkCoordinates blockPos, Block iBlockState) {
         pos = blockPos;
         state = iBlockState;
     }
 
-    public BlockMap(BlockPos blockPos, IBlockState iBlockState, int x, int y, int z) {
+    public BlockMap(ChunkCoordinates blockPos, Block iBlockState, int x, int y, int z) {
         pos = blockPos;
         state = iBlockState;
         xOffset = x;

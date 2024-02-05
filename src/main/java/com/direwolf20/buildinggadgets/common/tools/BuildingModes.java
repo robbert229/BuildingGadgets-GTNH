@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -64,7 +64,7 @@ public enum BuildingModes {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool, BlockPos initial) {
+    public static List<ChunkCoordinates> collectPlacementPos(World world, EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool, ChunkCoordinates initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
 
         // stream, sort by closes to the player, collect, return
@@ -92,7 +92,7 @@ public enum BuildingModes {
         return ICONS;
     }
 
-    public static BiPredicate<BlockPos, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, BlockPos initial) {
+    public static BiPredicate<ChunkCoordinates, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
         IBlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
             IBlockState current = world.getBlockState(pos);
@@ -107,11 +107,11 @@ public enum BuildingModes {
     }
 
     public static List<BlockMap> sortMapByDistance(List<BlockMap> unSortedMap, EntityPlayer player) {//TODO unused
-        List<BlockPos> unSortedList = new ArrayList<>();
-        Map<BlockPos, IBlockState> PosToStateMap = new HashMap<>();
-        Map<BlockPos, Integer> PosToX = new HashMap<>();
-        Map<BlockPos, Integer> PosToY = new HashMap<>();
-        Map<BlockPos, Integer> PosToZ = new HashMap<>();
+        List<ChunkCoordinates> unSortedList = new ArrayList<>();
+        Map<ChunkCoordinates, IBlockState> PosToStateMap = new HashMap<>();
+        Map<ChunkCoordinates, Integer> PosToX = new HashMap<>();
+        Map<ChunkCoordinates, Integer> PosToY = new HashMap<>();
+        Map<ChunkCoordinates, Integer> PosToZ = new HashMap<>();
         for (BlockMap blockMap : unSortedMap) {
             PosToStateMap.put(blockMap.pos, blockMap.state);
             PosToX.put(blockMap.pos, blockMap.xOffset);
@@ -120,19 +120,19 @@ public enum BuildingModes {
             unSortedList.add(blockMap.pos);
         }
         List<BlockMap> sortedMap = new ArrayList<BlockMap>();
-        Double2ObjectMap<BlockPos> rangeMap = new Double2ObjectArrayMap<>(unSortedList.size());
+        Double2ObjectMap<ChunkCoordinates> rangeMap = new Double2ObjectArrayMap<>(unSortedList.size());
         DoubleSortedSet distances = new DoubleRBTreeSet();
         double x = player.posX;
         double y = player.posY + player.getEyeHeight();
         double z = player.posZ;
-        for (BlockPos pos : unSortedList) {
+        for (ChunkCoordinates pos : unSortedList) {
             double distance = pos.distanceSqToCenter(x, y, z);
             rangeMap.put(distance, pos);
             distances.add(distance);
         }
         for (double dist : distances) {
             //System.out.println(dist);
-            BlockPos pos = new BlockPos(rangeMap.get(dist));
+            ChunkCoordinates pos = new ChunkCoordinates(rangeMap.get(dist));
             sortedMap.add(new BlockMap(pos, PosToStateMap.get(pos), PosToX.get(pos), PosToY.get(pos), PosToZ.get(pos)));
         }
         //System.out.println(unSortedList);

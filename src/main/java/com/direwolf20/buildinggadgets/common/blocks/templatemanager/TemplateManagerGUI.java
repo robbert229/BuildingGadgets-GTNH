@@ -34,7 +34,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -176,12 +176,12 @@ public class TemplateManagerGUI extends GuiContainer {
             String UUID = ModItems.gadgetCopyPaste.getUUID(itemstack);
             ToolDireBuffer bufferBuilder = PasteToolBufferBuilder.getBufferFromMap(UUID);
             if (bufferBuilder != null) {
-                BlockPos startPos = ModItems.gadgetCopyPaste.getStartPos(itemstack);
-                BlockPos endPos = ModItems.gadgetCopyPaste.getEndPos(itemstack);
+                ChunkCoordinates startPos = ModItems.gadgetCopyPaste.getStartPos(itemstack);
+                ChunkCoordinates endPos = ModItems.gadgetCopyPaste.getEndPos(itemstack);
                 if (startPos == null || endPos == null) return;
-                double lengthX = Math.abs(startPos.getX() - endPos.getX());
-                double lengthY = Math.abs(startPos.getY() - endPos.getY());
-                double lengthZ = Math.abs(startPos.getZ() - endPos.getZ());
+                double lengthX = Math.abs(startPos.posX - endPos.posX);
+                double lengthY = Math.abs(startPos.posY - endPos.posY);
+                double lengthZ = Math.abs(startPos.posZ - endPos.posZ);
 
                 final double maxW = 6 * 16;
                 final double maxH = 11 * 16;

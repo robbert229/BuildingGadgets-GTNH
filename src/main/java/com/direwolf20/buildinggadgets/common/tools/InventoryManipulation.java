@@ -19,7 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -429,7 +429,7 @@ public class InventoryManipulation {
         return new ItemStack(item, 1, i);
     }
 
-    public static IBlockState getSpecificStates(IBlockState originalState, World world, EntityPlayer player, BlockPos pos, ItemStack tool) {
+    public static IBlockState getSpecificStates(IBlockState originalState, World world, EntityPlayer player, ChunkCoordinates pos, ItemStack tool) {
         IBlockState placeState;
         Block block = originalState.getBlock();
 

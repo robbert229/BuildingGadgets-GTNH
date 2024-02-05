@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
@@ -28,17 +28,17 @@ public class RegionBlockView implements IBlockAccess {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public IBlockState getBlockState(ChunkCoordinates pos) {
         return region.contains(pos) ? state : UniqueBlockState.AIR;
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
+    public boolean isAirBlock(ChunkCoordinates pos) {
         return !region.contains(pos);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing facing) {
+    public int getStrongPower(ChunkCoordinates pos, EnumFacing facing) {
         return getBlockState(pos).getStrongPower(this, pos, facing);
     }
 
@@ -48,26 +48,26 @@ public class RegionBlockView implements IBlockAccess {
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing facing, boolean b) {
+    public boolean isSideSolid(ChunkCoordinates pos, EnumFacing facing, boolean b) {
         return getBlockState(pos).isSideSolid(this, pos, facing);
     }
 
     @Deprecated
     @Nullable
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public TileEntity getTileEntity(ChunkCoordinates pos) {
         return null;
     }
 
     @Deprecated
     @Override
-    public int getCombinedLight(BlockPos pos, int i) {
+    public int getCombinedLight(ChunkCoordinates pos, int i) {
         return 0;
     }
 
     @Deprecated
     @Override
-    public Biome getBiome(BlockPos pos) {
+    public Biome getBiome(ChunkCoordinates pos) {
         return null;
     }
 

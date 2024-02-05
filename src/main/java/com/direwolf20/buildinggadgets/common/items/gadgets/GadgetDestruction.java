@@ -26,7 +26,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -99,11 +99,11 @@ public class GadgetDestruction extends GadgetGeneric {
         return uuid;
     }
 
-    public static void setAnchor(ItemStack stack, BlockPos pos) {
+    public static void setAnchor(ItemStack stack, ChunkCoordinates pos) {
         GadgetUtils.writePOSToNBT(stack, pos, "anchor");
     }
 
-    public static BlockPos getAnchor(ItemStack stack) {
+    public static ChunkCoordinates getAnchor(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "anchor");
     }
 
@@ -213,7 +213,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 if (lookingAt == null && getAnchor(stack) == null) { //If we aren't looking at anything, exit
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
-                BlockPos startBlock = (getAnchor(stack) == null) ? lookingAt.getBlockPos() : getAnchor(stack);
+                ChunkCoordinates startBlock = (getAnchor(stack) == null) ? lookingAt.getBlockPos() : getAnchor(stack);
                 EnumFacing sideHit = (getAnchorSide(stack) == null) ? lookingAt.sideHit : getAnchorSide(stack);
                 clearArea(world, startBlock, sideHit, player, stack);
                 if (getAnchor(stack) != null) {
@@ -232,7 +232,7 @@ public class GadgetDestruction extends GadgetGeneric {
     }
 
     public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
-        BlockPos currentAnchor = getAnchor(stack);
+        ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
             RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {
@@ -249,12 +249,12 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
-    public static Set<BlockPos> getArea(World world, BlockPos pos, EnumFacing incomingSide, EntityPlayer player, ItemStack stack) {
+    public static Set<ChunkCoordinates> getArea(World world, ChunkCoordinates pos, EnumFacing incomingSide, EntityPlayer player, ItemStack stack) {
         int depth = getToolValue(stack, "depth");
         if (depth == 0)
             return Collections.emptySet();
 
-        BlockPos startPos = (getAnchor(stack) == null) ? pos : getAnchor(stack);
+        ChunkCoordinates startPos = (getAnchor(stack) == null) ? pos : getAnchor(stack);
         EnumFacing side = (getAnchorSide(stack) == null) ? incomingSide : getAnchorSide(stack);
 
         // Build the region
@@ -283,7 +283,7 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
-    private static boolean validBlock(World world, BlockPos voidPos, EntityPlayer player, @Nullable IBlockState stateTarget, boolean fuzzy) {
+    private static boolean validBlock(World world, ChunkCoordinates voidPos, EntityPlayer player, @Nullable IBlockState stateTarget, boolean fuzzy) {
         IBlockState currentBlock = world.getBlockState(voidPos);
         if (! fuzzy && currentBlock != stateTarget) return false;
         TileEntity te = world.getTileEntity(voidPos);
@@ -303,11 +303,11 @@ public class GadgetDestruction extends GadgetGeneric {
         return world.isBlockModifiable(player, voidPos);
     }
 
-    private void clearArea(World world, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack) {
-        Set<BlockPos> voidPosArray = getArea(world, pos, side, player, stack);
+    private void clearArea(World world, ChunkCoordinates pos, EnumFacing side, EntityPlayer player, ItemStack stack) {
+        Set<ChunkCoordinates> voidPosArray = getArea(world, pos, side, player, stack);
         List<BlockPosState> blockList = new ArrayList<>();
 
-        for (BlockPos voidPos : voidPosArray) {
+        for (ChunkCoordinates voidPos : voidPosArray) {
             boolean isPaste;
 
             IBlockState blockState = world.getBlockState(voidPos);
@@ -392,7 +392,7 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
-    private boolean destroyBlock(World world, BlockPos voidPos, EntityPlayer player) {
+    private boolean destroyBlock(World world, ChunkCoordinates voidPos, EntityPlayer player) {
         ItemStack tool = getGadget(player);
         if (tool.isEmpty())
             return false;

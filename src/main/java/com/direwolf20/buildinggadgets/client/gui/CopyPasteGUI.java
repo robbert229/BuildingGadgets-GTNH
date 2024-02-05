@@ -15,8 +15,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -40,8 +41,8 @@ public class CopyPasteGUI extends GuiScreen {
     private int guiTop = 15;
 
     private ItemStack copyPasteTool;
-    private BlockPos startPos;
-    private BlockPos endPos;
+    private ChunkCoordinates startPos;
+    private ChunkCoordinates endPos;
 
     private static final ResourceLocation background = new ResourceLocation(BuildingGadgets.MODID, "textures/gui/testcontainer.png");
 
@@ -60,8 +61,8 @@ public class CopyPasteGUI extends GuiScreen {
         super.initGui();
         startPos = ModItems.gadgetCopyPaste.getStartPos(copyPasteTool);
         endPos = ModItems.gadgetCopyPaste.getEndPos(copyPasteTool);
-        if (startPos == null) startPos = new BlockPos(0, 0, 0);
-        if (endPos == null) endPos = new BlockPos(0, 0, 0);
+        if (startPos == null) startPos = new ChunkCoordinates(0, 0, 0);
+        if (endPos == null) endPos = new ChunkCoordinates(0, 0, 0);
 
         startX = new GuiTextField(0, this.fontRenderer, this.guiLeft + 65, this.guiTop + 15, 40, this.fontRenderer.FONT_HEIGHT);
         startX.setMaxStringLength(50);
@@ -145,22 +146,22 @@ public class CopyPasteGUI extends GuiScreen {
     private void nullCheckTextBoxes() {
         if (absoluteCoords) {
             if (startX.getText().isEmpty()) {
-                startX.setText(String.valueOf(startPos.getX()));
+                startX.setText(String.valueOf(startPos.posX));
             }
             if (startY.getText().isEmpty()) {
-                startY.setText(String.valueOf(startPos.getY()));
+                startY.setText(String.valueOf(startPos.posY));
             }
             if (startZ.getText().isEmpty()) {
-                startZ.setText(String.valueOf(startPos.getZ()));
+                startZ.setText(String.valueOf(startPos.posZ));
             }
             if (endX.getText().isEmpty()) {
-                endX.setText(String.valueOf(endPos.getX()));
+                endX.setText(String.valueOf(endPos.posX));
             }
             if (endY.getText().isEmpty()) {
-                endY.setText(String.valueOf(endPos.getY()));
+                endY.setText(String.valueOf(endPos.posY));
             }
             if (endZ.getText().isEmpty()) {
-                endZ.setText(String.valueOf(endPos.getZ()));
+                endZ.setText(String.valueOf(endPos.posZ));
             }
         } else {
             if (startX.getText().isEmpty()) {
@@ -190,11 +191,11 @@ public class CopyPasteGUI extends GuiScreen {
             nullCheckTextBoxes();
             try {
                 if (absoluteCoords) {
-                    startPos = new BlockPos(Integer.parseInt(startX.getText()), Integer.parseInt(startY.getText()), Integer.parseInt(startZ.getText()));
-                    endPos = new BlockPos(Integer.parseInt(endX.getText()), Integer.parseInt(endY.getText()), Integer.parseInt(endZ.getText()));
+                    startPos = new ChunkCoordinates(Integer.parseInt(startX.getText()), Integer.parseInt(startY.getText()), Integer.parseInt(startZ.getText()));
+                    endPos = new ChunkCoordinates(Integer.parseInt(endX.getText()), Integer.parseInt(endY.getText()), Integer.parseInt(endZ.getText()));
                 } else {
-                    startPos = new BlockPos(startPos.getX() + Integer.parseInt(startX.getText()), startPos.getY() + Integer.parseInt(startY.getText()), startPos.getZ() + Integer.parseInt(startZ.getText()));
-                    endPos = new BlockPos(startPos.getX() + Integer.parseInt(endX.getText()), startPos.getY() + Integer.parseInt(endY.getText()), startPos.getZ() + Integer.parseInt(endZ.getText()));
+                    startPos = new ChunkCoordinates(startPos.posX + Integer.parseInt(startX.getText()), startPos.posY + Integer.parseInt(startY.getText()), startPos.posZ + Integer.parseInt(startZ.getText()));
+                    endPos = new ChunkCoordinates(startPos.posX + Integer.parseInt(endX.getText()), startPos.posY + Integer.parseInt(endY.getText()), startPos.posZ + Integer.parseInt(endZ.getText()));
                 }
                 PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(startPos, endPos));
             } catch (Throwable t) {
@@ -204,7 +205,7 @@ public class CopyPasteGUI extends GuiScreen {
         } else if (b.id == 2) {
             this.mc.displayGuiScreen(null);
         } else if (b.id == 3) {
-            PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(BlockPos.ORIGIN, BlockPos.ORIGIN));
+            PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(new ChunkCoordinates(), new ChunkCoordinates()));
             this.mc.displayGuiScreen(null);
         } else if (b.id == 4) {
             coordsModeSwitch();
@@ -244,26 +245,26 @@ public class CopyPasteGUI extends GuiScreen {
     private void updateTextFields() {
         String x, y, z;
         if (absoluteCoords) {
-            BlockPos start = startX.getText() != "" ? new BlockPos(startPos.getX() + Integer.parseInt(startX.getText()), startPos.getY() + Integer.parseInt(startY.getText()), startPos.getZ() + Integer.parseInt(startZ.getText())) : startPos;
-            BlockPos end = endX.getText() != "" ? new BlockPos(startPos.getX() + Integer.parseInt(endX.getText()), startPos.getY() + Integer.parseInt(endY.getText()), startPos.getZ() + Integer.parseInt(endZ.getText())) : endPos;
-            startX.setText(String.valueOf(start.getX()));
-            startY.setText(String.valueOf(start.getY()));
-            startZ.setText(String.valueOf(start.getZ()));
-            endX.setText(String.valueOf(end.getX()));
-            endY.setText(String.valueOf(end.getY()));
-            endZ.setText(String.valueOf(end.getZ()));
+            ChunkCoordinates start = startX.getText() != "" ? new ChunkCoordinates(startPos.posX + Integer.parseInt(startX.getText()), startPos.posY + Integer.parseInt(startY.getText()), startPos.posZ + Integer.parseInt(startZ.getText())) : startPos;
+            ChunkCoordinates end = endX.getText() != "" ? new ChunkCoordinates(startPos.posX + Integer.parseInt(endX.getText()), startPos.posY + Integer.parseInt(endY.getText()), startPos.posZ + Integer.parseInt(endZ.getText())) : endPos;
+            startX.setText(String.valueOf(start.posX));
+            startY.setText(String.valueOf(start.posY));
+            startZ.setText(String.valueOf(start.posZ));
+            endX.setText(String.valueOf(end.posX));
+            endY.setText(String.valueOf(end.posY));
+            endZ.setText(String.valueOf(end.posZ));
         } else {
-            x = startX.getText() != "" ? String.valueOf(Integer.parseInt(startX.getText()) - startPos.getX()) : "0";
+            x = startX.getText() != "" ? String.valueOf(Integer.parseInt(startX.getText()) - startPos.posX) : "0";
             startX.setText(x);
-            y = startY.getText() != "" ? String.valueOf(Integer.parseInt(startY.getText()) - startPos.getY()) : "0";
+            y = startY.getText() != "" ? String.valueOf(Integer.parseInt(startY.getText()) - startPos.posY) : "0";
             startY.setText(y);
-            z = startZ.getText() != "" ? String.valueOf(Integer.parseInt(startZ.getText()) - startPos.getZ()) : "0";
+            z = startZ.getText() != "" ? String.valueOf(Integer.parseInt(startZ.getText()) - startPos.posZ) : "0";
             startZ.setText(z);
-            x = endX.getText() != "" ? String.valueOf(Integer.parseInt(endX.getText()) - startPos.getX()) : String.valueOf(endPos.getX() - startPos.getX());
+            x = endX.getText() != "" ? String.valueOf(Integer.parseInt(endX.getText()) - startPos.posX) : String.valueOf(endPos.posX - startPos.posX);
             endX.setText(x);
-            y = endY.getText() != "" ? String.valueOf(Integer.parseInt(endY.getText()) - startPos.getY()) : String.valueOf(endPos.getY() - startPos.getY());
+            y = endY.getText() != "" ? String.valueOf(Integer.parseInt(endY.getText()) - startPos.posY) : String.valueOf(endPos.posY - startPos.posY);
             endY.setText(y);
-            z = endZ.getText() != "" ? String.valueOf(Integer.parseInt(endZ.getText()) - startPos.getZ()) : String.valueOf(endPos.getZ() - startPos.getZ());
+            z = endZ.getText() != "" ? String.valueOf(Integer.parseInt(endZ.getText()) - startPos.posZ) : String.valueOf(endPos.posZ - startPos.posZ);
             endZ.setText(z);
         }
     }

@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -14,7 +14,7 @@ import java.util.Spliterator;
 
 /**
  * Column is a line of blocks that is aligned to some axis, starting from a position to another where 2 and only 2 coordinates
- * are the same. Whether the resulting {@link BlockPos}es include the start/end position is up to the factory methods'
+ * are the same. Whether the resulting {@link ChunkCoordinates}es include the start/end position is up to the factory methods'
  * specification.
  */
 public final class Column implements IPlacementSequence {
@@ -27,7 +27,7 @@ public final class Column implements IPlacementSequence {
      * @param range length of the column
      * @implSpec this sequence includes the source position
      */
-    public static Column extendFrom(BlockPos hit, EnumFacing side, int range) {
+    public static Column extendFrom(ChunkCoordinates hit, EnumFacing side, int range) {
         return new Column(hit, hit.offset(side, range - 1));
     }
 
@@ -38,17 +38,17 @@ public final class Column implements IPlacementSequence {
      * @param axis   which axis will the column align to
      * @param length length of the column, will be floored to an odd number if it is not one already
      */
-    public static Column centerAt(BlockPos center, Axis axis, int length) {
+    public static Column centerAt(ChunkCoordinates center, Axis axis, int length) {
         EnumFacing positive = EnumFacing.getFacingFromAxis(EnumFacing.AxisDirection.POSITIVE, axis);
         EnumFacing negative = positive.getOpposite();
-        BlockPos base = center.offset(negative, (length - 1) / 2);
+        ChunkCoordinates base = center.offset(negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
         return new Column(base, base.offset(positive, MathTool.floorToOdd(length) - 1));
     }
 
     private final Region region;
 
-    private Column(BlockPos source, BlockPos target) {
+    private Column(ChunkCoordinates source, ChunkCoordinates target) {
         this.region = new Region(source, target);
     }
 
@@ -77,12 +77,12 @@ public final class Column implements IPlacementSequence {
 
     @Override
     @Nonnull
-    public Iterator<BlockPos> iterator() {
+    public Iterator<ChunkCoordinates> iterator() {
         return region.iterator();
     }
 
     @Override
-    public Spliterator<BlockPos> spliterator() {
+    public Spliterator<ChunkCoordinates> spliterator() {
         return region.spliterator();
     }
 

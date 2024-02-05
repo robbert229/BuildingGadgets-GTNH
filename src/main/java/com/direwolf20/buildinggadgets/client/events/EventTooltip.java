@@ -21,8 +21,9 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -210,7 +211,7 @@ public class EventTooltip {
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = IntStackMap.get(blockMap.state);
             NonNullList<ItemStack> drops = NonNullList.create();
-            blockMap.state.getBlock().getDrops(drops, Minecraft.getMinecraft().world, new BlockPos(0, 0, 0), blockMap.state, 0);
+            blockMap.state.getBlock().getDrops(drops, Minecraft.getMinecraft().world, new ChunkCoordinates(), blockMap.state, 0);
             int neededItems = 0;
             for (ItemStack drop : drops) {
                 if (drop.getItem().equals(uniqueItem.item)) {

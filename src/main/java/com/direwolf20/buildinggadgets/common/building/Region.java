@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.building;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.math.Vec3i;
 
 import java.util.Objects;
@@ -208,12 +208,12 @@ public final class Region implements IPlacementSequence {
         return maxZ;
     }
 
-    public BlockPos getMin() {
-        return new BlockPos(minX, minY, minZ);
+    public ChunkCoordinates getMin() {
+        return new ChunkCoordinates(minX, minY, minZ);
     }
 
-    public BlockPos getMax() {
-        return new BlockPos(maxX, maxY, maxZ);
+    public ChunkCoordinates getMax() {
+        return new ChunkCoordinates(maxX, maxY, maxZ);
     }
 
     public int getXSize() {
@@ -255,7 +255,7 @@ public final class Region implements IPlacementSequence {
     }
 
     /**
-     * @return whether or not this {@link BlockPos} lies within this Region
+     * @return whether or not this {@link ChunkCoordinates} lies within this Region
      */
     public boolean contains(int x, int y, int z) {
         return containsX(x) && containsY(y) && containsZ(z);
@@ -302,7 +302,7 @@ public final class Region implements IPlacementSequence {
      * @see GadgetUtils#POSITION_COMPARATOR
      */
     @Override
-    public PeekingIterator<BlockPos> iterator() {
+    public PeekingIterator<ChunkCoordinates> iterator() {
         return new RegionIterator(this);
     }
 
@@ -313,7 +313,7 @@ public final class Region implements IPlacementSequence {
      * @implSpec The returned {@link Spliterator} will be Immutable, Sorted and Sized
      */
     @Override
-    public Spliterator<BlockPos> spliterator() {
+    public Spliterator<ChunkCoordinates> spliterator() {
         return new RegionSpliterator(this);
     }
 

@@ -16,13 +16,13 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+//import net.minecraft.util.SoundEvent;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
-import net.minecraftforge.client.event.ModelRegistryEvent;
+//import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+//import net.minecraftforge.client.model.ModelLoader;
+//import net.minecraftforge.client.model.ModelLoaderRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -33,12 +33,11 @@ import static com.direwolf20.buildinggadgets.common.items.ModItems.gadgetBuildin
 
 import java.awt.Color;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         ModEntities.initModels();
-        ModelLoaderRegistry.registerLoader(new BakedModelLoader());
+//        ModelLoaderRegistry.registerLoader(new BakedModelLoader());
         super.preInit(e);
     }
 
@@ -70,9 +69,9 @@ public class ClientProxy extends CommonProxy {
             ModBlocks.constructionBlockDense.initModel();
             ModBlocks.constructionBlock.initModel();
             ModBlocks.constructionBlockPowder.initModel();
-            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainer, new PasteContainerMeshDefinition());
-            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainert2, new PasteContainerMeshDefinition());
-            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainert3, new PasteContainerMeshDefinition());
+//            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainer, new PasteContainerMeshDefinition());
+//            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainert2, new PasteContainerMeshDefinition());
+//            ModelLoader.setCustomMeshDefinition(ModItems.constructionPasteContainert3, new PasteContainerMeshDefinition());
         }
     }
 
@@ -86,7 +85,7 @@ public class ClientProxy extends CommonProxy {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         ItemStack heldItem = GadgetGeneric.getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem== null || heldItem.getItem() == null)
             return;
 
         if (heldItem.getItem() instanceof GadgetBuilding) {
@@ -108,13 +107,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private static void registerSprite(TextureStitchEvent.Pre event, String loc) {
-        event.getMap().registerSprite(new ResourceLocation(loc));
+//        event.getMap().registerSprite(new ResourceLocation(loc));
     }
 
-    public static void playSound(SoundEvent sound, float pitch) {
-
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(sound, pitch));
-    }
+//    public static void playSound(SoundEvent sound, float pitch) {
+//
+//        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(sound, pitch));
+//    }
 
     public static Color getColor(Color color, int alpha) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);

@@ -5,22 +5,22 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.PacketRequestBlockMap;
 import com.direwolf20.buildinggadgets.common.tools.PasteToolBufferBuilder;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.Mod.EventBusSubscriber;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.Side;
 
-@EventBusSubscriber(Side.CLIENT)
 public class EventClientTick {
 
     private static int counter = 0;
     private static boolean joinedWorld;
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onClientTick(@SuppressWarnings("unused") TickEvent.ClientTickEvent event) {
         counter++;
         if (counter > 600 || !joinedWorld) {
@@ -28,7 +28,8 @@ public class EventClientTick {
                 joinedWorld = true;
 
             counter = 0;
-            EntityPlayer player = Minecraft.getMinecraft().player;
+
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (player == null) return;
 
             for (int i = 0; i < 36; ++i) {
@@ -47,6 +48,7 @@ public class EventClientTick {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onJoinWorld(@SuppressWarnings("unused") ClientConnectedToServerEvent event) {
         joinedWorld = false;
     }

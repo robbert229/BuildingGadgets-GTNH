@@ -14,18 +14,20 @@ import com.direwolf20.buildinggadgets.common.network.PacketToggleConnectedArea;
 import com.direwolf20.buildinggadgets.common.network.PacketToggleFuzzy;
 import com.direwolf20.buildinggadgets.common.network.PacketUndo;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.settings.KeyModifier;
-import cpw.mods.fml.common.Mod.EventBusSubscriber;
+//import net.minecraftforge.client.settings.KeyModifier;
+//import cpw.mods.fml.common.Mod.EventBusSubscriber;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.Side;
+import org.lwjgl.input.Keyboard;
 
-@EventBusSubscriber(Side.CLIENT)
 public class EventKeyInput {
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public static void onKeyInput(@SuppressWarnings("unused") InputEvent.KeyInputEvent event) {
         handleEventInput();
     }
@@ -36,11 +38,14 @@ public class EventKeyInput {
     }
 
     private static void handleEventInput() {
-        if (KeyBindings.menuSettings.isKeyDown() && ((KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) || KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE)) {
+        //boolean extracted = (KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) ||
+        //        KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE;
+        boolean extracted = false;
+        if (KeyBindings.menuSettings.isPressed() && extracted) {
             //PacketHandler.INSTANCE.sendToServer(new PacketToggleMode());
             Minecraft mc = Minecraft.getMinecraft();
-            ItemStack tool = GadgetGeneric.getGadget(mc.player);
-            if (!tool.isEmpty())
+            ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
+            if (tool != null && tool.getItem() != null)
                 mc.displayGuiScreen(new ModeRadialMenu(tool));
         } else if (KeyBindings.range.isPressed())
             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());
@@ -55,8 +60,8 @@ public class EventKeyInput {
         else if (KeyBindings.connectedArea.isPressed())
             PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
         else if (KeyBindings.materialList.isPressed()) {
-            ItemStack held = InventoryManipulation.getStackInEitherHand(Minecraft.getMinecraft().player, ITemplate.class);
-            if( !held.isEmpty() )
+            ItemStack held = InventoryManipulation.getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
+            if( held != null && held.getItem() != null )
                 Minecraft.getMinecraft().displayGuiScreen(new MaterialListGUI(held));
         }
     }

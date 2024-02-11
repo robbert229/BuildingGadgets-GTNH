@@ -13,29 +13,29 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.google.common.collect.Multiset;
 
-import net.minecraft.block.state.IBlockState;
+//import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderItem;
+//import net.minecraft.client.renderer.GlStateManager;
+//import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.NonNullList;
+//import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import cpw.mods.fml.common.Mod.EventBusSubscriber;
+//import net.minecraftforge.client.event.RenderTooltipEvent;
+//import cpw.mods.fml.common.Mod.EventBusSubscriber;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+//import net.minecraftforge.fml.relauncher.Side;
+//import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
-@EventBusSubscriber(Side.CLIENT)
+//@EventBusSubscriber(Side.CLIENT)
 public class EventTooltip {
-
+/*
     private static final int STACKS_PER_LINE = 8;
     private static RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
@@ -181,11 +181,11 @@ public class EventTooltip {
         if (hasReq) {
             //The commented out code will draw a red box around any items that you don't have enough of
             //I personally didn't like it.
-            /*if (count < req) {
-                GlStateManager.enableDepth();
-                Gui.drawRect(x - 1, y - 1, x + 17, y + 17, 0x44FF0000);
-                GlStateManager.disableDepth();
-            }*/
+            //if (count < req) {
+            //    GlStateManager.enableDepth();
+            //    Gui.drawRect(x - 1, y - 1, x + 17, y + 17, 0x44FF0000);
+            //    GlStateManager.disableDepth();
+            //}
             if (count < req) {
                 String fs = Integer.toString(req - count);
                 //String s2 = TextFormatting.BOLD + "(" + fs + ")";
@@ -237,5 +237,5 @@ public class EventTooltip {
         }
         return itemCountMap;
     }
-
+*/
 }

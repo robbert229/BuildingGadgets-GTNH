@@ -14,11 +14,11 @@ public class AreaHelpText implements IHoverHelpText {
     }
 
     public AreaHelpText(Slot slot, int guiLeft, int guiTop, String helpTextKey) {
-        this(guiLeft + slot.xPos, guiTop + slot.yPos, 16, 16, helpTextKey);
+        this(guiLeft + slot.xDisplayPosition, guiTop + slot.yDisplayPosition, 16, 16, helpTextKey);
     }
 
     public AreaHelpText(GuiTextField field, String helpTextKey) {
-        this(field.x, field.y, field.width, field.height, helpTextKey);
+        this(field.xPosition, field.yPosition, field.width, field.height, helpTextKey);
     }
 
     public AreaHelpText(int x, int y, int width, int height, String helpTextKey) {

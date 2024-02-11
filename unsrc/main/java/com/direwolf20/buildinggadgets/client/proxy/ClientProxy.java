@@ -83,7 +83,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void renderWorldLastEvent(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.player;
+        EntityPlayer player = mc.thePlayer;
         ItemStack heldItem = GadgetGeneric.getGadget(player);
         if (heldItem== null || heldItem.getItem() == null)
             return;

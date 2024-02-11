@@ -3,8 +3,8 @@ package com.direwolf20.buildinggadgets.common.tools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
@@ -56,7 +56,7 @@ public class WorldSave extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public void writeToNBT(NBTTagCompound nbt) {
         NBTTagList tagList = new NBTTagList();
 
         for (Map.Entry<String, NBTTagCompound> entry : tagMap.entrySet()) {
@@ -66,7 +66,7 @@ public class WorldSave extends WorldSavedData {
             tagList.appendTag(map);
         }
         nbt.setTag(TAG_NAME, tagList);
-        return nbt;
+        //return nbt;
     }
 
     public void markForSaving() {
@@ -97,11 +97,12 @@ public class WorldSave extends WorldSavedData {
             name += "_DestructionUndo";
         }
         //String name = MODID + (isTemplate ? "_TemplateData" : "_BlockMapData");
-        MapStorage storage = world.getMapStorage();
+
+        MapStorage storage = world.mapStorage;
         if (storage == null)
             throw new IllegalStateException("World#getMapStorage returned null. The following WorldSave failed to save data: " + name);
 
-        WorldSave instance = (WorldSave) storage.getOrLoadData(clazz, name);
+        WorldSave instance = (WorldSave) storage.loadData(clazz, name);
 
         if (instance == null) {
             if (clazz == WorldSaveBlockMap.class) {

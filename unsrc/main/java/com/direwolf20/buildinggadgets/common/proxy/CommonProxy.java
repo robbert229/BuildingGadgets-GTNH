@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.proxy;
 
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.ModSounds;
+//import com.direwolf20.buildinggadgets.common.ModSounds;
 import com.direwolf20.buildinggadgets.common.blocks.*;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManager;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
@@ -27,8 +27,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
+//import net.minecraft.util.SoundEvent;
+//import net.minecraftforge.event.RegistryEvent;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -37,7 +37,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 import java.io.File;
 
-@Mod.EventBusSubscriber
+//@Mod.EventBusSubscriber
 public class CommonProxy {
 
     private boolean applyCompatConfig = false;
@@ -65,7 +65,7 @@ public class CommonProxy {
 
 
     }
-
+/*
     public void postInit() {
         IntegrationHandler.postInit();
     }
@@ -111,7 +111,7 @@ public class CommonProxy {
         for (ModSounds sound : ModSounds.values()) {
             event.getRegistry().register(sound.getSound());
         }
-    }
+    }*/
 
     public void serverStarting(FMLServerStartingEvent event) {
 

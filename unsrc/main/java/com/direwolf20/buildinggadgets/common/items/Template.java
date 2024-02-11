@@ -6,12 +6,12 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
+//import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.util.text.TextFormatting;
+//import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public class Template extends ItemModBase implements ITemplate {
     public static String getName(ItemStack stack) {
         return GadgetUtils.getStringFromNBT(stack, "TemplateName");
     }
-
+/*
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
         //Add tool information to the tooltip
@@ -75,6 +75,6 @@ public class Template extends ItemModBase implements ITemplate {
             player.openGui(BuildingGadgets.instance, GuiProxy.MaterialListID, world, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-    }
+    }*/
 
 }

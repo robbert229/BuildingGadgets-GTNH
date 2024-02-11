@@ -270,7 +270,7 @@ public class CopyPasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode)  {
         if (this.startX.textboxKeyTyped(typedChar, keyCode) || this.startY.textboxKeyTyped(typedChar, keyCode) || this.startZ.textboxKeyTyped(typedChar, keyCode) || this.endX.textboxKeyTyped(typedChar, keyCode) || this.endY.textboxKeyTyped(typedChar, keyCode) || this.endZ.textboxKeyTyped(typedChar, keyCode)) {
 
         } else {
@@ -279,7 +279,7 @@ public class CopyPasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton)  {
         if (mouseButton == 1) {
             if (this.startX.mouseClicked(mouseX, mouseY, 0)) {
                 startX.setText("");
@@ -324,7 +324,7 @@ public class CopyPasteGUI extends GuiScreen {
 
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput()  {
         super.handleMouseInput();
         //System.out.println(Mouse.getEventDWheel());
         //System.out.println(zoom);

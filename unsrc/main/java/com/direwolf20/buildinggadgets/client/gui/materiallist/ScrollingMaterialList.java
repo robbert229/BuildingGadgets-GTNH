@@ -3,13 +3,14 @@ package com.direwolf20.buildinggadgets.client.gui.materiallist;
 import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
 import com.direwolf20.buildinggadgets.client.util.RenderUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
+//import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.fml.client.GuiScrollingList;
+import cpw.mods.fml.client.GuiScrollingList;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -81,7 +82,7 @@ class ScrollingMaterialList extends GuiScrollingList {
         // -1 because the bottom x coordinate is exclusive
         RenderUtil.renderTextVerticalCenter(itemName, itemNameX, top, bottom - 1, Color.WHITE.getRGB());
 
-        int required = item.getCount();
+        int required = item.stackSize;
         int available = MathHelper.clamp(parent.getAvailable().getInt(index), 0, required);
         boolean fulfilled = available == required;
         int color = fulfilled ? Color.GREEN.getRGB() : Color.RED.getRGB();
@@ -98,6 +99,7 @@ class ScrollingMaterialList extends GuiScrollingList {
             int lineXStart = itemNameX + widthItemName + LINE_SIDE_MARGIN;
             int lineXEnd = right - widthAmount - LINE_SIDE_MARGIN;
             int lineY = AlignmentUtil.getYForAlignedCenter(1, top, bottom) - 1;
+
             GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

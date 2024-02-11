@@ -166,7 +166,7 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode)  {
         if (this.X.textboxKeyTyped(typedChar, keyCode) || this.Y.textboxKeyTyped(typedChar, keyCode) || this.Z.textboxKeyTyped(typedChar, keyCode)) {
 
         } else {
@@ -175,7 +175,7 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton)  {
         if (mouseButton == 1) {
             if (this.X.mouseClicked(mouseX, mouseY, 0)) {
                 X.setText("");
@@ -208,7 +208,7 @@ public class PasteGUI extends GuiScreen {
 
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput()  {
         super.handleMouseInput();
         //System.out.println(Mouse.getEventDWheel());
         //System.out.println(zoom);

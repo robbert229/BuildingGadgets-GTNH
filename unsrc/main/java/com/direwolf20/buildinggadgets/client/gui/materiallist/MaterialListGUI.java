@@ -18,11 +18,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static codechicken.lib.gui.GuiDraw.fontRenderer;
 
 /**
  * This class is adapted from Lunatrius's Schematica mod, 1.12.2 version.
@@ -96,8 +99,9 @@ public class MaterialListGUI extends GuiBase {
         this.backgroundY = AlignmentUtil.getYForAlignedCenter(BACKGROUND_HEIGHT, 0, height);
 
         this.title = I18n.format("gui.buildinggadgets.materialList.title");
-        this.titleTop = AlignmentUtil.getYForAlignedCenter(fontRenderer.FONT_HEIGHT, backgroundY, getWindowTopY() + ScrollingMaterialList.TOP);
-        this.titleLeft = AlignmentUtil.getXForAlignedCenter(fontRenderer.getStringWidth(title), backgroundX, getWindowRightX());
+
+        this.titleTop = AlignmentUtil.getYForAlignedCenter(fontRendererObj.FONT_HEIGHT, backgroundY, getWindowTopY() + ScrollingMaterialList.TOP);
+        this.titleLeft = AlignmentUtil.getXForAlignedCenter(fontRendererObj.getStringWidth(title), backgroundX, getWindowRightX());
 
         this.materials = item.getItemCountMap(template).entrySet().stream()
                 .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
@@ -111,9 +115,13 @@ public class MaterialListGUI extends GuiBase {
         this.buttonSortingModes = new DireButton(BUTTON_SORTING_MODES_ID, 0, buttonY, 0, BUTTON_HEIGHT, sortingMode.getLocalizedName());
         this.buttonCopyList = new DireButton(BUTTON_COPY_LIST_ID, 0, buttonY, 0, BUTTON_HEIGHT, I18n.format("gui.buildinggadgets.materialList.button.copyList"));
 
-        this.addButton(buttonSortingModes);
-        this.addButton(buttonCopyList);
-        this.addButton(buttonClose);
+        buttonList.add(buttonSortingModes);
+        buttonList.add(buttonCopyList);
+        buttonList.add(buttonClose);
+        //this.addButton(buttonSortingModes);
+        //this.addButton(buttonCopyList);
+        //this.addButton(buttonClose);
+
         this.calculateButtonsWidthAndX();
     }
 
@@ -127,9 +135,9 @@ public class MaterialListGUI extends GuiBase {
         return materials.stream()
                 .map(item -> String.format(PATTERN_DETAILED,
                         item.getDisplayName(),
-                        item.getCount(),
-                        item.getItem().getRegistryName(),
-                        InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.getCount())))
+                        item.stackSize,
+                        item.getItem().getUnlocalizedName(),
+                        InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.stackSize)))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -137,7 +145,7 @@ public class MaterialListGUI extends GuiBase {
         return materials.stream()
                 .map(item -> String.format(PATTERN_SIMPLE,
                         item.getDisplayName(),
-                        item.getCount()))
+                        item.stackSize))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -154,14 +162,15 @@ public class MaterialListGUI extends GuiBase {
 
         if (hoveringText != null) {
             RenderHelper.enableGUIStandardItemLighting();
-            drawHoveringText(hoveringText, hoveringTextX, hoveringTextY);
-            GlStateManager.disableLighting();
+            drawHoveringText(hoveringText, hoveringTextX, hoveringTextY, fontRenderer);
+//            GlStateManager.disableLighting();
+            GL11.glDisable(GL11.GL_LIGHTING);
             hoveringText = null;
         }
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput()  {
         super.handleMouseInput();
 
         int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -170,10 +179,10 @@ public class MaterialListGUI extends GuiBase {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button)  {
         switch (button.id) {
             case BUTTON_CLOSE_ID:
-                Minecraft.getMinecraft().player.closeScreen();
+                Minecraft.getMinecraft().thePlayer.closeScreen();
                 return;
             case BUTTON_SORTING_MODES_ID:
                 sortingMode = sortingMode.next();
@@ -204,7 +213,7 @@ public class MaterialListGUI extends GuiBase {
     }
 
     private void updateAvailableMaterials() {
-        this.available = InventoryManipulation.countItems(materials, Minecraft.getMinecraft().player);
+        this.available = InventoryManipulation.countItems(materials, Minecraft.getMinecraft().thePlayer);
     }
 
     private void calculateButtonsWidthAndX() {

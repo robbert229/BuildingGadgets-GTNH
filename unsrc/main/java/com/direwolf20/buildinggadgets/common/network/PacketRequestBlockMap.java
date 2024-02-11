@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,13 +39,16 @@ public class PacketRequestBlockMap implements IMessage {
     public static class Handler implements IMessageHandler<PacketRequestBlockMap, IMessage> {
         @Override
         public IMessage onMessage(PacketRequestBlockMap message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            if (ctx.side == Side.SERVER) {
+                handle(message, ctx);
+            }
+
             return null;
         }
 
         private void handle(PacketRequestBlockMap message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
-            NBTTagCompound tagCompound = (message.isTemplate ? WorldSave.getTemplateWorldSave(player.world) : WorldSave.getWorldSave(player.world)).getCompoundFromUUID(message.UUID);
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            NBTTagCompound tagCompound = (message.isTemplate ? WorldSave.getTemplateWorldSave(player.worldObj) : WorldSave.getWorldSave(player.worldObj)).getCompoundFromUUID(message.UUID);
             if (tagCompound != null) {
                 PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), player);
                 //System.out.println("Sending BlockMap Packet");

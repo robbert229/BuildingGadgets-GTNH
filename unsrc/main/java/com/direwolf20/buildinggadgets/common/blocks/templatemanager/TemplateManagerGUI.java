@@ -402,13 +402,15 @@ public class TemplateManagerGUI extends GuiContainer {
     }
 
     private void drawSlotOverlay(Slot slot) {
-        GlStateManager.translate(0, 0, 1000);
-        drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, -1660903937);
-        GlStateManager.translate(0, 0, -1000);
+        //GlStateManager.translate(0, 0, 1000);
+        GL11.glTranslatef(0, 0, 1000);
+        drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, -1660903937);
+        //GlStateManager.translate(0, 0, -1000);
+        GL11.glTranslatef(0, 0, -1000);
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput()  {
         super.handleMouseInput();
         //System.out.println(Mouse.getEventDWheel());
         zoom = initZoom + Mouse.getEventDWheel() / 2;

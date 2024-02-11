@@ -26,7 +26,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
         if (te instanceof TemplateManagerTileEntity) {
             return new TemplateManagerContainer(player.inventory, (TemplateManagerTileEntity) te);
         }
@@ -43,30 +43,42 @@ public class GuiProxy implements IGuiHandler {
             return new TemplateManagerGUI(containerTileEntity, new TemplateManagerContainer(player.inventory, containerTileEntity));
         }
         if (ID == CopyPasteID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetCopyPaste)
-                return new CopyPasteGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste)
-                return new CopyPasteGUI(player.getHeldItemOffhand());
-            else
+
+            if (player.getHeldItem().getItem() instanceof GadgetCopyPaste) {
+                return new CopyPasteGUI(player.getHeldItem());
+            }
+            //else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste) {
+            //    return new CopyPasteGUI(player.getHeldItemOffhand());
+            //}
+            else {
                 return null;
+            }
         } else if (ID == DestructionID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetDestruction)
-                return new DestructionGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetDestruction)
-                return new DestructionGUI(player.getHeldItemOffhand());
-            else
+            if (player.getHeldItem().getItem() instanceof GadgetDestruction) {
+                return new DestructionGUI(player.getHeldItem());
+            }
+            //else if (player.getHeldItemOffhand().getItem() instanceof GadgetDestruction) {
+            //    return new DestructionGUI(player.getHeldItemOffhand());
+            //}
+            else {
                 return null;
+            }
         } else if (ID == PasteID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetCopyPaste)
-                return new PasteGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste)
-                return new PasteGUI(player.getHeldItemOffhand());
-            else
+            if (player.getHeldItem().getItem() instanceof GadgetCopyPaste) {
+                return new PasteGUI(player.getHeldItem());
+            }
+            //else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste) {
+            //    return new PasteGUI(player.getHeldItemOffhand());
+            //}
+            else {
                 return null;
+            }
         } else if (ID == MaterialListID) {
             ItemStack template = InventoryManipulation.getStackInEitherHand(player, ITemplate.class);
-            if (! template.isEmpty())
+            if (template != null && template.getItem() != null){
                 return new MaterialListGUI(template);
+            }
+
             return null;
         }
         return null;

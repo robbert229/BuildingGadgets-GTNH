@@ -18,6 +18,8 @@ import net.minecraft.util.ChunkCoordinates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 
+import java.util.Comparator;
+
 public class GadgetUtils {
 
     private static class ChunkCoordinateComparatorHelper {
@@ -43,10 +45,10 @@ public class GadgetUtils {
             .anyMatch(s::startsWith);
     }
     //
-    // public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
-    // .comparingInt(ChunkCoordinateComparatorHelper::getX)
-    // .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
-    // .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
+     public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
+     .comparingInt(ChunkCoordinateComparatorHelper::getX)
+     .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
+     .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
     //
     // public static String getStackErrorSuffix(ItemStack stack) {
     // return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();

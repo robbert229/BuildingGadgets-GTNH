@@ -2,10 +2,10 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
@@ -42,7 +42,7 @@ public final class Wall implements IPlacementSequence {
      */
     public static Wall extendingFrom(ChunkCoordinates posHit, EnumFacing extension, EnumFacing flatSide, int radius, int extra) {
         Preconditions.checkArgument(extension != flatSide, "Cannot have a wall extending to " + extension + " and flat at " + flatSide);
-        return new Wall(posHit.offset(extension, radius + 1), flatSide, radius, extension, extra);
+        return new Wall(WorldUtils.offset(posHit, extension, radius + 1), flatSide, radius, extension, extra);
     }
 
     private Region region;
@@ -55,10 +55,12 @@ public final class Wall implements IPlacementSequence {
                 radius * (1 - Math.abs(side.getFrontOffsetZ())));
 
         if (extendingSize != 0) {
-            if (extendingSide.getAxisDirection() == AxisDirection.POSITIVE)
-                this.region = new Region(region.getMin(), region.getMax().offset(extendingSide, extendingSize));
-            else
-                this.region = new Region(region.getMin().offset(extendingSide, extendingSize), region.getMax());
+
+            if (WorldUtils.isEnumFacingPositive(extendingSide)) {
+                this.region = new Region(region.getMin(), WorldUtils.offset(region.getMax(), extendingSide, extendingSize));
+            } else {
+                this.region = new Region(WorldUtils.offset(region.getMin(), extendingSide, extendingSize), region.getMax());
+            }
         }
     }
 

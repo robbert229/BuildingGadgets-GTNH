@@ -14,6 +14,7 @@ public class ItemModBase extends Item {
     public ItemModBase(String name) {
         setUnlocalizedName(String.join(".", BuildingGadgets.MODID, name));
         setCreativeTab(BuildingGadgets.BUILDING_CREATIVE_TAB);
+        setTextureName(String.join(":", BuildingGadgets.MODID, name));
     }
 
     @SideOnly(Side.CLIENT)

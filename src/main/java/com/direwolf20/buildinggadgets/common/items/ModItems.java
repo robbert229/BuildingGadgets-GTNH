@@ -7,7 +7,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModItems {
-
     @GameRegistry.ObjectHolder("buildingtool")
     public static GadgetBuilding gadgetBuilding;
     //

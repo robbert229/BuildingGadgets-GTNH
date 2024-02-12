@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 // import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;

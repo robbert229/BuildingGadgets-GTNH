@@ -12,8 +12,10 @@
     "credits": "The Forge and FML guys, McJty, Vazkii, CPW, and Pahimar for helping me learn java/forge modding.  Rorax for the textures!",
     "logoFile": "assets/buildinggadgets/textures/logo/logo.png",
     "screenshots": [],
+    "requiredMods":["Forge"],
     "dependencies": [
-      "ctm"
+      "ctm",
+      "Forge"
     ]
   }]
 }

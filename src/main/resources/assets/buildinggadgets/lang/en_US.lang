@@ -11,7 +11,7 @@ singles.buildinggadgets.up=Up
 singles.buildinggadgets.confirm=Ok
 singles.buildinggadgets.cancel=Cancel
 
-#item: 
+#item:
 item.buildinggadgets.buildingtool.name=Building Gadget
 item.buildinggadgets.constructionpaste.name=Construction Paste
 item.buildinggadgets.construction_chunk_dense.name=Dense Construction Chunk

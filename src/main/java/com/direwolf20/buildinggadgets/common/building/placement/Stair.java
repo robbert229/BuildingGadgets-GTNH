@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
@@ -33,7 +34,7 @@ public final class Stair implements IPlacementSequence {
     @VisibleForTesting
     private Stair(ChunkCoordinates base, EnumFacing horizontalAdvance, EnumFacing verticalAdvance, int range) {
         this.base = base;
-        this.target = base.offset(horizontalAdvance, range - 1).offset(verticalAdvance, range - 1);
+        this.target = WorldUtils.offset(WorldUtils.offset(base, horizontalAdvance, range - 1), verticalAdvance, range - 1);
         this.horizontalAdvance = horizontalAdvance;
         this.verticalAdvance = verticalAdvance;
         this.region = new Region(base, target);

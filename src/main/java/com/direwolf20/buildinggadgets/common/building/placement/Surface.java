@@ -2,9 +2,10 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
@@ -28,7 +29,7 @@ public final class Surface implements IPlacementSequence {
      */
     public static Surface create(IBlockAccess world, ChunkCoordinates searchingCenter, EnumFacing side, int range, boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range).getBoundingBox();
-        return create(world, searchingCenter, searchingRegion, pos -> pos.offset(side), fuzzy);
+        return create(world, searchingCenter, searchingRegion, pos -> WorldUtils.offset(pos, side, 1), fuzzy);
     }
 
     public static Surface create(IBlockAccess world, ChunkCoordinates center, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, boolean fuzzy) {
@@ -36,7 +37,7 @@ public final class Surface implements IPlacementSequence {
     }
 
     private final IBlockAccess world;
-    private final IBlockState selectedBase;
+    private final Block selectedBase;
     private final Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper;
     private final Region searchingRegion;
     private final boolean fuzzy;
@@ -44,7 +45,10 @@ public final class Surface implements IPlacementSequence {
     @VisibleForTesting
     private Surface(IBlockAccess world, ChunkCoordinates center, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, boolean fuzzy) {
         this.world = world;
-        this.selectedBase = world.getBlockState(searching2referenceMapper.apply(center));
+
+        ChunkCoordinates searchResult = searching2referenceMapper.apply(center);
+
+        this.selectedBase = world.getBlock(searchResult.posX, searchResult.posY, searchResult.posZ);
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
         this.fuzzy = fuzzy;
@@ -53,7 +57,7 @@ public final class Surface implements IPlacementSequence {
     /**
      * For {@link #copy()}
      */
-    private Surface(IBlockAccess world, IBlockState selectedBase, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, Region searchingRegion, boolean fuzzy) {
+    private Surface(IBlockAccess world, Block selectedBase, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, Region searchingRegion, boolean fuzzy) {
         this.world = world;
         this.selectedBase = selectedBase;
         this.searching2referenceMapper = searching2referenceMapper;
@@ -91,8 +95,8 @@ public final class Surface implements IPlacementSequence {
                 while (it.hasNext()) {
                     ChunkCoordinates pos = it.next();
                     ChunkCoordinates referencePos = searching2referenceMapper.apply(pos);
-                    IBlockState baseBlock = world.getBlockState(referencePos);
-                    if ((fuzzy || baseBlock == selectedBase) && !baseBlock.getBlock().isAir(baseBlock, world, referencePos))
+                    Block baseBlock = world.getBlock(referencePos.posX, referencePos.posY, referencePos.posZ);
+                    if ((fuzzy || baseBlock == selectedBase) && !baseBlock.isAir(world, referencePos.posX, referencePos.posY, referencePos.posZ))
                         return pos;
                 }
                 return endOfData();

@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
 import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ChunkCoordinates;
@@ -12,12 +12,12 @@ import net.minecraft.util.ChunkCoordinates;
  */
 public class SingleTypeProvider implements IBlockProvider {
 
-    private final IBlockState state;
+    private final Block state;
 
     /**
      * @param state value that {@link #at(ChunkCoordinates)} will return
      */
-    public SingleTypeProvider(IBlockState state) {
+    public SingleTypeProvider(Block state) {
         this.state = state;
     }
 
@@ -30,17 +30,18 @@ public class SingleTypeProvider implements IBlockProvider {
      * @return {@link #state}, which is initialized in the constructor, regardless of the parameter.
      */
     @Override
-    public IBlockState at(ChunkCoordinates pos) {
+    public Block at(ChunkCoordinates pos) {
         return state;
     }
 
-    public IBlockState getBlockState() {
+    public Block getBlockState() {
         return state;
     }
 
     @Override
     public void serialize(NBTTagCompound tag) {
-        NBTUtil.writeBlockState(tag, state);
+//        NBTUtil.writeBlockState(tag, state);
+
     }
 
     @Override

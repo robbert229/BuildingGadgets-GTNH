@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.building.modes;
 import com.direwolf20.buildinggadgets.common.building.Context;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
+import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,7 +28,7 @@ public abstract class AbstractMode implements IBuildingMode {
     }
 
     @Override
-    public BiPredicate<ChunkCoordinates, IBlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
+    public BiPredicate<ChunkCoordinates, BlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
         return validatorFactory.createValidatorFor(world, tool, player, initial);
     }
 

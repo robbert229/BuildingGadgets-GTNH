@@ -9,17 +9,37 @@ public class WorldUtils {
         return facing.getFrontOffsetX() > 0 || facing.getFrontOffsetY() > 0 || facing.getFrontOffsetZ() > 0;
     }
 
+    public static EnumFacing getOppositeEnumFacing(EnumFacing facing) {
+        switch (facing) {
+            case DOWN:
+                return EnumFacing.UP;
+            case UP:
+                return EnumFacing.DOWN;
+            case NORTH:
+                return EnumFacing.SOUTH;
+            case SOUTH:
+                return EnumFacing.NORTH;
+            case EAST:
+                return EnumFacing.WEST;
+            case WEST:
+                return EnumFacing.EAST;
+        }
+
+        throw new IllegalArgumentException("invalid enum facing");
+    }
+
     public static ChunkCoordinates offset(ChunkCoordinates coordinates, EnumFacing facing, int distance) {
         return new ChunkCoordinates(
                 coordinates.posX + (facing.getFrontOffsetX() * distance),
                 coordinates.posY + (facing.getFrontOffsetY() * distance),
                 coordinates.posZ + (facing.getFrontOffsetZ() * distance)
-            );
+        );
     }
 
     public static ChunkCoordinates up(ChunkCoordinates coordinates, int y) {
         return new ChunkCoordinates(coordinates.posX, coordinates.posY + y, coordinates.posZ);
     }
+
     public static boolean isInsideWorldLimits(World worldIn, ChunkCoordinates coordinates) {
         if (coordinates.posY >= 0 && coordinates.posY < 256) {
             return true;

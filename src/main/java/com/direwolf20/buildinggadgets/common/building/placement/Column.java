@@ -3,9 +3,9 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
@@ -28,7 +28,7 @@ public final class Column implements IPlacementSequence {
      * @implSpec this sequence includes the source position
      */
     public static Column extendFrom(ChunkCoordinates hit, EnumFacing side, int range) {
-        return new Column(hit, hit.offset(side, range - 1));
+        return new Column(hit, WorldUtils.offset(hit, side, range - 1));
     }
 
     /**
@@ -38,12 +38,11 @@ public final class Column implements IPlacementSequence {
      * @param axis   which axis will the column align to
      * @param length length of the column, will be floored to an odd number if it is not one already
      */
-    public static Column centerAt(ChunkCoordinates center, Axis axis, int length) {
-        EnumFacing positive = EnumFacing.getFacingFromAxis(EnumFacing.AxisDirection.POSITIVE, axis);
-        EnumFacing negative = positive.getOpposite();
-        ChunkCoordinates base = center.offset(negative, (length - 1) / 2);
+    public static Column centerAt(ChunkCoordinates center, EnumFacing axis, int length) {
+        EnumFacing negative = WorldUtils.getOppositeEnumFacing(axis);
+        ChunkCoordinates base = WorldUtils.offset(center,negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
-        return new Column(base, base.offset(positive, MathTool.floorToOdd(length) - 1));
+        return new Column(base, WorldUtils.offset(base, axis, MathTool.floorToOdd(length) - 1));
     }
 
     private final Region region;

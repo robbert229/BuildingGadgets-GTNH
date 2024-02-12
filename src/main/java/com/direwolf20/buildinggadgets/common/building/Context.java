@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.building;
 
+import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -58,7 +58,7 @@ public class Context {
      */
     public Iterator<ChunkCoordinates> getFilteredSequence(World world, ItemStack stack, EntityPlayer player, ChunkCoordinates initial) {
         Iterator<ChunkCoordinates> positions = getPositionSequence().iterator();
-        BiPredicate<ChunkCoordinates, IBlockState> validator = validatorFactory.createValidatorFor(world, stack, player, initial);
+        BiPredicate<ChunkCoordinates, BlockState> validator = validatorFactory.createValidatorFor(world, stack, player, initial);
         return new AbstractIterator<ChunkCoordinates>() {
             @Override
             protected ChunkCoordinates computeNext() {

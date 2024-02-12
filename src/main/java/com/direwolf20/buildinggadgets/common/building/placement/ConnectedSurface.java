@@ -3,9 +3,10 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
@@ -32,14 +33,16 @@ public final class ConnectedSurface implements IPlacementSequence {
      */
     public static ConnectedSurface create(IBlockAccess world, ChunkCoordinates searchingCenter, EnumFacing side, int range, boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range).getBoundingBox();
-        return create(world, searchingRegion, pos -> pos.offset(side), searchingCenter, side, fuzzy);
+        // TODO(johnrowl) offset's refactor here is suspicious.
+        //return create(world, searchingRegion, pos -> pos.offset(side), searchingCenter, side, fuzzy);
+        return create(world, searchingRegion, pos -> WorldUtils.offset(pos, side, 1), searchingCenter, side, fuzzy);
     }
 
     public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
         return new ConnectedSurface(world, searchingRegion, searching2referenceMapper, searchingCenter, side, fuzzy);
     }
 
-    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, ChunkCoordinates> predicate) {
+    public static ConnectedSurface create(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<Block, ChunkCoordinates> predicate) {
         return new ConnectedSurface(world, searchingRegion, searching2referenceMapper, searchingCenter, side, predicate);
     }
 
@@ -48,20 +51,21 @@ public final class ConnectedSurface implements IPlacementSequence {
     private final Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper;
     private final ChunkCoordinates searchingCenter;
     private final EnumFacing side;
-    private final BiPredicate<IBlockState, ChunkCoordinates> predicate;
+    private final BiPredicate<Block, ChunkCoordinates> predicate;
 
     @VisibleForTesting
     private ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
         this(world, searchingRegion, searching2referenceMapper, searchingCenter, side,
                 (filter, pos) -> {
-                    IBlockState reference = world.getBlockState(searching2referenceMapper.apply(pos));
-                    boolean isAir = reference.getBlock().isAir(reference, world, pos);
+                    ChunkCoordinates position = searching2referenceMapper.apply(pos);
+                    Block reference = world.getBlock(position.posX, position.posY, position.posZ);
+                    boolean isAir = reference.isAir(world, pos.posX, pos.posY, pos.posZ);
                     // If fuzzy=true, we ignore the block for reference
                     return ! isAir && (fuzzy || filter == reference);
                 });
     }
 
-    ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<IBlockState, ChunkCoordinates> predicate) {
+    ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<ChunkCoordinates, ChunkCoordinates> searching2referenceMapper, ChunkCoordinates searchingCenter, @Nullable EnumFacing side, BiPredicate<Block, ChunkCoordinates> predicate) {
         this.world = world;
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
@@ -103,7 +107,7 @@ public final class ConnectedSurface implements IPlacementSequence {
     @Nonnull
     @Override
     public Iterator<ChunkCoordinates> iterator() {
-        IBlockState selectedBlock = getReferenceFor(searchingCenter);
+        Block selectedBlock = getReferenceFor(searchingCenter);
 
         return new AbstractIterator<ChunkCoordinates>() {
             private Queue<ChunkCoordinates> queue = new LinkedList<>();
@@ -130,7 +134,10 @@ public final class ConnectedSurface implements IPlacementSequence {
                             addNeighbour(neighbor);
                         } else {
                             for (int k = - 1; k <= 1; k++) {
-                                ChunkCoordinates neighbor = current.add(i, j, k);
+                                ChunkCoordinates neighbor = new ChunkCoordinates(
+                                        current.posX + i,
+                                        current.posY + j,
+                                        current.posZ + k);
                                 addNeighbour(neighbor);
                             }
                         }
@@ -153,8 +160,9 @@ public final class ConnectedSurface implements IPlacementSequence {
         };
     }
 
-    private IBlockState getReferenceFor(ChunkCoordinates pos) {
-        return world.getBlockState(searching2referenceMapper.apply(pos));
+    private Block getReferenceFor(ChunkCoordinates pos) {
+        ChunkCoordinates coordinates = searching2referenceMapper.apply(pos);
+        return world.getBlock(coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
 }

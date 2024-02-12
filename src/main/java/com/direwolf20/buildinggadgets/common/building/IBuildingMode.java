@@ -31,7 +31,7 @@ public interface IBuildingMode {
         return CapabilityBlockProvider.DEFAULT_AIR_PROVIDER;
     }
 
-    BiPredicate<ChunkCoordinates, IBlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial);
+    BiPredicate<ChunkCoordinates, BlockState> createValidatorFor(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial);
 
     /**
      * @see Context#getPositionSequence()

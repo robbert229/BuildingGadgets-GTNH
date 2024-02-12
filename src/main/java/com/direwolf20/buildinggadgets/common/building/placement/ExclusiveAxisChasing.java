@@ -3,10 +3,9 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;
@@ -17,19 +16,18 @@ import java.util.Iterator;
  */
 public final class ExclusiveAxisChasing implements IPlacementSequence {
 
-    public static ExclusiveAxisChasing create(ChunkCoordinates source, ChunkCoordinates target, Axis axis, int maxProgression) {
+    /*public static ExclusiveAxisChasing create(ChunkCoordinates source, ChunkCoordinates target, EnumFacing axis, int maxProgression) {
         int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
         if (difference < 0)
             return create(source, target, EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis), maxProgression);
         return create(source, target, EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axis), maxProgression);
-    }
+    }*/
 
     /**
      * <p>Note that this factory method does not verify that {@code offsetDirection} is appropriate. Use {@link #create(ChunkCoordinates, ChunkCoordinates, Axis, int)} if this is required.</p>
      */
     public static ExclusiveAxisChasing create(ChunkCoordinates source, ChunkCoordinates target, EnumFacing offsetDirection, int maxProgression) {
-        Axis axis = offsetDirection.getAxis();
-        int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
+        int difference = VectorTools.getAxisValue(target, offsetDirection) - VectorTools.getAxisValue(source, offsetDirection);
         maxProgression = Math.min(Math.abs(difference), maxProgression);
 
         return new ExclusiveAxisChasing(source, offsetDirection, maxProgression);
@@ -52,9 +50,8 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
 
     @Override
     public boolean mayContain(int x, int y, int z) {
-        Axis axis = offsetDirection.getAxis();
-        int value = VectorTools.getAxisValue(x, y, z, axis);
-        int sourceValue = VectorTools.getAxisValue(source, axis);
+        int value = VectorTools.getAxisValue(x, y, z, offsetDirection);
+        int sourceValue = VectorTools.getAxisValue(source, offsetDirection);
         int difference = Math.abs(value - sourceValue);
         return difference > 0 && difference < maxProgression;
     }
@@ -75,7 +72,7 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
                 if (progression >= maxProgression)
                     return endOfData();
 
-                return source.offset(offsetDirection, progression++);
+                return WorldUtils.offset(source, offsetDirection, progression++);
             }
         };
     }

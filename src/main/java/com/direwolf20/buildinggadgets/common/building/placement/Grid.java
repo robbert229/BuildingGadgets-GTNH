@@ -83,10 +83,14 @@ public final class Grid implements IPlacementSequence {
 
             @Override
             protected ChunkCoordinates computeNext() {
-                if (z > end)
+                if (z > end) {
                     return endOfData();
+                }
 
-                ChunkCoordinates pos = new ChunkCoordinates(center.getX() + x, center.getY(), center.getZ() + z);
+                ChunkCoordinates pos = new ChunkCoordinates(
+                        center.posX + x,
+                        center.posY,
+                        center.posZ + z);
 
                 x += period;
                 if (x > end) {

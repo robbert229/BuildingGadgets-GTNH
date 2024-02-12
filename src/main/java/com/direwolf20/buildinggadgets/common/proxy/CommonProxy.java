@@ -8,6 +8,7 @@ package com.direwolf20.buildinggadgets.common.proxy;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 // import com.direwolf20.buildinggadgets.common.building.CapabilityBlockProvider;
 
+import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -22,6 +23,8 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
         ModItems.init();
+        ModBlocks.init();
+
         // ModEntities.init();
         // PacketHandler.registerMessages();
         // File cfgFile = new File(e.getModConfigurationDirectory(), "BuildingGadgets.cfg");

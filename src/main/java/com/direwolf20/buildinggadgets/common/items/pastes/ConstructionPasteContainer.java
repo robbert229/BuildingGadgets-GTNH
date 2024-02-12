@@ -3,8 +3,6 @@ package com.direwolf20.buildinggadgets.common.items.pastes;
 import java.util.List;
 import java.util.function.IntSupplier;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -12,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 import com.direwolf20.buildinggadgets.common.tools.NBTTool;
 
@@ -66,7 +65,7 @@ public class ConstructionPasteContainer extends GenericPasteContainer {
     @Override
     public void setPasteCount(ItemStack stack, int amount) {
         NBTTool.getOrNewTag(stack)
-                .setInteger("amount", amount);
+            .setInteger("amount", amount);
 
         this.setMaxDamage(this.getMaxCapacity());
         this.setDamage(stack, this.getMaxDamage() - amount);
@@ -79,7 +78,7 @@ public class ConstructionPasteContainer extends GenericPasteContainer {
         }
 
         return stack.getTagCompound()
-                .getInteger("amount");
+            .getInteger("amount");
     }
 
     @Override

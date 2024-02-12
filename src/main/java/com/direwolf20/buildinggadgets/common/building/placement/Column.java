@@ -1,20 +1,24 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import java.util.Iterator;
+import java.util.Spliterator;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ChunkCoordinates;
-
-import javax.annotation.Nonnull;
-import java.util.Iterator;
-import java.util.Spliterator;
 
 /**
- * Column is a line of blocks that is aligned to some axis, starting from a position to another where 2 and only 2 coordinates
- * are the same. Whether the resulting {@link ChunkCoordinates}es include the start/end position is up to the factory methods'
+ * Column is a line of blocks that is aligned to some axis, starting from a position to another where 2 and only 2
+ * coordinates
+ * are the same. Whether the resulting {@link ChunkCoordinates}es include the start/end position is up to the factory
+ * methods'
  * specification.
  */
 public final class Column implements IPlacementSequence {
@@ -40,7 +44,7 @@ public final class Column implements IPlacementSequence {
      */
     public static Column centerAt(ChunkCoordinates center, EnumFacing axis, int length) {
         EnumFacing negative = WorldUtils.getOppositeEnumFacing(axis);
-        ChunkCoordinates base = WorldUtils.offset(center,negative, (length - 1) / 2);
+        ChunkCoordinates base = WorldUtils.offset(center, negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
         return new Column(base, WorldUtils.offset(base, axis, MathTool.floorToOdd(length) - 1));
     }

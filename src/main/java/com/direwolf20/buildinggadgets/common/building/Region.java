@@ -1,12 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building;
 
+import java.util.Objects;
+import java.util.Spliterator;
+
+import net.minecraft.util.ChunkCoordinates;
+
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.ChunkCoordinates;
-
-import java.util.Objects;
-import java.util.Spliterator;
 
 /**
  * Represents a region in the world with a finite and nonzero size.
@@ -98,11 +99,74 @@ public final class Region implements IPlacementSequence {
      *
      * <h3>Samples:</h3>
      * <table>
-     * <tr><th>Input</th><th>Result</th></tr>
-     * <tr><td><pre>{@code new Region(0, 0, 0, 1, 1, 1).grow(2, 2, 2)}</pre></td><td><pre><samp>box[-2, -2, -2 -> 3, 3, 3]</samp></pre></td></tr>
-     * <tr><td><pre>{@code new Region(0, 0, 0, 6, 6, 6).grow(-2, -2, -2)}</pre></td><td><pre><samp>box[2, 2, 2 -> 4, 4, 4]</samp></pre></td></tr>
-     * <tr><td><pre>{@code new Region(5, 5, 5, 7, 7, 7).grow(0, 1, -1)}</pre></td><td><pre><samp>box[5, 4, 6 -> 7, 8, 6]</samp></pre></td></tr>
-     * <tr><td><pre>{@code new Region(1, 1, 1, 3, 3, 3).grow(-4, -2, -3)}</pre></td><td><pre><samp>box[-1, 1, 0 -> 5, 3, 4]</samp></pre></td></tr>
+     * <tr>
+     * <th>Input</th>
+     * <th>Result</th>
+     * </tr>
+     * <tr>
+     * <td>
+     * 
+     * <pre>
+     * {@code new Region(0, 0, 0, 1, 1, 1).grow(2, 2, 2)}
+     * </pre>
+     * 
+     * </td>
+     * <td>
+     * 
+     * <pre>
+     * <samp>box[-2, -2, -2 -> 3, 3, 3]</samp>
+     * </pre>
+     * 
+     * </td>
+     * </tr>
+     * <tr>
+     * <td>
+     * 
+     * <pre>
+     * {@code new Region(0, 0, 0, 6, 6, 6).grow(-2, -2, -2)}
+     * </pre>
+     * 
+     * </td>
+     * <td>
+     * 
+     * <pre>
+     * <samp>box[2, 2, 2 -> 4, 4, 4]</samp>
+     * </pre>
+     * 
+     * </td>
+     * </tr>
+     * <tr>
+     * <td>
+     * 
+     * <pre>
+     * {@code new Region(5, 5, 5, 7, 7, 7).grow(0, 1, -1)}
+     * </pre>
+     * 
+     * </td>
+     * <td>
+     * 
+     * <pre>
+     * <samp>box[5, 4, 6 -> 7, 8, 6]</samp>
+     * </pre>
+     * 
+     * </td>
+     * </tr>
+     * <tr>
+     * <td>
+     * 
+     * <pre>
+     * {@code new Region(1, 1, 1, 3, 3, 3).grow(-4, -2, -3)}
+     * </pre>
+     * 
+     * </td>
+     * <td>
+     * 
+     * <pre>
+     * <samp>box[-1, 1, 0 -> 5, 3, 4]</samp>
+     * </pre>
+     * 
+     * </td>
+     * </tr>
      * </table>
      *
      * <h3>See Also:</h3>
@@ -121,7 +185,7 @@ public final class Region implements IPlacementSequence {
 
     /**
      * Expand the current region by the given value in the max values. Equivalent to {@link
-     * #expand(int)}  with the given value for all 3 params. Negative values will shrink the region.
+     * #expand(int)} with the given value for all 3 params. Negative values will shrink the region.
      * <p>
      * Side lengths will be increased by 2 times the value of the parameter, since both min and max are changed.
      * <p>
@@ -265,12 +329,11 @@ public final class Region implements IPlacementSequence {
     }
 
     public boolean intersectsWith(Region other) {
-        return this.maxX >= other.minX &&
-                this.minX <= other.maxX &&
-                this.maxZ >= other.minZ &&
-                this.minZ <= other.maxZ &&
-                this.maxY >= other.minY &&
-                this.minY <= other.maxY;
+        return this.maxX >= other.minX && this.minX <= other.maxX
+            && this.maxZ >= other.minZ
+            && this.minZ <= other.maxZ
+            && this.maxY >= other.minY
+            && this.minY <= other.maxY;
     }
 
     /**
@@ -292,7 +355,8 @@ public final class Region implements IPlacementSequence {
     }
 
     /**
-     * The first result will have the minimum x, y, and z value. In the process it will advance in positive z-y-x order as used in BG-Code on various other places.
+     * The first result will have the minimum x, y, and z value. In the process it will advance in positive z-y-x order
+     * as used in BG-Code on various other places.
      * Positions provided by this Iterator may be considered ordered.
      *
      * @return A {@link PeekingIterator} over all positions in this Region
@@ -319,13 +383,13 @@ public final class Region implements IPlacementSequence {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("minX", minX)
-                .add("minY", minY)
-                .add("minZ", minZ)
-                .add("maxX", maxX)
-                .add("maxY", maxY)
-                .add("maxZ", maxZ)
-                .toString();
+            .add("minX", minX)
+            .add("minY", minY)
+            .add("minZ", minZ)
+            .add("maxX", maxX)
+            .add("maxY", maxY)
+            .add("maxZ", maxZ)
+            .toString();
     }
 
     @Override
@@ -333,12 +397,11 @@ public final class Region implements IPlacementSequence {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Region region = (Region) o;
-        return minX == region.minX &&
-                minY == region.minY &&
-                minZ == region.minZ &&
-                maxX == region.maxX &&
-                maxY == region.maxY &&
-                maxZ == region.maxZ;
+        return minX == region.minX && minY == region.minY
+            && minZ == region.minZ
+            && maxX == region.maxX
+            && maxY == region.maxY
+            && maxZ == region.maxZ;
     }
 
     @Override

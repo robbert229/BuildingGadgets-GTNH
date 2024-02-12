@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 // import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
@@ -311,7 +310,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
     public static ItemStack getGadget(EntityPlayer player) {
         ItemStack stack = GadgetGeneric.getGadget(player);
-        if (!(stack.getItem() instanceof GadgetBuilding)){
+        if (!(stack.getItem() instanceof GadgetBuilding)) {
             return null;
         }
 

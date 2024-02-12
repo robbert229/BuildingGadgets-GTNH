@@ -1,13 +1,15 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.google.common.collect.ImmutableList;
-import net.minecraft.util.ChunkCoordinates;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.ChunkCoordinates;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Represents a sequence of blocks where each block is part of the build attempt.
@@ -20,8 +22,10 @@ public interface IPlacementSequence extends Iterable<ChunkCoordinates> {
     /**
      * {@inheritDoc}
      * <p>
-     * In general it is not necessary to make any considerations whether a given position is suitable for placement, however an implementation may make exceptions from this rule.
-     * See {@link com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface ConnectedSurface} for further information.
+     * In general it is not necessary to make any considerations whether a given position is suitable for placement,
+     * however an implementation may make exceptions from this rule.
+     * See {@link com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface ConnectedSurface} for
+     * further information.
      */
     @Nonnull
     @Override
@@ -39,18 +43,21 @@ public interface IPlacementSequence extends Iterable<ChunkCoordinates> {
      * When the method returns {@code false}, it guaranteed that the position is not a part of the structure. When the
      * the method returns {@code true}, the region may contain the position but it is not guaranteed to be a part of it.
      * <p>
-     * In other cases where the process is not costly, implementation should return the exact representation straight up.
+     * In other cases where the process is not costly, implementation should return the exact representation straight
+     * up.
      * <p>
      * Please consult the Javadoc of a given implementation for accurate information.
      *
-     * @return {@code false} if this PlacementSequence definitely doesn't contain the specified Position. Otherwise {@code true}.
+     * @return {@code false} if this PlacementSequence definitely doesn't contain the specified Position. Otherwise
+     *         {@code true}.
      */
     boolean mayContain(int x, int y, int z);
 
     /**
      * Collect the elements provided by the object to the given {@link Collection}.
      *
-     * @return The given {@link Collection} but with all Elements represented by this {@code IPlacementSequence} added to it. Will be the same instance as the parameter.
+     * @return The given {@link Collection} but with all Elements represented by this {@code IPlacementSequence} added
+     *         to it. Will be the same instance as the parameter.
      */
     default <T extends Collection<? super ChunkCoordinates>> T collect(T collection) {
         iterator().forEachRemaining(collection::add);

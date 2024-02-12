@@ -5,6 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class WorldUtils {
+
     public static boolean isEnumFacingPositive(EnumFacing facing) {
         return facing.getFrontOffsetX() > 0 || facing.getFrontOffsetY() > 0 || facing.getFrontOffsetZ() > 0;
     }
@@ -30,10 +31,9 @@ public class WorldUtils {
 
     public static ChunkCoordinates offset(ChunkCoordinates coordinates, EnumFacing facing, int distance) {
         return new ChunkCoordinates(
-                coordinates.posX + (facing.getFrontOffsetX() * distance),
-                coordinates.posY + (facing.getFrontOffsetY() * distance),
-                coordinates.posZ + (facing.getFrontOffsetZ() * distance)
-        );
+            coordinates.posX + (facing.getFrontOffsetX() * distance),
+            coordinates.posY + (facing.getFrontOffsetY() * distance),
+            coordinates.posZ + (facing.getFrontOffsetZ() * distance));
     }
 
     public static ChunkCoordinates up(ChunkCoordinates coordinates, int y) {

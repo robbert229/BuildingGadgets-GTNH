@@ -1,15 +1,17 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import java.util.Iterator;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ChunkCoordinates;
-
-import javax.annotation.Nonnull;
-import java.util.Iterator;
 
 /**
  * Grid is a set of blocks where each block is equidistant from its neighboring blocks. The distance between the blocks
@@ -28,7 +30,8 @@ public final class Grid implements IPlacementSequence {
 
     @VisibleForTesting
     private Grid(ChunkCoordinates center, int range, int periodSize) {
-        this.region = Wall.clickedSide(center, EnumFacing.UP, range).getBoundingBox();
+        this.region = Wall.clickedSide(center, EnumFacing.UP, range)
+            .getBoundingBox();
         this.range = range;
         this.center = center;
         this.periodSize = periodSize;
@@ -67,7 +70,8 @@ public final class Grid implements IPlacementSequence {
     @Override
     @Nonnull
     public Iterator<ChunkCoordinates> iterator() {
-        /* Distance between blocks + block itself
+        /*
+         * Distance between blocks + block itself
          * arithmetic sequence of [2,7] where -1 for range being 1~15, +2 to shift the sequence from [0,5] to [2,7]
          */
         int period = (range - 1) % periodSize + 2;
@@ -78,6 +82,7 @@ public final class Grid implements IPlacementSequence {
         int start = MathTool.floorMultiple(-end, period);
 
         return new AbstractIterator<ChunkCoordinates>() {
+
             private int x = start;
             private int z = start;
 
@@ -87,10 +92,7 @@ public final class Grid implements IPlacementSequence {
                     return endOfData();
                 }
 
-                ChunkCoordinates pos = new ChunkCoordinates(
-                        center.posX + x,
-                        center.posY,
-                        center.posZ + z);
+                ChunkCoordinates pos = new ChunkCoordinates(center.posX + x, center.posY, center.posZ + z);
 
                 x += period;
                 if (x > end) {

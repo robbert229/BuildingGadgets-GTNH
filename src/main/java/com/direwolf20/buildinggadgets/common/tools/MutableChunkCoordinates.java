@@ -1,14 +1,16 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import cofh.lib.util.helpers.MathHelper;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
+
+import cofh.lib.util.helpers.MathHelper;
 
 /**
  * MutableChunkCoordinates is a back-ported shim of MutableBlockPos from 1.12.x designed to work with ChunkCoordinates.
  */
-public class MutableChunkCoordinates extends ChunkCoordinates{
-    public MutableChunkCoordinates( ChunkCoordinates base) {
+public class MutableChunkCoordinates extends ChunkCoordinates {
+
+    public MutableChunkCoordinates(ChunkCoordinates base) {
         super(base);
     }
 

@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
+import net.minecraft.util.ChunkCoordinates;
+
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.ChunkCoordinates;
 
 class RegionIterator extends AbstractIterator<ChunkCoordinates> implements PeekingIterator<ChunkCoordinates> {
 
@@ -19,7 +20,13 @@ class RegionIterator extends AbstractIterator<ChunkCoordinates> implements Peeki
     private int posZ;
 
     RegionIterator(Region region) {
-        this(region.getMinX(), region.getMinY(), region.getMinZ(), region.getMaxX(), region.getMaxY(), region.getMaxZ());
+        this(
+            region.getMinX(),
+            region.getMinY(),
+            region.getMinZ(),
+            region.getMaxX(),
+            region.getMaxY(),
+            region.getMaxZ());
     }
 
     private RegionIterator(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
@@ -37,8 +44,7 @@ class RegionIterator extends AbstractIterator<ChunkCoordinates> implements Peeki
 
     @Override
     protected ChunkCoordinates computeNext() {
-        if (isXOverflowed())
-            return endOfData();
+        if (isXOverflowed()) return endOfData();
 
         ChunkCoordinates pos = new ChunkCoordinates(posX, posY, posZ);
 

@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.items.pastes;
 
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-
 import java.util.function.IntSupplier;
+
+import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 
 public enum RegularPasteContainerTypes {
 

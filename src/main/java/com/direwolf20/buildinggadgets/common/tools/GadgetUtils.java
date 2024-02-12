@@ -8,6 +8,8 @@ package com.direwolf20.buildinggadgets.common.tools;
 // import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 // import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 
+import java.util.Comparator;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.inventory.IInventory;
@@ -17,8 +19,6 @@ import net.minecraft.util.ChunkCoordinates;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-
-import java.util.Comparator;
 
 public class GadgetUtils {
 
@@ -44,11 +44,12 @@ public class GadgetUtils {
         return LINK_STARTS.stream()
             .anyMatch(s::startsWith);
     }
+
     //
-     public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
-     .comparingInt(ChunkCoordinateComparatorHelper::getX)
-     .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
-     .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
+    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
+        .comparingInt(ChunkCoordinateComparatorHelper::getX)
+        .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
+        .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
     //
     // public static String getStackErrorSuffix(ItemStack stack) {
     // return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();

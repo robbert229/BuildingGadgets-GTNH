@@ -1,16 +1,18 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import java.util.Iterator;
+import java.util.Spliterator;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ChunkCoordinates;
-
-import javax.annotation.Nonnull;
-import java.util.Iterator;
-import java.util.Spliterator;
 
 /**
  * A wall is a plane of blocks described with a starting and an ending position. The positions will and must have 1
@@ -40,8 +42,11 @@ public final class Wall implements IPlacementSequence {
      * @param radius    radius of the wall.
      * @param extra     amount of blocks to add beyond the radius
      */
-    public static Wall extendingFrom(ChunkCoordinates posHit, EnumFacing extension, EnumFacing flatSide, int radius, int extra) {
-        Preconditions.checkArgument(extension != flatSide, "Cannot have a wall extending to " + extension + " and flat at " + flatSide);
+    public static Wall extendingFrom(ChunkCoordinates posHit, EnumFacing extension, EnumFacing flatSide, int radius,
+        int extra) {
+        Preconditions.checkArgument(
+            extension != flatSide,
+            "Cannot have a wall extending to " + extension + " and flat at " + flatSide);
         return new Wall(WorldUtils.offset(posHit, extension, radius + 1), flatSide, radius, extension, extra);
     }
 
@@ -50,16 +55,20 @@ public final class Wall implements IPlacementSequence {
     @VisibleForTesting
     private Wall(ChunkCoordinates posHit, EnumFacing side, int radius, EnumFacing extendingSide, int extendingSize) {
         this.region = new Region(posHit).expand(
-                radius * (1 - Math.abs(side.getFrontOffsetX())),
-                radius * (1 - Math.abs(side.getFrontOffsetY())),
-                radius * (1 - Math.abs(side.getFrontOffsetZ())));
+            radius * (1 - Math.abs(side.getFrontOffsetX())),
+            radius * (1 - Math.abs(side.getFrontOffsetY())),
+            radius * (1 - Math.abs(side.getFrontOffsetZ())));
 
         if (extendingSize != 0) {
 
             if (WorldUtils.isEnumFacingPositive(extendingSide)) {
-                this.region = new Region(region.getMin(), WorldUtils.offset(region.getMax(), extendingSide, extendingSize));
+                this.region = new Region(
+                    region.getMin(),
+                    WorldUtils.offset(region.getMax(), extendingSide, extendingSize));
             } else {
-                this.region = new Region(WorldUtils.offset(region.getMin(), extendingSide, extendingSize), region.getMax());
+                this.region = new Region(
+                    WorldUtils.offset(region.getMin(), extendingSide, extendingSize),
+                    region.getMax());
             }
         }
     }

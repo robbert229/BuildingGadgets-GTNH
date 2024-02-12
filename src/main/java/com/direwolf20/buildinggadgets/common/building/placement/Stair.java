@@ -1,16 +1,18 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import java.util.Iterator;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.common.tools.MutableChunkCoordinates;
 import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ChunkCoordinates;
-import com.direwolf20.buildinggadgets.common.tools.MutableChunkCoordinates;
-
-import javax.annotation.Nonnull;
-import java.util.Iterator;
 
 /**
  * A sequence of blocks that offsets in 2 different directions where one is vertical, one is horizontal.
@@ -20,7 +22,8 @@ import java.util.Iterator;
  */
 public final class Stair implements IPlacementSequence {
 
-    public static Stair create(ChunkCoordinates base, EnumFacing horizontalAdvance, EnumFacing verticalAdvance, int range) {
+    public static Stair create(ChunkCoordinates base, EnumFacing horizontalAdvance, EnumFacing verticalAdvance,
+        int range) {
         return new Stair(base, horizontalAdvance, verticalAdvance, range);
     }
 
@@ -34,7 +37,8 @@ public final class Stair implements IPlacementSequence {
     @VisibleForTesting
     private Stair(ChunkCoordinates base, EnumFacing horizontalAdvance, EnumFacing verticalAdvance, int range) {
         this.base = base;
-        this.target = WorldUtils.offset(WorldUtils.offset(base, horizontalAdvance, range - 1), verticalAdvance, range - 1);
+        this.target = WorldUtils
+            .offset(WorldUtils.offset(base, horizontalAdvance, range - 1), verticalAdvance, range - 1);
         this.horizontalAdvance = horizontalAdvance;
         this.verticalAdvance = verticalAdvance;
         this.region = new Region(base, target);
@@ -45,7 +49,8 @@ public final class Stair implements IPlacementSequence {
      * For {@link #copy()}
      */
     @VisibleForTesting
-    private Stair(ChunkCoordinates base, ChunkCoordinates target, EnumFacing horizontalAdvance, EnumFacing verticalAdvance, Region region, int range) {
+    private Stair(ChunkCoordinates base, ChunkCoordinates target, EnumFacing horizontalAdvance,
+        EnumFacing verticalAdvance, Region region, int range) {
         this.base = base;
         this.target = target;
         this.horizontalAdvance = horizontalAdvance;
@@ -73,20 +78,22 @@ public final class Stair implements IPlacementSequence {
     @Nonnull
     public Iterator<ChunkCoordinates> iterator() {
         return new AbstractIterator<ChunkCoordinates>() {
+
             private MutableChunkCoordinates current = new MutableChunkCoordinates(base);
             private int i = 0;
 
             {
-                current.move(horizontalAdvance, -1).move(verticalAdvance, -1);
+                current.move(horizontalAdvance, -1)
+                    .move(verticalAdvance, -1);
             }
 
             @Override
             protected ChunkCoordinates computeNext() {
-                if (i >= range)
-                    return endOfData();
+                if (i >= range) return endOfData();
                 i++;
 
-                current.move(horizontalAdvance, 1).move(verticalAdvance, 1);
+                current.move(horizontalAdvance, 1)
+                    .move(verticalAdvance, 1);
                 return current.toImmutable();
             }
         };

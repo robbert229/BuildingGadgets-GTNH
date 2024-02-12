@@ -138,7 +138,7 @@ public class SyncedConfig {
         pasteDroppedMin = Config.pasteDroppedMin;
         pasteDroppedMax = Config.pasteDroppedMax;
 
-        //blockBlacklist = FieldMapper.PATTERN_LIST_MAPPER.mapToField(Config.subCategoryBlacklist.blockBlacklist);
+        // blockBlacklist = FieldMapper.PATTERN_LIST_MAPPER.mapToField(Config.subCategoryBlacklist.blockBlacklist);
 
         maxRange = Config.subCategoryGadgets.maxRange;
         energyMax = Config.subCategoryGadgets.maxEnergy;

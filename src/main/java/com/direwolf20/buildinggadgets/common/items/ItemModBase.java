@@ -9,8 +9,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemModBase extends Item {
 
-    public ItemModBase() {}
-
     public ItemModBase(String name) {
         setUnlocalizedName(String.join(".", BuildingGadgets.MODID, name));
         setCreativeTab(BuildingGadgets.BUILDING_CREATIVE_TAB);

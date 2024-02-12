@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+//import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+//import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+//import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
+//import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -18,14 +19,19 @@ public class PacketToggleFuzzy extends PacketEmpty {
     public static class Handler implements IMessageHandler<PacketToggleFuzzy, IMessage> {
         @Override
         public IMessage onMessage(PacketToggleFuzzy message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-                EntityPlayer player = ctx.getServerHandler().player;
+            if (ctx.side != Side.SERVER){
+                return null;
+            }
+
+
+            /*
+                EntityPlayer player = ctx.getServerHandler().playerEntity;
                 ItemStack stack = GadgetGeneric.getGadget(player);
                 GadgetGeneric item = (GadgetGeneric) stack.getItem();
                 if (item instanceof GadgetExchanger || item instanceof GadgetBuilding
                         || (item instanceof GadgetDestruction && SyncedConfig.nonFuzzyEnabledDestruction))
                     item.toggleFuzzy(player, stack);
-            });
+*/
             return null;
         }
     }

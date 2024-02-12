@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -43,28 +44,35 @@ public class PacketCopyCoords implements IMessage {
     public static class Handler implements IMessageHandler<PacketCopyCoords, IMessage> {
         @Override
         public IMessage onMessage(PacketCopyCoords message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            if (ctx.side == Side.CLIENT) {
+                return null;
+            }
+
+            handle(message, ctx);
+
             return null;
         }
 
         private void handle(PacketCopyCoords message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
-            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
-            if (heldItem.isEmpty()) return;
+            // TODO(johnrowl) re-enable
 
-            ChunkCoordinates startPos = message.start;
-            ChunkCoordinates endPos = message.end;
-            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
-            if (startPos.equals(new ChunkCoordinates(0,0,0)) && endPos.equals(new ChunkCoordinates(0,0,0))) {
-                tool.setStartPos(heldItem, null);
-                tool.setEndPos(heldItem, null);
-                playerEntity.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
-            } else {
-                tool.setStartPos(heldItem, startPos);
-                tool.setEndPos(heldItem, endPos);
-                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.world, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
-            }
+//            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
+//            if (heldItem.isEmpty()) return;
+//
+//            ChunkCoordinates startPos = message.start;
+//            ChunkCoordinates endPos = message.end;
+//            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
+//            if (startPos.equals(new ChunkCoordinates(0,0,0)) && endPos.equals(new ChunkCoordinates(0,0,0))) {
+//                tool.setStartPos(heldItem, null);
+//                tool.setEndPos(heldItem, null);
+//                playerEntity.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
+//            } else {
+//                tool.setStartPos(heldItem, startPos);
+//                tool.setEndPos(heldItem, endPos);
+//                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.world, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
+//            }
         }
     }
 }

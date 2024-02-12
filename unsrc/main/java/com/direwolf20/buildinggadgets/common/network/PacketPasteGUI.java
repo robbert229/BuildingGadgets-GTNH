@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.network;
 
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+//import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -40,19 +41,25 @@ public class PacketPasteGUI implements IMessage {
     public static class Handler implements IMessageHandler<PacketPasteGUI, IMessage> {
         @Override
         public IMessage onMessage(PacketPasteGUI message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            if (ctx.side == Side.CLIENT) {
+                return null;
+            }
+
+            handle(message, ctx);
+
             return null;
         }
 
         private void handle(PacketPasteGUI message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
-            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
-            if (heldItem.isEmpty()) return;
-
-            GadgetCopyPaste.setX(heldItem, message.X);
-            GadgetCopyPaste.setY(heldItem, message.Y);
-            GadgetCopyPaste.setZ(heldItem, message.Z);
+            // TODO(johnrowl) implement
+//            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
+//            if (heldItem.isEmpty()) return;
+//
+//            GadgetCopyPaste.setX(heldItem, message.X);
+//            GadgetCopyPaste.setY(heldItem, message.Y);
+//            GadgetCopyPaste.setZ(heldItem, message.Z);
         }
     }
 }

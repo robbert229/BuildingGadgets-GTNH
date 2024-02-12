@@ -28,19 +28,20 @@ public class PacketAnchor extends PacketEmpty {
 
         private void handle(MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
-            ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
-            if (heldItem == null && heldItem.getItem() == null)
-                return;
-
-            if (heldItem.getItem() instanceof GadgetBuilding) {
-                GadgetUtils.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetExchanger) {
-                GadgetUtils.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
-                GadgetCopyPaste.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetDestruction) {
-                GadgetDestruction.anchorBlocks(playerEntity, heldItem);
-            }
+            // TODO(johnrowl) re-enable this.
+//            ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
+//            if (heldItem == null && heldItem.getItem() == null)
+//                return;
+//
+//            if (heldItem.getItem() instanceof GadgetBuilding) {
+//                GadgetUtils.anchorBlocks(playerEntity, heldItem);
+//            } else if (heldItem.getItem() instanceof GadgetExchanger) {
+//                GadgetUtils.anchorBlocks(playerEntity, heldItem);
+//            } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
+//                GadgetCopyPaste.anchorBlocks(playerEntity, heldItem);
+//            } else if (heldItem.getItem() instanceof GadgetDestruction) {
+//                GadgetDestruction.anchorBlocks(playerEntity, heldItem);
+//            }
         }
     }
 }

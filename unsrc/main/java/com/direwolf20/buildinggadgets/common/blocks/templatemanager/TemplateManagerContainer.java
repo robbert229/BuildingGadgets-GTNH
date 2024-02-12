@@ -1,13 +1,13 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
+//import net.minecraftforge.items.CapabilityItemHandler;
+//import net.minecraftforge.items.IItemHandler;
 
 public class TemplateManagerContainer extends Container {
     public static final String TEXTURE_LOC_SLOT_TOOL = BuildingGadgets.MODID + ":gui/slot_copypastetool";
@@ -43,7 +43,8 @@ public class TemplateManagerContainer extends Container {
     }
 
     private void addOwnSlots() {
-        IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IInventory itemHandler = (IInventory) this.te;
+        //.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         int x = 86;
         int y = 41;
 
@@ -60,7 +61,7 @@ public class TemplateManagerContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
+        ItemStack itemstack = null;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -71,14 +72,14 @@ public class TemplateManagerContainer extends Container {
 
             if (index < TemplateManagerTileEntity.SIZE) {
                 if (!this.mergeItemStack(itemstack1, TemplateManagerTileEntity.SIZE, this.inventorySlots.size(), true)) {
-                    return ItemStack.EMPTY;
+                    return null;
                 }
             } else if (!this.mergeItemStack(itemstack1, 0, TemplateManagerTileEntity.SIZE, false)) {
-                return ItemStack.EMPTY;
+                return null;
             }
 
-            if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+            if (itemstack1 == null && itemstack1.getItem() == null) {
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }

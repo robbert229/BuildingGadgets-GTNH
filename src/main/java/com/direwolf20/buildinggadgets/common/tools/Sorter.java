@@ -35,7 +35,7 @@ public class Sorter {
                     z = player.posZ;
 
             list.forEach(pos -> {
-                double distance = pos.distanceSqToCenter(x, y, z);
+                double distance = pos.getDistanceSquared((int)(x), (int)(y), (int)(z));
 
                 rangeMap.put(distance, pos);
                 distances.add(distance);
@@ -54,7 +54,7 @@ public class Sorter {
 
         private static final Comparator<ItemStack> COMPARATOR_NAME = Comparator.comparing(ItemStack::getDisplayName);
         private static final Comparator<ItemStack> COMPARATOR_NAME_REVERSED = COMPARATOR_NAME.reversed();
-        private static final Comparator<ItemStack> COMPARATOR_COUNT = Comparator.comparing(ItemStack::getCount);
+        private static final Comparator<ItemStack> COMPARATOR_COUNT = Comparator.comparing(stack -> stack.stackSize);
         private static final Comparator<ItemStack> COMPARATOR_COUNT_REVERSED = COMPARATOR_COUNT.reversed();
 
         /**
@@ -87,7 +87,7 @@ public class Sorter {
          * Sort the given list consisting {@link ItemStack} by stack size.
          * <p>
          * This method will copy all content of the original list to another {@link ArrayList}, and sort them using
-         * {@link List#sort(Comparator)} by comparing the {@link ItemStack#getCount()}.
+         * {@link List#sort(Comparator)} by comparing the {@link ItemStack#stackSize}.
          *
          * @param stacks the list of {@link ItemStack} to be sorted
          * @return A copy of the original list that is sorted.
@@ -108,7 +108,5 @@ public class Sorter {
             stacks.sort(reverse ? COMPARATOR_COUNT_REVERSED : COMPARATOR_COUNT);
             return stacks;
         }
-
     }
-
 }

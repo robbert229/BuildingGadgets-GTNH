@@ -9,8 +9,8 @@ public class ModBlocks {
 
     // @GameRegistry.ObjectHolder("effectblock")
     // public static EffectBlock effectBlock;
-    // @GameRegistry.ObjectHolder("constructionblock")
-    // public static ConstructionBlock constructionBlock;
+    @GameRegistry.ObjectHolder("constructionblock")
+    public static ConstructionBlock constructionBlock;
     @GameRegistry.ObjectHolder("constructionblock_dense")
     public static ConstructionBlockDense constructionBlockDense;
     @GameRegistry.ObjectHolder("constructionblockpowder")
@@ -25,5 +25,8 @@ public class ModBlocks {
 
         constructionBlockPowder = new ConstructionBlockPowder();
         GameRegistry.registerBlock(constructionBlockPowder, constructionBlockPowder.getUnlocalizedName());
+
+        constructionBlock = new ConstructionBlock();
+        GameRegistry.registerBlock(constructionBlock, constructionBlock.getUnlocalizedName());
     }
 }

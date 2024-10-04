@@ -47,4 +47,15 @@ public class WorldUtils {
             return false;
         }
     }
+
+    /**
+     * Returns the squared distance between this coordinates and the coordinates given as argument.
+     */
+    public float getDistanceSquared(int x, int y, int z)
+    {
+        float f = (float)(this.posX - x);
+        float f1 = (float)(this.posY - y);
+        float f2 = (float)(this.posZ - z);
+        return f * f + f1 * f1 + f2 * f2;
+    }
 }

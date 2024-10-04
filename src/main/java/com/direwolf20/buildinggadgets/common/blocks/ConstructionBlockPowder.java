@@ -106,4 +106,8 @@ public class ConstructionBlockPowder extends BlockFalling {
         return false;
     }
 
+    public int getDefaultMetadata() {
+        return 0;
+    }
+
 }

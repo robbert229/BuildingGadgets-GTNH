@@ -130,19 +130,19 @@ public abstract class GadgetGeneric extends ItemModBase {
     // }
     // return tool.getMaxDamage() <= 0 || tool.getItemDamage() < tool.getMaxDamage() || tool.isItemStackDamageable();
     // }
-    //
+
     // public void applyDamage(ItemStack tool, EntityPlayer player) {
     // // don't apply damage in creative or if there is no power to be had
     // if (player.capabilities.isCreativeMode || getEnergyMax() == 0)
     // return;
-    //
+
     // if (tool.hasCapability(CapabilityEnergy.ENERGY, null)) {
     // ItemEnergyForge energy = (ItemEnergyForge) CapabilityProviderEnergy.getCap(tool);
     // energy.extractPower(getEnergyCost(tool), false);
     // } else
     // tool.damageItem(getDamageCost(tool), player);
     // }
-    //
+
     // protected void addEnergyInformation(List<String> list, ItemStack stack) {
     // // Don't display energy for gadgets that can't accept it.
     // if( getEnergyMax() == 0 ) return;

@@ -18,7 +18,8 @@ public class BlockModBase extends Block {
     public static void init(Block block, float hardness, String name) {
         block.setHardness(hardness);
         block.setCreativeTab(BuildingGadgets.BUILDING_CREATIVE_TAB);
-        block.setBlockName(name);
+        block.setBlockName(String.join(".", BuildingGadgets.MODID, name));
+        block.setBlockTextureName(String.join(":", BuildingGadgets.MODID, name));
     }
 
     @SideOnly(Side.CLIENT)
@@ -27,7 +28,6 @@ public class BlockModBase extends Block {
     }
 
     public static void initModel(Block block) {
-        // ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new
-        // ModelResourceLocation(block.getRegistryName(), "inventory"));
+
     }
 }

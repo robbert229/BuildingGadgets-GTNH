@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterator.SORTED;
 
 public enum BuildingModes {
     BuildToMe("build_to_me.png", new BuildToMeMode(BuildingModes::combineTester)),

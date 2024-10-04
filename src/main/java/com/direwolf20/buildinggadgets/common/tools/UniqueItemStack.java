@@ -8,7 +8,7 @@ public final class UniqueItemStack {
     public final NBTTagCompound nbt;
 
     public UniqueItemStack(ItemStack stack) {
-        uniqueItem = new UniqueItem(stack.getItem(), stack.getMetadata());
+        uniqueItem = new UniqueItem(stack.getItem(), stack.getItemDamage());
         nbt = stack.getTagCompound();
     }
 

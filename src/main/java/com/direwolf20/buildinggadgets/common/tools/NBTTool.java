@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByteArray;
@@ -358,5 +359,43 @@ public class NBTTool {
         stack.setTagCompound(tag);
         return tag;
     }
+
+    private static final String NBT_BLOCK_ID = "block_id";
+    private static final String NBT_BLOCK_META = "block_meta";
+
+    public static NBTTagCompound blockToCompound(Block block, int meta) {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(NBT_BLOCK_ID, Block.getIdFromBlock(block));
+        compound.setInteger(NBT_BLOCK_META, meta);
+
+        return compound;
+    }
+
+    public static BlockCompound blockFromCompound(NBTTagCompound compound) {
+        // Retrieve block and metadata
+        Block block = Block.getBlockById(compound.getInteger(NBT_BLOCK_ID));
+        int meta = compound.getInteger(NBT_BLOCK_META);
+
+        return new BlockCompound(block, meta);
+    }
+
+    public static class BlockCompound {
+        private Block block;
+        private int meta;
+
+        public BlockCompound(Block block, int meta) {
+            this.block = block;
+            this.meta = meta;
+        }
+
+        public int getMeta() {
+            return meta;
+        }
+
+        public Block getBlock() {
+            return block;
+        }
+    }
+
 
 }

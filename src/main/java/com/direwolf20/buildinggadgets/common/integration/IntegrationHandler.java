@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
@@ -24,7 +24,7 @@ public class IntegrationHandler {
                     MODS.add(mod);
                 }
             } catch (Exception e) {
-                BuildingGadgets.logger.error(String.format("Integration with %s failed", name), e);
+                BuildingGadgets.LOG.error(String.format("Integration with %s failed", name), e);
             }
         }
     }

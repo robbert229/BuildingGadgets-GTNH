@@ -73,5 +73,4 @@ public interface ITemplate {
     default ChunkCoordinates getEndPos(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "endPos");
     }
-
 }

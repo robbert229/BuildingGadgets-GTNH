@@ -1,21 +1,16 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-import com.direwolf20.buildinggadgets.client.events.EventTooltip;
-import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+//import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
-import net.minecraft.client.resources.I18n;
 //import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
 //import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.UUID;
 
 public class Template extends ItemModBase implements ITemplate {
@@ -53,6 +48,7 @@ public class Template extends ItemModBase implements ITemplate {
     public static String getName(ItemStack stack) {
         return GadgetUtils.getStringFromNBT(stack, "TemplateName");
     }
+
 /*
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {

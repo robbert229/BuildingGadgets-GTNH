@@ -9,16 +9,29 @@ package com.direwolf20.buildinggadgets.common.tools;
 // import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 
 import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class GadgetUtils {
 
@@ -42,22 +55,23 @@ public class GadgetUtils {
 
     public static boolean mightBeLink(final String s) {
         return LINK_STARTS.stream()
-            .anyMatch(s::startsWith);
+                .anyMatch(s::startsWith);
     }
 
     //
     public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
-        .comparingInt(ChunkCoordinateComparatorHelper::getX)
-        .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
-        .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
-    //
-    // public static String getStackErrorSuffix(ItemStack stack) {
-    // return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();
-    // }
-    //
-    // private static String getStackErrorText(ItemStack stack) {
-    // return "the following stack: [" + stack + "]";
-    // }
+            .comparingInt(ChunkCoordinateComparatorHelper::getX)
+            .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
+            .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
+
+    public static String getStackErrorSuffix(ItemStack stack) {
+        return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();
+    }
+
+    private static String getStackErrorText(ItemStack stack) {
+        return "the following stack: [" + stack + "]";
+    }
+
     //
     // @Nullable
     // public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
@@ -69,14 +83,14 @@ public class GadgetUtils {
     // return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
     // }
     //
-    // @Nonnull
-    // public static NBTTagCompound getStackTag(ItemStack stack) {
-    // NBTTagCompound tag = stack.getTagCompound();
-    // if (tag == null)
-    // throw new IllegalArgumentException("An NBT tag could net be retrieved from " + getStackErrorText(stack));
-    //
-    // return tag;
-    // }
+
+    public static NBTTagCompound getStackTag(ItemStack stack) {
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null)
+            throw new IllegalArgumentException("An NBT tag could net be retrieved from " + getStackErrorText(stack));
+
+        return tag;
+    }
     //
     // public static void pushUndoList(ItemStack stack, UndoState undoState) {
     // //When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
@@ -359,59 +373,74 @@ public class GadgetUtils {
     // remoteInventorySupplier = null;
     // }
     //
-    // @Nullable
-    // public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
-    // return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);
-    // }
+    @Nullable
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
+        return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);
+    }
 
     /**
      * Call {@link #clearCachedRemoteInventory clearCachedRemoteInventory} when done using this method
      */
-    // @Nullable
-    // public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation
-    // operation) {
-    // if (remoteInventorySupplier == null) {
-    // remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
-    // Integer dim = getDIMFromNBT(tool, "boundTE");
-    // if (dim == null)
-    // return null;
-    //
-    // // Check if the Dimension actually exists. (Thanks RFTools...)
-    // if (DimensionManager.getWorld(dim) == null)
-    // return null;
-    //
-    // ChunkCoordinates pos = getPOSFromNBT(tool, "boundTE");
-    // return pos == null ? null : getRemoteInventory(pos, dim, world, player, operation);
-    // }, 500, TimeUnit.MILLISECONDS);
-    // }
-    // return remoteInventorySupplier.get();
-    // }
-    //
-    // @Nullable
-    // public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player) {
-    // return getRemoteInventory(pos, dim, world, player, NetworkIO.Operation.EXTRACT);
-    // }
-    //
-    // @Nullable
-    // public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player,
-    // NetworkIO.Operation operation) {
-    // MinecraftServer server = world.getMinecraftServer();
-    // if (server == null) return null;
-    // World worldServer = server.getWorld(dim);
-    // if (worldServer == null) return null;
-    // return getRemoteInventory(pos, worldServer, player, operation);
-    // }
-    //
-    // @Nullable
-    // public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player,
-    // NetworkIO.Operation operation) {
-    // TileEntity te = world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
-    // if (te == null) return null;
-    // IInventory network = NetworkProvider.getWrappedNetwork(te, player, operation);
-    // if (network != null) return network;
-    // IInventory cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-    // return cap != null ? cap : null;
-    // }
+    @Nullable
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation
+            operation) {
+        if (remoteInventorySupplier == null) {
+            remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
+                Integer dim = getDIMFromNBT(tool, "boundTE");
+                if (dim == null)
+                    return null;
+
+                // Check if the Dimension actually exists. (Thanks RFTools...)
+                if (DimensionManager.getWorld(dim) == null)
+                    return null;
+
+                ChunkCoordinates pos = getPOSFromNBT(tool, "boundTE");
+                return pos == null ? null : getRemoteInventory(pos, dim, world, player, operation);
+            }, 500, TimeUnit.MILLISECONDS);
+        }
+        return remoteInventorySupplier.get();
+    }
+
+    @Nullable
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player) {
+        return getRemoteInventory(pos, dim, world, player, NetworkIO.Operation.EXTRACT);
+    }
+
+    @Nullable
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player,
+                                                NetworkIO.Operation operation) {
+        MinecraftServer server = MinecraftServer.getServer();
+        if (server == null) {
+            return null;
+        }
+
+        World worldServer = server.worldServerForDimension(dim);
+        if (worldServer == null) {
+            return null;
+        }
+
+        return getRemoteInventory(pos, worldServer, player, operation);
+    }
+
+    @Nullable
+    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player,
+                                                NetworkIO.Operation operation) {
+        TileEntity te = world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
+        if (te == null) {
+            return null;
+        }
+
+        IInventory network = NetworkProvider.getWrappedNetwork(te, player, operation);
+        if (network != null) {
+            return network;
+        }
+
+        if (te instanceof IInventory iInventory) {
+            return iInventory;
+        }
+
+        return null;
+    }
 
     public static String withSuffix(int count) {
         if (count < 1000) return "" + count;
@@ -455,7 +484,7 @@ public class GadgetUtils {
     }
 
     public static void writePOSToNBT(NBTTagCompound tagCompound, @Nullable ChunkCoordinates pos, String tagName,
-        Integer dim) {
+                                     Integer dim) {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
@@ -557,20 +586,6 @@ public class GadgetUtils {
         return posTag.getInteger("dim");
     }
 
-    // public static NBTTagCompound stateToCompound(IBlockState state) {
-    // NBTTagCompound tagCompound = new NBTTagCompound();
-    // NBTUtil.writeBlockState(tagCompound, state);
-    // return tagCompound;
-    // }
-    //
-    // @Nullable
-    // public static IBlockState compoundToState(@Nullable NBTTagCompound tagCompound) {
-    // if (tagCompound == null) {
-    // return null;
-    // }
-    // return NBTUtil.readBlockState(tagCompound);
-    // }
-
     public static int relPosToInt(ChunkCoordinates startPos, ChunkCoordinates relPos) {
         int px = (((relPos.posX - startPos.posX) & 0xff) << 16);
         int py = (((relPos.posY - startPos.posY) & 0xff) << 8);
@@ -587,34 +602,36 @@ public class GadgetUtils {
         return new ChunkCoordinates(x, y, z);
     }
 
-    // public static NBTTagList itemCountToNBT(Multiset<UniqueItem> itemCountMap) {
-    // NBTTagList tagList = new NBTTagList();
-    //
-    // for (Multiset.Entry<UniqueItem> entry : itemCountMap.entrySet()) {
-    // int item = Item.getIdFromItem(entry.getElement().item);
-    // int meta = entry.getElement().meta;
-    // int count = entry.getCount();
-    // NBTTagCompound tagCompound = new NBTTagCompound();
-    // tagCompound.setInteger("item", item);
-    // tagCompound.setInteger("meta", meta);
-    // tagCompound.setInteger("count", count);
-    // tagList.appendTag(tagCompound);
-    // }
-    // return tagList;
-    // }
-    //
-    // public static Multiset<UniqueItem> nbtToItemCount(@Nullable NBTTagList tagList) {
-    // if (tagList == null) return HashMultiset.create();
-    // Multiset<UniqueItem> itemCountMap = HashMultiset.create(tagList.tagCount());
-    // for (int i = 0; i < tagList.tagCount(); i++) {
-    // NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-    // UniqueItem uniqueItem = new UniqueItem(Item.getItemById(tagCompound.getInteger("item")),
-    // tagCompound.getInteger("meta"));
-    // int count = tagCompound.getInteger("count");
-    // itemCountMap.setCount(uniqueItem, count);
-    // }
-    //
-    // return itemCountMap;
-    // }
+    public static NBTTagList itemCountToNBT(Multiset<UniqueItem> itemCountMap) {
+        NBTTagList tagList = new NBTTagList();
 
+        for (Multiset.Entry<UniqueItem> entry : itemCountMap.entrySet()) {
+            int item = Item.getIdFromItem(entry.getElement().item);
+            int meta = entry.getElement().meta;
+            int count = entry.getCount();
+
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            tagCompound.setInteger("item", item);
+            tagCompound.setInteger("meta", meta);
+            tagCompound.setInteger("count", count);
+
+            tagList.appendTag(tagCompound);
+        }
+
+        return tagList;
+    }
+
+    public static Multiset<UniqueItem> nbtToItemCount(@Nullable NBTTagList tagList) {
+        if (tagList == null) return HashMultiset.create();
+        Multiset<UniqueItem> itemCountMap = HashMultiset.create(tagList.tagCount());
+        for (int i = 0; i < tagList.tagCount(); i++) {
+            NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
+            UniqueItem uniqueItem = new UniqueItem(Item.getItemById(tagCompound.getInteger("item")),
+                    tagCompound.getInteger("meta"));
+            int count = tagCompound.getInteger("count");
+            itemCountMap.setCount(uniqueItem, count);
+        }
+
+        return itemCountMap;
+    }
 }

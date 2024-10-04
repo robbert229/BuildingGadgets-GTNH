@@ -12,7 +12,6 @@ import com.direwolf20.buildinggadgets.common.tools.NetworkIO.Operation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.items.IItemHandler;
 
 public abstract class NetworkProvider implements IIntegratedMod {
     private boolean isLoaded = true;

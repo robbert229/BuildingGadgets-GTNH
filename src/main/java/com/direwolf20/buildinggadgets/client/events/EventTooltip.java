@@ -1,41 +1,27 @@
 package com.direwolf20.buildinggadgets.client.events;
 
-import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
-
 /**
  * This class was adapted from code written by Vazkii
  * Thanks Vazkii!!
  */
 
+import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
 import com.google.common.collect.Multiset;
-
-//import net.minecraft.block.state.IBlockState;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-//import net.minecraft.client.renderer.GlStateManager;
-//import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
-//import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
-//import net.minecraftforge.client.event.RenderTooltipEvent;
-//import cpw.mods.fml.common.Mod.EventBusSubscriber;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-//import net.minecraftforge.fml.relauncher.Side;
-//import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
+import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 
 import java.util.*;
 
-//@EventBusSubscriber(Side.CLIENT)
 public class EventTooltip {
-/*
+
     private static final int STACKS_PER_LINE = 8;
     private static RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
@@ -70,7 +56,7 @@ public class EventTooltip {
             int totalMissing = 0;
             //Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
-                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().player, cache);
+                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
                 if (hasAmt < entry.getValue())
                     totalMissing = totalMissing + Math.abs(entry.getValue() - hasAmt);
             }
@@ -237,5 +223,4 @@ public class EventTooltip {
         }
         return itemCountMap;
     }
-*/
 }

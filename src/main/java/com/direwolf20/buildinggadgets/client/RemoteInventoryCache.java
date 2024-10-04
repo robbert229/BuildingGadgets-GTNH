@@ -46,7 +46,7 @@ public class RemoteInventoryCache implements IRemoteInventoryProvider {
         if (isCacheOld(loc))
             updateCache(loc);
 
-        return cache == null ? 0 : cache.count(new UniqueItem(stack.getItem(), stack.getMetadata()));
+        return cache == null ? 0 : cache.count(new UniqueItem(stack.getItem(), stack.getItemDamage()));
     }
 
     private void updateCache(Pair<Integer, ChunkCoordinates> loc) {

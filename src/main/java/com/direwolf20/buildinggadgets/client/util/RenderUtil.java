@@ -2,10 +2,8 @@ package com.direwolf20.buildinggadgets.client.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import static com.direwolf20.buildinggadgets.client.util.AlignmentUtil.*;
@@ -47,14 +45,12 @@ public final class RenderUtil {
     }
 
     public static void drawTexturedModalRect(int x, int y, int width, int height) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(x, y + height, 0).tex(0, 1).endVertex();
-        buffer.pos(x + width, y + height, 0).tex(1, 1).endVertex();
-        buffer.pos(x + width, y, 0).tex(1, 0).endVertex();
-        buffer.pos(x, y, 0).tex(0, 0).endVertex();
-        tessellator.draw();
+        Tessellator tessellator = Tessellator.instance; // 1.7.10 uses Tessellator.instance
+        tessellator.startDrawingQuads(); // Begin drawing quads (like BufferBuilder)
+        tessellator.addVertexWithUV(x, y + height, 0, 0, 1);  // Equivalent to pos(x, y, z).tex(u, v)
+        tessellator.addVertexWithUV(x + width, y + height, 0, 1, 1);
+        tessellator.addVertexWithUV(x + width, y, 0, 1, 0);
+        tessellator.addVertexWithUV(x, y, 0, 0, 0);
+        tessellator.draw(); // End drawing
     }
-
 }

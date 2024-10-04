@@ -4,6 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentTranslation;
 
+import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +32,8 @@ public class BuildingGadgets {
     public static final String MODID = "buildinggadgets";
     public static final Logger LOG = LogManager.getLogger(MODID);
 
+    public static Configuration config;
+
     public static final CreativeTabs BUILDING_CREATIVE_TAB = new CreativeTabs(
         new ChatComponentTranslation("buildingGadgets").getUnformattedTextForChat()) {
 
@@ -52,6 +55,9 @@ public class BuildingGadgets {
     @Mod.EventHandler
     public void preInit(final FMLPreInitializationEvent event) {
         proxy.preInit(event);
+
+        config = new Configuration(event.getSuggestedConfigurationFile());
+        loadConfig();
     }
 
     @Mod.EventHandler
@@ -73,5 +79,18 @@ public class BuildingGadgets {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         proxy.serverStarting(event);
+    }
+
+    public static void loadConfig() {
+        try {
+            config.load(); // Load the config file
+            // Add any config-specific loading logic here, such as default values or validation
+        } catch (Exception e) {
+            LOG.error("Error loading configuration for " + MODID, e);
+        } finally {
+            if (config.hasChanged()) {
+                config.save(); // Save the config file if any changes were made
+            }
+        }
     }
 }

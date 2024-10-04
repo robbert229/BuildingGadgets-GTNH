@@ -2,6 +2,9 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionChunkDense;
 import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionPaste;
 import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionPasteContainer;
@@ -16,10 +19,9 @@ public class ModItems {
     @GameRegistry.ObjectHolder("buildingtool")
     public static GadgetBuilding gadgetBuilding;
 
-    //
-    // @GameRegistry.ObjectHolder("exchangertool")
-    // public static GadgetExchanger gadgetExchanger;
-    //
+    @GameRegistry.ObjectHolder("exchangertool")
+    public static GadgetExchanger gadgetExchanger;
+
     @GameRegistry.ObjectHolder("constructionpaste")
     public static ConstructionPaste constructionPaste;
 
@@ -38,18 +40,27 @@ public class ModItems {
     @GameRegistry.ObjectHolder("constructionpastecontainercreative")
     public static ConstructionPasteContainerCreative constructionPasteContainerCreative;
 
-    // @GameRegistry.ObjectHolder("copypastetool")
-    // public static GadgetCopyPaste gadgetCopyPaste;
-    //
-    // @GameRegistry.ObjectHolder("template")
-    // public static Template template;
-    //
-    // @GameRegistry.ObjectHolder("destructiontool")
-    // public static GadgetDestruction gadgetDestruction;
+    @GameRegistry.ObjectHolder("copypastetool")
+    public static GadgetCopyPaste gadgetCopyPaste;
+
+    @GameRegistry.ObjectHolder("template")
+    public static Template template;
+
+    @GameRegistry.ObjectHolder("destructiontool")
+    public static GadgetDestruction gadgetDestruction;
 
     public static void init() {
         gadgetBuilding = new GadgetBuilding();
         GameRegistry.registerItem(gadgetBuilding, gadgetBuilding.getUnlocalizedName());
+
+        gadgetCopyPaste = new GadgetCopyPaste();
+        GameRegistry.registerItem(gadgetCopyPaste, gadgetCopyPaste.getUnlocalizedName());
+
+        gadgetDestruction = new GadgetDestruction();
+        GameRegistry.registerItem(gadgetDestruction, gadgetDestruction.getUnlocalizedName());
+
+        gadgetExchanger = new GadgetExchanger();
+        GameRegistry.registerItem(gadgetExchanger, gadgetExchanger.getUnlocalizedName());
 
         constructionPaste = new ConstructionPaste();
         GameRegistry.registerItem(constructionPaste, constructionPaste.getUnlocalizedName());
@@ -58,23 +69,23 @@ public class ModItems {
         GameRegistry.registerItem(constructionChunkDense, constructionChunkDense.getUnlocalizedName());
 
         constructionPasteContainer = new ConstructionPasteContainer(
-            RegularPasteContainerTypes.T1.itemSuffix,
-            RegularPasteContainerTypes.T1.capacitySupplier);
+                RegularPasteContainerTypes.T1.itemSuffix,
+                RegularPasteContainerTypes.T1.capacitySupplier);
         GameRegistry.registerItem(constructionPasteContainer, constructionPasteContainer.getUnlocalizedName());
 
         constructionPasteContainert2 = new ConstructionPasteContainer(
-            RegularPasteContainerTypes.T2.itemSuffix,
-            RegularPasteContainerTypes.T2.capacitySupplier);
+                RegularPasteContainerTypes.T2.itemSuffix,
+                RegularPasteContainerTypes.T2.capacitySupplier);
         GameRegistry.registerItem(constructionPasteContainert2, constructionPasteContainert2.getUnlocalizedName());
 
         constructionPasteContainert3 = new ConstructionPasteContainer(
-            RegularPasteContainerTypes.T3.itemSuffix,
-            RegularPasteContainerTypes.T3.capacitySupplier);
+                RegularPasteContainerTypes.T3.itemSuffix,
+                RegularPasteContainerTypes.T3.capacitySupplier);
         GameRegistry.registerItem(constructionChunkDense, constructionChunkDense.getUnlocalizedName());
 
         constructionPasteContainerCreative = new ConstructionPasteContainerCreative();
         GameRegistry
-            .registerItem(constructionPasteContainerCreative, constructionPasteContainerCreative.getUnlocalizedName());
+                .registerItem(constructionPasteContainerCreative, constructionPasteContainerCreative.getUnlocalizedName());
     }
 
 }

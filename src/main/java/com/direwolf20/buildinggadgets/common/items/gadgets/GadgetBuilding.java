@@ -2,14 +2,20 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 // import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 
+import com.direwolf20.buildinggadgets.common.tools.BuildingModes;
+import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.tools.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraft.util.StatCollector;
+
+import java.util.List;
 
 public class GadgetBuilding extends GadgetGeneric {
 
@@ -42,48 +48,55 @@ public class GadgetBuilding extends GadgetGeneric {
     // tagCompound.setString("mode", mode.getRegistryName());
     // }
 
-    // public static BuildingModes getToolMode(ItemStack tool) {
-    // NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
-    // return BuildingModes.byName(tagCompound.getString("mode"));
-    // }
+    public static BuildingModes getToolMode(ItemStack tool) {
+        NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
+        return BuildingModes.byName(tagCompound.getString("mode"));
+    }
 
     public static boolean shouldPlaceAtop(ItemStack stack) {
         return !NBTTool.getOrNewTag(stack)
-            .getBoolean("start_inside");
+                .getBoolean("start_inside");
     }
 
     public static void togglePlaceAtop(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-            .setBoolean("start_inside", shouldPlaceAtop(stack));
+                .setBoolean("start_inside", shouldPlaceAtop(stack));
         String prefix = "message.gadget.building.placement";
         player.addChatComponentMessage(
-            new ChatComponentText(
-                ChatFormatting.AQUA + new ChatComponentTranslation(
-                    prefix,
-                    new ChatComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside")))
-                        .getUnformattedTextForChat()));
+                new ChatComponentText(
+                        ChatFormatting.AQUA + new ChatComponentTranslation(
+                                prefix,
+                                new ChatComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside")))
+                                .getUnformattedTextForChat()));
     }
 
-    // @Override
-    // public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-    // //Add tool information to the tooltip
-    // super.addInformation(stack, world, list, b);
-    // list.add(TextFormatting.DARK_GREEN + I18n.format("tooltip.gadget.block") + ": " +
-    // getToolBlock(stack).getBlock().getLocalizedName());
-    // BuildingModes mode = getToolMode(stack);
-    // list.add(TextFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + (mode == BuildingModes.Surface &&
-    // getConnectedArea(stack) ? I18n.format("tooltip.gadget.connected") + " " : "") + mode);
-    // if (getToolMode(stack) != BuildingModes.BuildToMe)
-    // list.add(TextFormatting.LIGHT_PURPLE + I18n.format("tooltip.gadget.range") + ": " + getToolRange(stack));
-    //
-    // if (getToolMode(stack) == BuildingModes.Surface)
-    // list.add(TextFormatting.GOLD + I18n.format("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
-    //
-    // addInformationRayTraceFluid(list, stack);
-    // list.add(TextFormatting.YELLOW + I18n.format("tooltip.gadget.building.place_atop") + ": " +
-    // shouldPlaceAtop(stack));
-    // addEnergyInformation(list, stack);
-    // }
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        //Add tool information to the tooltip
+        super.addInformation(stack, player, list, b);
+
+        list.add(ChatFormatting.DARK_GREEN + StatCollector.translateToLocal("tooltip.gadget.block") + ": " +
+                GadgetUtils.getToolBlock(stack).getBlock().getLocalizedName());
+
+        BuildingModes mode = getToolMode(stack);
+
+        list.add(ChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.mode") + ": " + (mode == BuildingModes.Surface &&
+                getConnectedArea(stack) ? StatCollector.translateToLocal("tooltip.gadget.connected") + " " : "") + mode);
+
+        if (getToolMode(stack) != BuildingModes.BuildToMe) {
+            list.add(ChatFormatting.LIGHT_PURPLE + StatCollector.translateToLocal("tooltip.gadget.range") + ": " + GadgetUtils.getToolRange(stack));
+        }
+
+        if (getToolMode(stack) == BuildingModes.Surface)
+            list.add(ChatFormatting.GOLD + StatCollector.translateToLocal("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
+
+        addInformationRayTraceFluid(list, stack);
+
+        list.add(ChatFormatting.YELLOW + StatCollector.translateToLocal("tooltip.gadget.building.place_atop") + ": " +
+                shouldPlaceAtop(stack));
+
+        addEnergyInformation(list, stack);
+    }
 
     // @Override
     // public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {

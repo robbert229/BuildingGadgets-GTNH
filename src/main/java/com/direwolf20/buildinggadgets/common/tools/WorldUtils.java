@@ -28,6 +28,32 @@ public class WorldUtils {
         return new ChunkCoordinates(coordinates.posX, coordinates.posY + y, coordinates.posZ);
     }
 
+    public static ChunkCoordinates up(ChunkCoordinates coordinates) {
+    return up(coordinates, 1);
+    }
+
+    public static ChunkCoordinates down(ChunkCoordinates coordinates) {
+        return down(coordinates, 1);
+    }
+
+    public static ChunkCoordinates down(ChunkCoordinates coordinates, int y) {
+        return up(coordinates, -1 * y);
+    }
+
+    public static double distanceSqToCenter(ChunkCoordinates first, ChunkCoordinates second) {
+        double dx = first.posX + 0.5D - second.posX;
+        double dy = first.posY + 0.5D - second.posY;
+        double dz = first.posZ + 0.5D - second.posZ;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
+    public static double distanceSqToCenter(ChunkCoordinates first, double x, double y, double z) {
+        double dx = first.posX + 0.5D - x;
+        double dy = first.posY + 0.5D - y;
+        double dz = first.posZ + 0.5D - z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
     public static boolean isInsideWorldLimits(World worldIn, ChunkCoordinates coordinates) {
         if (coordinates.posY >= 0 && coordinates.posY < 256) {
             return true;

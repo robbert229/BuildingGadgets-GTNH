@@ -226,15 +226,16 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
         return mode;
     }
-//
-//    @Override
-//    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-//        super.addInformation(stack, world, list, b);
-//        list.add(TextFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + getToolMode(stack));
-//        addInformationRayTraceFluid(list, stack);
-//        addEnergyInformation(list, stack);
-//        EventTooltip.addTemplatePadding(stack, list);
-//    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        super.addInformation(stack, player, list, b);
+
+        list.add(EnumChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.mode") + ": " + getToolMode(stack));
+        addInformationRayTraceFluid(list, stack);
+        addEnergyInformation(list, stack);
+        EventTooltip.addTemplatePadding(stack, list);
+    }
 
     public void setMode(ItemStack heldItem, int modeInt) {
         //Called when we specify a mode with the radial menu

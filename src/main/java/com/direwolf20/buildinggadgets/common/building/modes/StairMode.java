@@ -1,10 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Stair;
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -31,22 +34,23 @@ public class StairMode extends AtopSupportedMode {
     @Override
     public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
-        EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getOpposite() : sideHit;
+        EnumFacing side = VectorTools.isAxisVertical(sideHit) ? DirectionUtils.getOppositeEnumFacing(VectorTools.getHorizontalFacingFromPlayer(player)) : sideHit;
 
-        if (original.getY() > player.posY + 1)
+        if (original.posY > player.posY + 1)
             return Stair.create(transformed, side, EnumFacing.DOWN, range);
-        else if (original.getY() < player.posY - 2)
+        else if (original.posY < player.posY - 2)
             return Stair.create(transformed, side, EnumFacing.UP, range);
-        return Stair.create(transformed, side.getOpposite(), EnumFacing.UP, range);
+        return Stair.create(transformed, DirectionUtils.getOppositeEnumFacing(side), EnumFacing.UP, range);
     }
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        if (hit.getY() > player.posY + 1) {
-            EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing() : sideHit;
-            return hit.down().offset(side);
+        if (hit.posY > player.posY + 1) {
+            EnumFacing side = VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player) : sideHit;
+            return WorldUtils.offset(WorldUtils.down(hit), side);
         }
-        return hit.up();
+
+        return WorldUtils.up(hit);
     }
 
     @Override

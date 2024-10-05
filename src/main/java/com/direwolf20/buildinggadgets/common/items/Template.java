@@ -2,15 +2,20 @@ package com.direwolf20.buildinggadgets.common.items;
 
 //import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
 //import net.minecraft.client.util.ITooltipFlag;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 //import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.UUID;
 
 public class Template extends ItemModBase implements ITemplate {
@@ -49,15 +54,16 @@ public class Template extends ItemModBase implements ITemplate {
         return GadgetUtils.getStringFromNBT(stack, "TemplateName");
     }
 
-/*
+
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         //Add tool information to the tooltip
-        super.addInformation(stack, world, list, b);
-        list.add(TextFormatting.AQUA + I18n.format("tooltip.template.name") + ": " + getName(stack));
+        super.addInformation(stack, player, list, b);
+        list.add(ChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.template.name") + ": " + getName(stack));
         EventTooltip.addTemplatePadding(stack, list);
     }
 
+    /*
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, ChunkCoordinates pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         // Open GUI

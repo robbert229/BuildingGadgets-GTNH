@@ -1,10 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Column;
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -30,14 +33,17 @@ public class BuildingHorizontalColumnMode extends AtopSupportedMode {
     @Override
     public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
-        if (sideHit.getAxis().isVertical())
-            return Column.extendFrom(transformed, player.getHorizontalFacing(), range);
-        return Column.extendFrom(transformed, sideHit.getOpposite(), range);
+
+        if (VectorTools.isAxisVertical(sideHit)) {
+            return Column.extendFrom(transformed, VectorTools.getHorizontalFacingFromPlayer(player), range);
+        }
+
+        return Column.extendFrom(transformed, DirectionUtils.getOppositeEnumFacing(sideHit), range);
     }
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return sideHit.getAxis().isVertical() ? hit.offset(player.getHorizontalFacing()) : hit.offset(sideHit.getOpposite());
+        return VectorTools.isAxisVertical(sideHit) ? WorldUtils.offset(hit, VectorTools.getHorizontalFacingFromPlayer(player)) : WorldUtils.offset(hit, DirectionUtils.getOppositeEnumFacing(sideHit));
     }
 
     @Override

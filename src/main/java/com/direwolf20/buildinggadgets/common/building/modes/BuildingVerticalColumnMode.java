@@ -1,11 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Column;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
+import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -34,15 +36,17 @@ public class BuildingVerticalColumnMode extends AtopSupportedMode {
     @Override
     public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
-        if (sideHit.getAxis().isVertical())
+        if (VectorTools.isAxisVertical(sideHit)) {
             return Column.extendFrom(transformed, sideHit, range);
+        }
+
         int radius = MathTool.floorToOdd(range);
-        return Column.centerAt(transformed, EnumFacing.Axis.Y, radius);
+        return Column.centerAt(transformed, EnumFacing.UP, radius);
     }
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return hit.offset(sideHit);
+        return WorldUtils.offset(hit, sideHit);
     }
 
     @Override

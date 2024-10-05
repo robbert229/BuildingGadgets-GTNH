@@ -26,12 +26,12 @@ public class ConstructionBlockPowder extends BlockFalling {
         BlockModBase.initModel(this);
     }
 
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
-    // super.addInformation(stack, player, list, b);
-    // list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
-    // }
+//     @Override
+//     @SideOnly(Side.CLIENT)
+//     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+//     super.addInformation(stack, player, list, b);
+//     list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
+//     }
 
     // @Override
     // public void onEndFalling(World worldIn, ChunkCoordinates pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {

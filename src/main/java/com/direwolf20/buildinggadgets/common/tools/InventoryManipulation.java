@@ -283,34 +283,36 @@ public class InventoryManipulation {
     // return result;
     // }
 
-    // public static int countPaste(EntityPlayer player) {
-    // if (player.capabilities.isCreativeMode) {
-    // return Integer.MAX_VALUE;
-    // }
-    //
-    // IItemHandler currentInv = player.getCapability(ITEM_HANDLER_CAPABILITY, null);
-    // if (currentInv == null) return 0;
-    //
-    // long count = 0;
-    // Item item = ModItems.constructionPaste;
-    // List<Integer> slots = findItem(item, 0, currentInv);
-    // if (slots.size() > 0) {
-    // for (int slot : slots) {
-    // ItemStack stackInSlot = currentInv.getStackInSlot(slot);
-    // count += stackInSlot.getCount();
-    // }
-    // }
-    // List<Integer> containerSlots = findItemClass(GenericPasteContainer.class, currentInv);
-    // if (containerSlots.size() > 0) {
-    // for (int slot : containerSlots) {
-    // ItemStack stackInSlot = currentInv.getStackInSlot(slot);
-    // if (stackInSlot.getItem() instanceof GenericPasteContainer) {
-    // count += GenericPasteContainer.getPasteAmount(stackInSlot);
-    // }
-    // }
-    // }
-    // return MathTool.longToInt(count);
-    // }
+    public static int countPaste(EntityPlayer player) {
+        if (player.capabilities.isCreativeMode) {
+            return Integer.MAX_VALUE;
+        }
+
+        IInventory currentInv = player.inventory;
+        if (currentInv == null) {
+            return 0;
+        }
+
+        long count = 0;
+        Item item = ModItems.constructionPaste;
+        List<Integer> slots = findItem(item, 0, currentInv);
+        if (slots.size() > 0) {
+            for (int slot : slots) {
+                ItemStack stackInSlot = currentInv.getStackInSlot(slot);
+                count += stackInSlot.stackSize;
+            }
+        }
+        List<Integer> containerSlots = findItemClass(GenericPasteContainer.class, currentInv);
+        if (containerSlots.size() > 0) {
+            for (int slot : containerSlots) {
+                ItemStack stackInSlot = currentInv.getStackInSlot(slot);
+                if (stackInSlot.getItem() instanceof GenericPasteContainer) {
+                    count += GenericPasteContainer.getPasteAmount(stackInSlot);
+                }
+            }
+        }
+        return MathTool.longToInt(count);
+    }
 
     /**
      * -------------------------------------

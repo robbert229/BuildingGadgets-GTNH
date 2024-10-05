@@ -7,12 +7,15 @@ import cpw.mods.fml.common.registry.GameRegistry;
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModBlocks {
 
-    // @GameRegistry.ObjectHolder("effectblock")
-    // public static EffectBlock effectBlock;
+    @GameRegistry.ObjectHolder("effectblock")
+    public static EffectBlock effectBlock;
+
     @GameRegistry.ObjectHolder("constructionblock")
     public static ConstructionBlock constructionBlock;
+
     @GameRegistry.ObjectHolder("constructionblock_dense")
     public static ConstructionBlockDense constructionBlockDense;
+
     @GameRegistry.ObjectHolder("constructionblockpowder")
     public static ConstructionBlockPowder constructionBlockPowder;
 
@@ -28,5 +31,8 @@ public class ModBlocks {
 
         constructionBlock = new ConstructionBlock();
         GameRegistry.registerBlock(constructionBlock, constructionBlock.getUnlocalizedName());
+
+        effectBlock = new EffectBlock();
+        GameRegistry.registerBlock(effectBlock, effectBlock.getUnlocalizedName());
     }
 }

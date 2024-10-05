@@ -320,7 +320,7 @@ public class NBTTool {
     }
 
     public static <K, V> NBTTagList serializeMap(Map<K, V> map, Function<K, NBTBase> keySerializer,
-        Function<V, NBTBase> valueSerializer) {
+                                                 Function<V, NBTBase> valueSerializer) {
         NBTTagList list = new NBTTagList();
         for (Map.Entry<K, V> entry : map.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -332,15 +332,15 @@ public class NBTTool {
     }
 
     public static <K, V> Map<K, V> deserializeMap(NBTTagList list, Map<K, V> toAppendTo,
-        Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
+                                                  Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
 
         for (int i = 0; i < list.tagCount(); i++) {
             NBTBase nbt = list.getCompoundTagAt(i);
             if (nbt instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) nbt;
                 toAppendTo.put(
-                    keyDeserializer.apply(compound.getTag("key")),
-                    valueDeserializer.apply(compound.getTag("val")));
+                        keyDeserializer.apply(compound.getTag("key")),
+                        valueDeserializer.apply(compound.getTag("val")));
             }
         }
         return toAppendTo;
@@ -363,39 +363,22 @@ public class NBTTool {
     private static final String NBT_BLOCK_ID = "block_id";
     private static final String NBT_BLOCK_META = "block_meta";
 
-    public static NBTTagCompound blockToCompound(Block block, int meta) {
+    public static NBTTagCompound blockToCompound(BlockState block) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(NBT_BLOCK_ID, Block.getIdFromBlock(block));
-        compound.setInteger(NBT_BLOCK_META, meta);
-
+        writeBlockToCompound(compound, block);
         return compound;
     }
 
-    public static BlockCompound blockFromCompound(NBTTagCompound compound) {
+    public static void writeBlockToCompound(NBTTagCompound compound, BlockState block) {
+        compound.setInteger(NBT_BLOCK_ID, Block.getIdFromBlock(block.getBlock()));
+        compound.setInteger(NBT_BLOCK_META, block.getMetadata());
+    }
+
+    public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
         Block block = Block.getBlockById(compound.getInteger(NBT_BLOCK_ID));
         int meta = compound.getInteger(NBT_BLOCK_META);
 
-        return new BlockCompound(block, meta);
+        return new BlockState(block, meta);
     }
-
-    public static class BlockCompound {
-        private Block block;
-        private int meta;
-
-        public BlockCompound(Block block, int meta) {
-            this.block = block;
-            this.meta = meta;
-        }
-
-        public int getMeta() {
-            return meta;
-        }
-
-        public Block getBlock() {
-            return block;
-        }
-    }
-
-
 }

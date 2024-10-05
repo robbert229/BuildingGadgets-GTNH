@@ -13,10 +13,15 @@ import net.minecraft.enchantment.EnchantmentHelper;
 //import net.minecraft.entity.player.EntityPlayer;
 //import net.minecraft.init.Blocks;
 //import net.minecraft.init.Enchantments;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+
+import java.util.List;
+
+import static com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste.getToolMode;
 //import net.minecraft.util.MovingObjectPosition;
 //import net.minecraft.util.text.TextComponentString;
 //import net.minecraft.util.text.TextComponentTranslation;
@@ -71,36 +76,34 @@ public class GadgetExchanger extends GadgetGeneric {
         return super.isBookEnchantable(stack, book);
     }
 
-//    @Override
-//    public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment) {
-//        if (enchantment == Enchantments.SILK_TOUCH) {
-//            return true;
-//        }
-//        return super.canApplyAtEnchantingTable(stack, enchantment);
-//    }
-//
-//    private static void setToolMode(ItemStack tool, ExchangingModes mode) {
-//        //Store the tool's mode in NBT as a string
-//        NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
-//        tagCompound.setString("mode", mode.getRegistryName());
-//    }
-//
-//    public static ExchangingModes getToolMode(ItemStack tool) {
-//        NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
-//        return ExchangingModes.byName(tagCompound.getString("mode"));
-//    }
-//
-//    @Override
-//    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-//        super.addInformation(stack, world, list, b);
-//        list.add(TextFormatting.DARK_GREEN + I18n.format("tooltip.gadget.block") + ": " + getToolBlock(stack).getBlock().getLocalizedName());
-//        ExchangingModes mode = getToolMode(stack);
-//        list.add(TextFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + (mode == ExchangingModes.Surface && getConnectedArea(stack) ? I18n.format("tooltip.gadget.connected") + " " : "") + mode);
-//        list.add(TextFormatting.LIGHT_PURPLE + I18n.format("tooltip.gadget.range") + ": " + getToolRange(stack));
-//        list.add(TextFormatting.GOLD + I18n.format("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
-//        addInformationRayTraceFluid(list, stack);
-//        addEnergyInformation(list, stack);
-//    }
+    private static void setToolMode(ItemStack tool, ExchangingModes mode) {
+        //Store the tool's mode in NBT as a string
+        NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
+        tagCompound.setString("mode", mode.getRegistryName());
+    }
+
+    public static ExchangingModes getToolMode(ItemStack tool) {
+        NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
+        return ExchangingModes.byName(tagCompound.getString("mode"));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        super.addInformation(stack, player, list, b);
+
+        list.add(EnumChatFormatting.DARK_GREEN + StatCollector.translateToLocal("tooltip.gadget.block") + ": " + GadgetUtils.getToolBlock(stack).getBlock().getLocalizedName());
+
+        ExchangingModes mode = getToolMode(stack);
+        String modeText = (mode == ExchangingModes.Surface && getConnectedArea(stack)) ? StatCollector.translateToLocal("tooltip.gadget.connected") + " " : "";
+        list.add(EnumChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.mode") + ": " + modeText + mode);
+
+        list.add(EnumChatFormatting.LIGHT_PURPLE + StatCollector.translateToLocal("tooltip.gadget.range") + ": " + GadgetUtils.getToolRange(stack));
+
+        list.add(EnumChatFormatting.GOLD + StatCollector.translateToLocal("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
+
+        addInformationRayTraceFluid(list, stack);
+        addEnergyInformation(list, stack);
+    }
 //
 //    @Override
 //    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
@@ -118,11 +121,11 @@ public class GadgetExchanger extends GadgetGeneric {
 //        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
 //    }
 //
-//    public void setMode(ItemStack heldItem, int modeInt) {
-//        //Called when we specify a mode with the radial menu
-//        ExchangingModes mode = ExchangingModes.values()[modeInt];
-//        setToolMode(heldItem, mode);
-//    }
+    public void setMode(ItemStack heldItem, int modeInt) {
+        //Called when we specify a mode with the radial menu
+        ExchangingModes mode = ExchangingModes.values()[modeInt];
+        setToolMode(heldItem, mode);
+    }
 //
 //    public void rangeChange(EntityPlayer player, ItemStack heldItem) {
 //        int range = getToolRange(heldItem);

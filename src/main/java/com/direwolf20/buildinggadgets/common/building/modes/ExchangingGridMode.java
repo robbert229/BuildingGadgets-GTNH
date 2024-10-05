@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.building.modes;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +25,6 @@ public class ExchangingGridMode extends GridMode {
      */
     @Override
     public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return super.computeCoordinates(player, hit.offset(EnumFacing.DOWN), sideHit, tool);
+        return super.computeCoordinates(player, WorldUtils.offset(hit, EnumFacing.DOWN), sideHit, tool);
     }
-
 }

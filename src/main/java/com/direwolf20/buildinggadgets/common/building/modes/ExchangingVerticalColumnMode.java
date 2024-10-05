@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Column;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
+import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -13,20 +14,20 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ChunkCoordinates;
 
 /**
- * Horizontal column mode for Exchanging Gadget.
+ * Vertical column mode for Exchanging Gadget.
  * <p>
  * If a 2D x-y coordinate plane was built on the selected side with the selected block as origin, the column will be the
- * X axis in the plane.
+ * Y axis in the plane.
  * The column will be centered at the origin. Length of the column will be the tool range that is floored to an odd
  * number with a lower bound of 1.
  *
  * @see Column
  */
-public class ExchangingHorizontalColumnMode extends AbstractMode {
+public class ExchangingVerticalColumnMode extends AbstractMode {
 
-    private static final ResourceLocation NAME = new ResourceLocation(BuildingGadgets.MODID, "horizontal_column");
+    private static final ResourceLocation NAME = new ResourceLocation(BuildingGadgets.MODID, "vertical_column");
 
-    public ExchangingHorizontalColumnMode(IValidatorFactory validatorFactory) {
+    public ExchangingVerticalColumnMode(IValidatorFactory validatorFactory) {
         super(validatorFactory);
     }
 
@@ -34,7 +35,11 @@ public class ExchangingHorizontalColumnMode extends AbstractMode {
     public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         int radius = MathTool.floorToOdd(range);
-        return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing() : sideHit).rotateY().getAxis(), radius);
+
+        // @TODO(johnrowl) this is suspicious.
+        //return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getAxis() : Axis.Y), radius);
+        var facing = (VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player) : EnumFacing.UP);
+        return Column.centerAt(hit, facing, radius);
     }
 
     @Override

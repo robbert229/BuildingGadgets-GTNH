@@ -7,16 +7,20 @@ package com.direwolf20.buildinggadgets.client.events;
 
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
+import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
+import com.direwolf20.buildinggadgets.common.tools.*;
 import com.google.common.collect.Multiset;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
+import net.minecraft.util.ChunkCoordinates;
+import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
@@ -31,18 +35,19 @@ public class EventTooltip {
 
     @SideOnly(Side.CLIENT)
     private static void tooltipIfShift(@SuppressWarnings("unused") List<String> tooltip, Runnable r) {
-        if (GuiScreen.isShiftKeyDown())
+        if (GuiScreen.isShiftKeyDown()) {
             r.run();
-        //else addToTooltip(tooltip, "arl.misc.shiftForInfo");
+        }
     }
 
     public static void addTemplatePadding(ItemStack stack, List<String> tooltip) {
         //This method extends the tooltip box size to fit the item's we will render in onDrawTooltip
         Minecraft mc = Minecraft.getMinecraft();
-        if (stack.getItem() instanceof ITemplate) {
-            ITemplate template = (ITemplate) stack.getItem();
+        if (stack.getItem() instanceof ITemplate template) {
             String UUID = template.getUUID(stack);
-            if (UUID == null) return;
+            if (UUID == null) {
+                return;
+            }
 
             Multiset<UniqueItem> itemCountMap = template.getItemCountMap(stack);
 
@@ -79,13 +84,11 @@ public class EventTooltip {
     }
 
     @SubscribeEvent
-    public static void onDrawTooltip(RenderTooltipEvent.PostText event) {
-        //This method will draw items on the tooltip
-        ItemStack stack = event.getStack();
-
-        if ((stack.getItem() instanceof ITemplate) && GuiScreen.isShiftKeyDown()) {
+    public static void onDrawTooltip(ItemStack stack, List<String> tooltip, int bx, int by) {
+        if ((stack.getItem() instanceof ITemplate stackTemplate) && GuiScreen.isShiftKeyDown()) {
             long totalMissing = 0;
-            Multiset<UniqueItem> itemCountMap = ((ITemplate) stack.getItem()).getItemCountMap(stack);
+
+            Multiset<UniqueItem> itemCountMap = stackTemplate.getItemCountMap(stack);
 
             //Create an ItemStack -> Integer Map
             Map<ItemStack, Integer> itemStackCount = new HashMap<ItemStack, Integer>();
@@ -98,18 +101,8 @@ public class EventTooltip {
             Comparator<Map.Entry<ItemStack, Integer>> comparator = Comparator.comparing(entry -> entry.getValue());
             comparator = comparator.reversed();
             comparator = comparator.thenComparing(Comparator.comparing(entry -> Item.getIdFromItem(entry.getKey().getItem())));
-            comparator = comparator.thenComparing(Comparator.comparing(entry -> entry.getKey().getMetadata()));
+            comparator = comparator.thenComparing(Comparator.comparing(entry -> entry.getKey().getItemDamage()));
             list.sort(comparator);
-
-//            int count = itemStackCount.size();
-
-            int bx = event.getX();
-            int by = event.getY();
-
-            List<String> tooltip = event.getLines();
-//            int lines = (((count - 1) / STACKS_PER_LINE) + 1);
-//            int width = Math.min(STACKS_PER_LINE, count) * 18;
-//            int height = lines * 20 + 1;
 
             for (String s : tooltip) {
                 if (s.trim().equals("\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r"))
@@ -117,14 +110,18 @@ public class EventTooltip {
                 by += 10;
             }
 
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            // GlStateManager.enableBlend();
+            // GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             //Gui.drawRect(bx, by, bx + width, by + height, 0x55000000);
 
             int j = 0;
             //Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
-                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().player, cache);
+                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
                 int x = bx + (j % STACKS_PER_LINE) * 18;
                 int y = by + (j / STACKS_PER_LINE) * 20;
                 totalMissing += renderRequiredBlocks(entry.getKey(), x, y, hasAmt, entry.getValue());
@@ -132,7 +129,7 @@ public class EventTooltip {
             }
             if (totalMissing > 0) {
                 ItemStack pasteItemStack = new ItemStack(ModItems.constructionPaste);
-                int hasAmt = InventoryManipulation.countPaste(Minecraft.getMinecraft().player);
+                int hasAmt = InventoryManipulation.countPaste(Minecraft.getMinecraft().thePlayer);
                 int x = bx + (j % STACKS_PER_LINE) * 18;
                 int y = by + (j / STACKS_PER_LINE) * 20;
                 renderRequiredBlocks(pasteItemStack, x, y, hasAmt, MathTool.longToInt(totalMissing));
@@ -143,71 +140,68 @@ public class EventTooltip {
 
     private static int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
         Minecraft mc = Minecraft.getMinecraft();
-        GlStateManager.disableDepth();
-        RenderItem render = mc.getRenderItem();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        var renderItem = new RenderItem();
 
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-        render.renderItemIntoGUI(itemStack, x, y);
+        renderItem.renderItemIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
 
-        //String s1 = req == Integer.MAX_VALUE ? "\u221E" : TextFormatting.BOLD + Integer.toString((int) ((float) req));
+
         String s1 = req == Integer.MAX_VALUE ? "\u221E" : Integer.toString(req);
         int w1 = mc.fontRenderer.getStringWidth(s1);
         int color = 0xFFFFFF;
 
         boolean hasReq = req > 0;
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 8 - w1 / 4, y + (hasReq ? 12 : 14), 0);
-        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x + 8 - (float) w1 / 4, y + (hasReq ? 12 : 14), 0);
+        GL11.glScalef(0.5F, 0.5F, 0.5F);
         mc.fontRenderer.drawStringWithShadow(s1, 0, 0, color);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
 
         int missingCount = 0;
 
-        if (hasReq) {
-            //The commented out code will draw a red box around any items that you don't have enough of
-            //I personally didn't like it.
-            //if (count < req) {
-            //    GlStateManager.enableDepth();
-            //    Gui.drawRect(x - 1, y - 1, x + 17, y + 17, 0x44FF0000);
-            //    GlStateManager.disableDepth();
-            //}
-            if (count < req) {
-                String fs = Integer.toString(req - count);
-                //String s2 = TextFormatting.BOLD + "(" + fs + ")";
-                String s2 = "(" + fs + ")";
-                int w2 = mc.fontRenderer.getStringWidth(s2);
+        if (hasReq && count < req) {
+            String fs = Integer.toString(req - count);
+            String s2 = "(" + fs + ")";
+            int w2 = mc.fontRenderer.getStringWidth(s2);
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(x + 8 - w2 / 4, y + 17, 0);
-                GlStateManager.scale(0.5F, 0.5F, 0.5F);
-                mc.fontRenderer.drawStringWithShadow(s2, 0, 0, 0xFF0000);
-                GlStateManager.popMatrix();
-                missingCount = (req - count);
-            }
+            GL11.glPushMatrix();
+            GL11.glTranslatef(x + 8 - (float) w2 / 4, y + 17, 0);
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            mc.fontRenderer.drawStringWithShadow(fs, 0, 0, 0xFF0000);
+            GL11.glPopMatrix();
+            missingCount = (req - count);
         }
-        GlStateManager.enableDepth();
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         return missingCount;
     }
 
     public static Map<UniqueItem, Integer> makeRequiredList(String UUID) {//TODO unused
         Map<UniqueItem, Integer> itemCountMap = new HashMap<UniqueItem, Integer>();
-        Map<IBlockState, UniqueItem> IntStackMap = GadgetCopyPaste.getBlockMapIntState(PasteToolBufferBuilder.getTagFromUUID(UUID)).getIntStackMap();
+        Map<BlockState, UniqueItem> IntStackMap = GadgetCopyPaste.getBlockMapIntState(PasteToolBufferBuilder.getTagFromUUID(UUID)).getIntStackMap();
         List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
+
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = IntStackMap.get(blockMap.state);
-            NonNullList<ItemStack> drops = NonNullList.create();
-            blockMap.state.getBlock().getDrops(drops, Minecraft.getMinecraft().world, new ChunkCoordinates(), blockMap.state, 0);
+
+            List<ItemStack> drops = blockMap.state.getBlock().getDrops(Minecraft.getMinecraft().theWorld, 0, 0, 0, blockMap.state.getMetadata(), 0);
             int neededItems = 0;
             for (ItemStack drop : drops) {
                 if (drop.getItem().equals(uniqueItem.item)) {
                     neededItems++;
                 }
             }
+
             if (neededItems == 0) {
                 neededItems = 1;
             }
-            if (uniqueItem.item != Items.AIR) {
+
+            if (uniqueItem.item != null) {
                 boolean found = false;
                 for (Map.Entry<UniqueItem, Integer> entry : itemCountMap.entrySet()) {
                     if (entry.getKey().equals(uniqueItem)) {

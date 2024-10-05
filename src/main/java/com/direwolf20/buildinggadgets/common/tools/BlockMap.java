@@ -6,17 +6,17 @@ import net.minecraft.util.ChunkCoordinates;
 public class BlockMap {
 
     public final ChunkCoordinates pos;
-    public final Block state;
+    public final BlockState state;
     public int xOffset = 0;
     public int yOffset = 0;
     public int zOffset = 0;
 
-    public BlockMap(ChunkCoordinates blockPos, Block iBlockState) {
+    public BlockMap(ChunkCoordinates blockPos, BlockState iBlockState) {
         pos = blockPos;
         state = iBlockState;
     }
 
-    public BlockMap(ChunkCoordinates blockPos, Block iBlockState, int x, int y, int z) {
+    public BlockMap(ChunkCoordinates blockPos, BlockState iBlockState, int x, int y, int z) {
         pos = blockPos;
         state = iBlockState;
         xOffset = x;

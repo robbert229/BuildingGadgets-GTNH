@@ -1,100 +1,105 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-// import net.minecraft.block.state.IBlockState;
-
+import com.direwolf20.buildinggadgets.common.tools.BlockState;
+import com.direwolf20.buildinggadgets.common.tools.NBTTool;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nullable;
+
 public class ConstructionBlockTileEntity extends TileEntity {
-     //private IBlockState blockState;
-    // private IBlockState actualBlockState;
+    private BlockState blockState;
+    private BlockState actualBlockState;
 
-//     public boolean setBlockState(IBlockState state) {
-//     blockState = state;
-//     markDirtyClient();
-//     return true;
-//     }
-    //
-    // public boolean setActualBlockState(IBlockState state) {
-    // actualBlockState = state;
-    // markDirtyClient();
-    // return true;
-    // }
+    public boolean setBlockState(BlockState state) {
+        blockState = state;
+        markDirtyClient();
+        return true;
+    }
 
-    // @Nullable
-    // public IBlockState getBlockState() {
-    // if (blockState == null || blockState == Blocks.AIR.getDefaultState()) {
-    // return null;
-    // }
-    // return blockState;
-    // }
 
-    // @Nullable
-    // public IBlockState getActualBlockState() {
-    // if (actualBlockState == null || actualBlockState == Blocks.AIR.getDefaultState()) {
-    // return null;
-    // }
-    // return actualBlockState;
-    // }
+    public boolean setActualBlockState(BlockState state) {
+        actualBlockState = state;
+        markDirtyClient();
+        return true;
+    }
 
-    // @Override
-    // public void readFromNBT(NBTTagCompound compound) {
-    // super.readFromNBT(compound);
-    // blockState = NBTUtil.readBlockState(compound.getCompoundTag("blockState"));
-    // actualBlockState = NBTUtil.readBlockState(compound.getCompoundTag("actualBlockState"));
-    // markDirtyClient();
-    // }
+    @Nullable
+    public BlockState getBlockState() {
+        if (blockState == null || blockState.isAir()) {
+            return null;
+        }
 
-    // private void markDirtyClient() {
-    // markDirty();
-    // if (getWorld() != null) {
-    // IBlockState state = getWorld().getBlockState(getPos());
-    // getWorld().notifyBlockUpdate(getPos(), state, state, 3);
-    // }
-    // }
+        return blockState;
+    }
 
-    // @Override
-    // public NBTTagCompound getUpdateTag() {
-    // NBTTagCompound updateTag = super.getUpdateTag();
-    // writeToNBT(updateTag);
-    // return updateTag;
-    // }
+    @Nullable
+    public BlockState getActualBlockState() {
+        if (actualBlockState == null || actualBlockState.isAir()) {
+            return null;
+        }
 
-    // @Override
-    // public SPacketUpdateTileEntity getUpdatePacket() {
-    // NBTTagCompound nbtTag = new NBTTagCompound();
-    // writeToNBT(nbtTag);
-    // return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
-    // }
+        return actualBlockState;
+    }
 
-    // @Override
-    // public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-    // IBlockState oldMimicBlock = getBlockState();
-    // NBTTagCompound tagCompound = packet.getNbtCompound();
-    // super.onDataPacket(net, packet);
-    // readFromNBT(tagCompound);
-    // if (world.isRemote) {
-    // // If needed send a render update.
-    // if (getBlockState() != oldMimicBlock) {
-    // world.markBlockRangeForRenderUpdate(getPos(), getPos());
-    // }
-    // }
-    // }
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        blockState = NBTTool.blockFromCompound(compound.getCompoundTag("blockState"));
+        actualBlockState = NBTTool.blockFromCompound(compound.getCompoundTag("actualBlockState"));
+        markDirtyClient();
+    }
 
-    // @Override
-    // public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-    // super.writeToNBT(compound);
-    // if (blockState != null) {
-    // NBTTagCompound blockStateTag = new NBTTagCompound();
-    // NBTTagCompound actualBlockStateTag = new NBTTagCompound();
-    // if (blockState != null) {
-    // NBTUtil.writeBlockState(blockStateTag, blockState);
-    // compound.setTag("blockState", blockStateTag);
-    // }
-    // if (actualBlockState != null) {
-    // NBTUtil.writeBlockState(actualBlockStateTag, actualBlockState);
-    // compound.setTag("actualBlockState", actualBlockStateTag);
-    // }
-    // }
-    // return compound;
-    // }
+    private void markDirtyClient() {
+        markDirty();
+
+        var world = getWorldObj();
+        if (world != null) {
+            var state = WorldUtils.getBlockState(world, xCoord, yCoord, zCoord);
+            world.markBlockForUpdate(xCoord, yCoord, zCoord);
+
+            // TODO(johnrowl) maybe overload this?
+            world.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, state.getBlock());
+        }
+    }
+
+    @Override
+    public Packet getDescriptionPacket() {
+        NBTTagCompound nbtTag = new NBTTagCompound();
+        writeToNBT(nbtTag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbtTag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        BlockState oldMimicBlock = getBlockState();
+        NBTTagCompound tagCompound = packet.func_148857_g();
+
+        super.onDataPacket(net, packet);
+        readFromNBT(tagCompound);
+
+        if (getWorldObj().isRemote) {
+            if (getBlockState() != oldMimicBlock) {
+                getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            }
+        }
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        super.writeToNBT(compound);
+        if (blockState != null) {
+            var blockStateTag = NBTTool.blockToCompound(blockState);
+            compound.setTag("blockState", blockStateTag);
+
+            if (actualBlockState != null) {
+                NBTTagCompound actualBlockStateTag = NBTTool.blockToCompound(actualBlockState);
+                compound.setTag("actualBlockState", actualBlockStateTag);
+            }
+        }
+    }
 }

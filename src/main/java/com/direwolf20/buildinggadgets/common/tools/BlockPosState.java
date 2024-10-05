@@ -20,15 +20,13 @@ public class BlockPosState {
     private static final String NBT_BLOCK_STATE = "block_state";
     private static final String NBT_BLOCK_PASTE = "block_is_paste";
 
-    private ChunkCoordinates pos;
-    private Block block;
-    private int meta;
-    private boolean isPaste;
+    private final ChunkCoordinates pos;
+    private final BlockState blockState;
+    private final boolean isPaste;
 
-    public BlockPosState(ChunkCoordinates pos, Block block, int meta, boolean isPaste) {
+    public BlockPosState(ChunkCoordinates pos, BlockState blockState, boolean isPaste) {
         this.pos = pos;
-        this.meta = meta;
-        this.block = block;
+        this.blockState = blockState;
         this.isPaste = isPaste;
     }
 
@@ -36,12 +34,8 @@ public class BlockPosState {
         return pos;
     }
 
-    public Block getBlock() {
-        return block;
-    }
-
-    public int getMeta() {
-        return meta;
+    public BlockState getBlock() {
+        return blockState;
     }
 
     public boolean isPaste() {
@@ -61,7 +55,7 @@ public class BlockPosState {
         posCompound.setInteger("y", this.pos.posY);
         posCompound.setInteger("z", this.pos.posZ);
 
-        compound.setTag(NBT_BLOCK_STATE, NBTTool.blockToCompound(this.block, this.meta));
+        compound.setTag(NBT_BLOCK_STATE, NBTTool.blockToCompound(this.blockState));
         compound.setTag(NBT_BLOCK_POS, posCompound);
         compound.setBoolean(NBT_BLOCK_PASTE, this.isPaste);
 
@@ -87,10 +81,8 @@ public class BlockPosState {
         );
 
         // Retrieve block and metadata
-        var decoded = NBTTool.blockFromCompound(compound.getCompoundTag(NBT_BLOCK_STATE));
-
+        var blockState = NBTTool.blockFromCompound(compound.getCompoundTag(NBT_BLOCK_STATE));
         boolean isPaste = compound.getBoolean(NBT_BLOCK_PASTE);
-
-        return new BlockPosState(pos, decoded.getBlock(), decoded.getMeta(), isPaste);
+        return new BlockPosState(pos, blockState, isPaste);
     }
 }

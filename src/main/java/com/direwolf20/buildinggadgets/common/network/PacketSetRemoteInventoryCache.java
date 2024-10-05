@@ -3,28 +3,28 @@ package com.direwolf20.buildinggadgets.common.network;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import cpw.mods.fml.relauncher.Side;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
-import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
+//import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+
 
 public class PacketSetRemoteInventoryCache implements IMessage {
 
@@ -32,7 +32,8 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     private Multiset<UniqueItem> cache;
     private Pair<Integer, ChunkCoordinates> loc;
 
-    public PacketSetRemoteInventoryCache() {}
+    public PacketSetRemoteInventoryCache() {
+    }
 
     public PacketSetRemoteInventoryCache(Multiset<UniqueItem> cache, boolean isCopyPaste) {
         this.cache = cache;
@@ -48,7 +49,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public void fromBytes(ByteBuf buf) {
         isCopyPaste = buf.readBoolean();
         if (buf.readBoolean()) {
-            loc = new ImmutablePair<>(buf.readInt(), ChunkCoordinates.fromLong(buf.readLong()));
+            loc = new ImmutablePair<>(buf.readInt(), WorldUtils.fromLong(buf.readLong()));
             return;
         }
         int len = buf.readInt();
@@ -66,7 +67,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
         buf.writeBoolean(isRequest);
         if (isRequest) {
             buf.writeInt(loc.getLeft());
-            buf.writeLong(loc.getRight().toLong());
+            buf.writeLong(WorldUtils.toLong(loc.getRight()));
             return;
         }
         Set<Entry<UniqueItem>> items = cache.entrySet();
@@ -80,36 +81,44 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketSetRemoteInventoryCache, IMessage> {
+
         @Override
         public IMessage onMessage(PacketSetRemoteInventoryCache message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-                if (ctx.side == Side.SERVER) {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
-                    Set<UniqueItem> itemTypes = new HashSet<>();
-                    ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
-                    IItemHandler remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.world, player);
-                    if (remoteInventory != null) {
-                        for (int i = 0; i < remoteInventory.getSlots(); i++) {
-                            ItemStack stack = remoteInventory.getStackInSlot(i);
-                            if (!stack.isEmpty()) {
-                                Item item = stack.getItem();
-                                int meta = stack.getItemDamage();
-                                UniqueItem uniqueItem = new UniqueItem(item, meta);
-                                if (!itemTypes.contains(uniqueItem)) {
-                                    itemTypes.add(uniqueItem);
-                                    builder.addCopies(uniqueItem, InventoryManipulation.countInContainer(remoteInventory,item, meta));
-                                }
+            var player = ctx.getServerHandler().playerEntity;
+            MinecraftServer server = player.mcServer;
+
+
+            if (ctx.side == Side.SERVER) {
+                Set<UniqueItem> itemTypes = new HashSet<>();
+                ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
+                IInventory remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);
+
+                if (remoteInventory != null) {
+                    for (int i = 0; i < remoteInventory.getSizeInventory(); i++) {
+                        ItemStack stack = remoteInventory.getStackInSlot(i);
+                        if (stack != null) {
+                            Item item = stack.getItem();
+                            int meta = stack.getItemDamage();
+                            UniqueItem uniqueItem = new UniqueItem(item, meta);
+                            if (!itemTypes.contains(uniqueItem)) {
+                                itemTypes.add(uniqueItem);
+                                builder.addCopies(uniqueItem, InventoryManipulation.countInContainer(remoteInventory, item, meta));
                             }
                         }
                     }
-                    PacketHandler.INSTANCE.sendTo(new PacketSetRemoteInventoryCache(builder.build(), message.isCopyPaste), player);
-                    return;
                 }
-                if (message.isCopyPaste)
-                    EventTooltip.setCache(message.cache);
-                else
-                    ToolRenders.setInventoryCache(message.cache);
-            });
+
+                PacketHandler.INSTANCE.sendTo(new PacketSetRemoteInventoryCache(builder.build(), message.isCopyPaste), player);
+                return null;
+            }
+
+            if (message.isCopyPaste) {
+                EventTooltip.setCache(message.cache);
+            } else {
+                // TODO(johnrowl) re-enable ToolRenders.
+                //ToolRenders.setInventoryCache(message.cache);
+            }
+
             return null;
         }
     }

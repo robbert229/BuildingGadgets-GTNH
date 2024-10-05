@@ -8,17 +8,22 @@ package com.direwolf20.buildinggadgets.common.tools;
 // import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 // import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import cofh.lib.util.helpers.MathHelper;
+import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,15 +59,11 @@ public class GadgetUtils {
     private static Supplier<IInventory> remoteInventorySupplier;
 
     public static boolean mightBeLink(final String s) {
-        return LINK_STARTS.stream()
-                .anyMatch(s::startsWith);
+        return LINK_STARTS.stream().anyMatch(s::startsWith);
     }
 
     //
-    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
-            .comparingInt(ChunkCoordinateComparatorHelper::getX)
-            .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
-            .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
+    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator.comparingInt(ChunkCoordinateComparatorHelper::getX).thenComparingInt(ChunkCoordinateComparatorHelper::getY).thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
 
     public static String getStackErrorSuffix(ItemStack stack) {
         return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();
@@ -91,6 +92,7 @@ public class GadgetUtils {
 
         return tag;
     }
+
     //
     // public static void pushUndoList(ItemStack stack, UndoState undoState) {
     // //When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
@@ -165,54 +167,58 @@ public class GadgetUtils {
     // return undoState;
     // }
     //
-    // public static void setAnchor(ItemStack stack, List<ChunkCoordinates> coordinates) {
-    // //Store 1 set of ChunkCoordinates in NBT to anchor the Ghost Blocks in the world when the anchor key is pressed
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // NBTTagList coords = new NBTTagList();
-    // if (tagCompound == null) {
-    // tagCompound = new NBTTagCompound();
-    // }
-    // for (ChunkCoordinates coord : coordinates) {
-    // coords.appendTag(NBTUtil.createPosTag(coord));
-    // }
-    // tagCompound.setTag("anchorcoords", coords);
-    // stack.setTagCompound(tagCompound);
-    // }
-    //
-    // public static List<ChunkCoordinates> getAnchor(ItemStack stack) {
-    // //Return the list of coordinates in the NBT Tag for anchor Coordinates
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
-    // if (tagCompound == null) {
-    // setAnchor(stack, coordinates);
-    // tagCompound = stack.getTagCompound();
-    // return coordinates;
-    // }
-    // NBTTagList coordList = (NBTTagList) tagCompound.getTag("anchorcoords");
-    // if (coordList == null) {
-    // setAnchor(stack, coordinates);
-    // tagCompound = stack.getTagCompound();
-    // return coordinates;
-    // }
-    // if (coordList.tagCount() == 0) {
-    // return coordinates;
-    // }
-    // for (int i = 0; i < coordList.tagCount(); i++) {
-    // coordinates.add(NBTUtil.getPosFromTag(coordList.getCompoundTagAt(i)));
-    // }
-    // return coordinates;
-    // }
-    //
-    // public static void setToolRange(ItemStack stack, int range) {
-    // //Store the tool's range in NBT as an Integer
-    // NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
-    // tagCompound.setInteger("range", range);
-    // }
-    //
-    // public static int getToolRange(ItemStack stack) {
-    // NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
-    // return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
-    // }
+    public static void setAnchor(ItemStack stack, List<ChunkCoordinates> coordinates) {
+        //Store 1 set of ChunkCoordinates in NBT to anchor the Ghost Blocks in the world when the anchor key is pressed
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        NBTTagList coords = new NBTTagList();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+        }
+        for (ChunkCoordinates coord : coordinates) {
+            coords.appendTag(NBTTool.createPosTag(coord));
+        }
+        tagCompound.setTag("anchorcoords", coords);
+        stack.setTagCompound(tagCompound);
+    }
+
+    public static List<ChunkCoordinates> getAnchor(ItemStack stack) {
+        //Return the list of coordinates in the NBT Tag for anchor Coordinates
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
+
+        if (tagCompound == null) {
+            setAnchor(stack, coordinates);
+            tagCompound = stack.getTagCompound();
+            return coordinates;
+        }
+
+        NBTTagList coordList = (NBTTagList) tagCompound.getTag("anchorcoords");
+        if (coordList == null) {
+            setAnchor(stack, coordinates);
+            tagCompound = stack.getTagCompound();
+            return coordinates;
+        }
+
+        if (coordList.tagCount() == 0) {
+            return coordinates;
+        }
+
+        for (int i = 0; i < coordList.tagCount(); i++) {
+            coordinates.add(NBTTool.getPosFromTag(coordList.getCompoundTagAt(i)));
+        }
+        return coordinates;
+    }
+
+    public static void setToolRange(ItemStack stack, int range) {
+        //Store the tool's range in NBT as an Integer
+        NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
+        tagCompound.setInteger("range", range);
+    }
+
+    public static int getToolRange(ItemStack stack) {
+        NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
+        return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
+    }
 
     // public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,
     // IBlockState state) {
@@ -229,20 +235,22 @@ public class GadgetUtils {
     // setToolActualBlock(stack, rotateOrMirrorBlock(player, operation, getToolActualBlock(stack)));
     // }
     //
-    // private static void setToolBlock(ItemStack stack, @Nullable IBlockState state) {
-    // //Store the selected block in the tool's NBT
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // if (tagCompound == null) {
-    // tagCompound = new NBTTagCompound();
-    // }
-    // if (state == null) {
-    // state = Blocks.AIR.getDefaultState();
-    // }
-    // NBTTagCompound stateTag = new NBTTagCompound();
-    // NBTUtil.writeBlockState(stateTag, state);
-    // tagCompound.setTag("blockstate", stateTag);
-    // stack.setTagCompound(tagCompound);
-    // }
+    private static void setToolBlock(ItemStack stack, @Nullable BlockState state) {
+        //Store the selected block in the tool's NBT
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+        }
+
+        if (state == null) {
+            state = new BlockState(Blocks.air, 0);
+        }
+
+        var stateTag = NBTTool.blockToCompound(state);
+        tagCompound.setTag("blockstate", stateTag);
+        stack.setTagCompound(tagCompound);
+    }
+
     //
     // private static void setToolActualBlock(ItemStack stack, @Nullable IBlockState state) {
     // //Store the selected block actual state in the tool's NBT
@@ -259,24 +267,30 @@ public class GadgetUtils {
     // stack.setTagCompound(tagCompound);
     // }
     //
-    // public static IBlockState getToolBlock(ItemStack stack) {
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // if (tagCompound == null) {
-    // setToolBlock(stack, Blocks.AIR.getDefaultState());
-    // return Blocks.AIR.getDefaultState();
-    // }
-    // return NBTUtil.readBlockState(tagCompound.getCompoundTag("blockstate"));
-    // }
-    //
-    // public static IBlockState getToolActualBlock(ItemStack stack) {
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // if (tagCompound == null) {
-    // setToolBlock(stack, Blocks.AIR.getDefaultState());
-    // tagCompound = stack.getTagCompound();
-    // return Blocks.AIR.getDefaultState();
-    // }
-    // return NBTUtil.readBlockState(tagCompound.getCompoundTag("actualblockstate"));
-    // }
+    public static BlockState getToolBlock(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            var air = new BlockState(Blocks.air, 0);
+            setToolBlock(stack, air);
+            return air;
+        }
+
+        return NBTTool.blockFromCompound(tagCompound.getCompoundTag("blockstate"));
+    }
+
+
+    public static BlockState getToolActualBlock(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            var air = new BlockState(Blocks.air, 0);
+            setToolBlock(stack, air);
+            tagCompound = stack.getTagCompound();
+            return air;
+        }
+
+        return NBTTool.blockFromCompound(tagCompound.getCompoundTag("actualblockstate"));
+    }
+
     //
     // public static void selectBlock(ItemStack stack, EntityPlayer player) {
     // //Used to find which block the player is looking at, and store it in NBT on the tool.
@@ -382,17 +396,14 @@ public class GadgetUtils {
      * Call {@link #clearCachedRemoteInventory clearCachedRemoteInventory} when done using this method
      */
     @Nullable
-    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation
-            operation) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
         if (remoteInventorySupplier == null) {
             remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
                 Integer dim = getDIMFromNBT(tool, "boundTE");
-                if (dim == null)
-                    return null;
+                if (dim == null) return null;
 
                 // Check if the Dimension actually exists. (Thanks RFTools...)
-                if (DimensionManager.getWorld(dim) == null)
-                    return null;
+                if (DimensionManager.getWorld(dim) == null) return null;
 
                 ChunkCoordinates pos = getPOSFromNBT(tool, "boundTE");
                 return pos == null ? null : getRemoteInventory(pos, dim, world, player, operation);
@@ -407,8 +418,7 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player,
-                                                NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
         MinecraftServer server = MinecraftServer.getServer();
         if (server == null) {
             return null;
@@ -423,8 +433,7 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player,
-                                                NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player, NetworkIO.Operation operation) {
         TileEntity te = world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
         if (te == null) {
             return null;
@@ -483,8 +492,7 @@ public class GadgetUtils {
         stack.setTagCompound(tagCompound);
     }
 
-    public static void writePOSToNBT(NBTTagCompound tagCompound, @Nullable ChunkCoordinates pos, String tagName,
-                                     Integer dim) {
+    public static void writePOSToNBT(NBTTagCompound tagCompound, @Nullable ChunkCoordinates pos, String tagName, Integer dim) {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
@@ -626,8 +634,7 @@ public class GadgetUtils {
         Multiset<UniqueItem> itemCountMap = HashMultiset.create(tagList.tagCount());
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-            UniqueItem uniqueItem = new UniqueItem(Item.getItemById(tagCompound.getInteger("item")),
-                    tagCompound.getInteger("meta"));
+            UniqueItem uniqueItem = new UniqueItem(Item.getItemById(tagCompound.getInteger("item")), tagCompound.getInteger("meta"));
             int count = tagCompound.getInteger("count");
             itemCountMap.setCount(uniqueItem, count);
         }

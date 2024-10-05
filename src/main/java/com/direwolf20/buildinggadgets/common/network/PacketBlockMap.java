@@ -25,7 +25,8 @@ public class PacketBlockMap implements IMessage {
         ByteBufUtils.writeTag(buf, tag);
     }
 
-    public PacketBlockMap() {}
+    public PacketBlockMap() {
+    }
 
     public PacketBlockMap(NBTTagCompound tagCompound) {
         tag = (NBTTagCompound) tagCompound.copy();
@@ -50,8 +51,8 @@ public class PacketBlockMap implements IMessage {
             }
             String UUID = message.tag.getString("UUID");
             PasteToolBufferBuilder.addToMap(UUID, message.tag);
-            PasteToolBufferBuilder.addMapToBuffer(UUID);
-            // System.out.println("Sent blockmap for: " + UUID);
+            // TODO(johnrowl) re-enable buffer
+//            PasteToolBufferBuilder.addMapToBuffer(UUID);
         }
     }
 }

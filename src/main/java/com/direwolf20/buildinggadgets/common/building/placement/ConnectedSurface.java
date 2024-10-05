@@ -41,9 +41,11 @@ public final class ConnectedSurface implements IPlacementSequence {
         int range, boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range)
             .getBoundingBox();
+
         // TODO(johnrowl) offset's refactor here is suspicious.
+        // After revisiting, maybe not?
         // return create(world, searchingRegion, pos -> pos.offset(side), searchingCenter, side, fuzzy);
-        return create(world, searchingRegion, pos -> WorldUtils.offset(pos, side, 1), searchingCenter, side, fuzzy);
+        return create(world, searchingRegion, pos -> WorldUtils.offset(pos, side), searchingCenter, side, fuzzy);
     }
 
     public static ConnectedSurface create(IBlockAccess world, Region searchingRegion,

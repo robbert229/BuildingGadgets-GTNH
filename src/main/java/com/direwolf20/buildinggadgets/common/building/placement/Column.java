@@ -5,6 +5,7 @@ import java.util.Spliterator;
 
 import javax.annotation.Nonnull;
 
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
@@ -43,7 +44,7 @@ public final class Column implements IPlacementSequence {
      * @param length length of the column, will be floored to an odd number if it is not one already
      */
     public static Column centerAt(ChunkCoordinates center, EnumFacing axis, int length) {
-        EnumFacing negative = WorldUtils.getOppositeEnumFacing(axis);
+        EnumFacing negative = DirectionUtils.getOppositeEnumFacing(axis);
         ChunkCoordinates base = WorldUtils.offset(center, negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
         return new Column(base, WorldUtils.offset(base, axis, MathTool.floorToOdd(length) - 1));

@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
@@ -11,7 +11,7 @@ import com.direwolf20.buildinggadgets.common.building.modes.ExchangingVerticalCo
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -79,11 +79,11 @@ public enum ExchangingModes {
         return mode.createExecutionContext(player, hit, sideHit, tool).collectFilteredSequence(world, tool, player, initial);
     }
 
-    public static BiPredicate<ChunkCoordinates, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
-        IBlockState initialBlockState = world.getBlockState(initial);
-        IBlockState target = GadgetUtils.getToolBlock(tool);
+    public static BiPredicate<ChunkCoordinates, BlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
+        BlockState initialBlockState = WorldUtils.getBlockState(world, initial);
+        BlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
-            IBlockState worldBlockState = world.getBlockState(pos);
+            BlockState worldBlockState = WorldUtils.getBlockState(world, pos);
 
             // Don't try to replace for the same block
             if (worldBlockState == target)
@@ -94,26 +94,33 @@ public enum ExchangingModes {
                 return false;
 
             // If the target is already enqueued, don't replace it
-            if (worldBlockState == ModBlocks.effectBlock.getDefaultState())
+            if (worldBlockState.getBlock().equals(ModBlocks.effectBlock)) {
                 return false;
+            }
 
             // Only replace existing blocks, don't place more
-            if (worldBlockState.getBlock().isAir(worldBlockState, world, pos))
+            if (worldBlockState.isAir(worldBlockState, world, pos))
                 return false;
 
+            // TODO(johnrowl) re-enable the black list.
             // Messy, lovely.
-            if( SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock().getDefaultState().getBlock()) )
-                return false;
+//            if (SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock().getDefaultState().getBlock()))
+//                return false;
 
-            TileEntity tile = world.getTileEntity(pos.posX, pos.posY,pos.posZ);
+            TileEntity tile = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
             // Only replace construction block with same block state
-            if (tile instanceof ConstructionBlockTileEntity && ((ConstructionBlockTileEntity) tile).getBlockState() == state)
+            if (tile instanceof ConstructionBlockTileEntity cbte &&
+                    cbte.getBlockMetadata() == state.getMetadata() &&
+                    cbte.blockType.equals(state.getBlock())) {
                 return false;
-            else if (tile != null) // Otherwise if the block has a tile entity, ignore it
+            } else if (tile != null) {
+                // Otherwise if the block has a tile entity, ignore it
+
                 return false;
+            }
 
             // Bedrock, End Portal Frame, etc.
-            if (worldBlockState.getBlockHardness(world, pos) < 0)
+            if (worldBlockState.getBlock().getBlockHardness(world, pos.posX, pos.posY, pos.posZ) < 0)
                 return false;
 
             // Don't replace liquids

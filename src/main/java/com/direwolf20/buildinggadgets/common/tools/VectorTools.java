@@ -6,10 +6,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
@@ -48,6 +45,37 @@ public class VectorTools {
         if (lookingAt == null) return null;
 
         return VectorTools.getPosFromMovingObjectPosition(lookingAt);
+    }
+
+    public static boolean isAxisVertical(EnumFacing facing) {
+        return facing == EnumFacing.DOWN || facing == EnumFacing.UP;
+    }
+
+    // Helper function to get horizontal facing from player's yaw
+    public static EnumFacing getHorizontalFacingFromYaw(float yaw) {
+        int direction = MathHelper.floor_double((yaw * 4.0F / 360.0F) + 0.5D) & 3;
+
+        switch (direction) {
+            case 0: return EnumFacing.SOUTH;
+            case 1: return EnumFacing.WEST;
+            case 2: return EnumFacing.NORTH;
+            case 3: return EnumFacing.EAST;
+            default: return EnumFacing.NORTH; // Fallback
+        }
+    }
+
+    public static EnumFacing getHorizontalFacingFromPlayer(EntityPlayer player) {
+        return getHorizontalFacingFromYaw(player.rotationYaw);
+    }
+
+    public static EnumFacing rotateY(EnumFacing facing) {
+        switch (facing) {
+            case NORTH: return EnumFacing.EAST;
+            case EAST: return EnumFacing.SOUTH;
+            case SOUTH: return EnumFacing.WEST;
+            case WEST: return EnumFacing.NORTH;
+            default: return facing; // If it's vertical (UP/DOWN), no rotation is applied
+        }
     }
 
     public static int getAxisValue(ChunkCoordinates pos, EnumFacing axis) {

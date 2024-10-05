@@ -1,10 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Grid;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.common.tools.VectorTools;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -34,8 +36,8 @@ public class GridMode extends AtopSupportedMode {
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        EnumFacing locked = sideHit.getAxis().isVertical() ? sideHit : EnumFacing.UP;
-        return hit.offset(locked);
+        EnumFacing locked = VectorTools.isAxisVertical(sideHit) ? sideHit : EnumFacing.UP;
+        return WorldUtils.offset(hit, locked);
     }
 
     @Override

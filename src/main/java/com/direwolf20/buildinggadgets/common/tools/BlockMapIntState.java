@@ -17,52 +17,23 @@ import java.util.Map;
 
 public class BlockMapIntState {
 
-    public Map<Short, BlockMeta> intStateMap;
-    public Map<BlockMeta, UniqueItem> intStackMap;
+    public Map<Short, BlockState> intStateMap;
+    public Map<BlockState, UniqueItem> intStackMap;
 
     public BlockMapIntState() {
-        intStateMap = new HashMap<Short, BlockMeta>();
-        intStackMap = new HashMap<BlockMeta, UniqueItem>();
+        intStateMap = new HashMap<Short, BlockState>();
+        intStackMap = new HashMap<BlockState, UniqueItem>();
     }
 
-    // Wrapper class to hold block and metadata, which replaces IBlockState
-    public static class BlockMeta {
-        public final Block block;
-        public final int meta;
-
-        public BlockMeta(Block block, int meta) {
-            this.block = block;
-            this.meta = meta;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            BlockMeta blockMeta = (BlockMeta) obj;
-
-            if (meta != blockMeta.meta) return false;
-            return block == blockMeta.block;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = block.hashCode();
-            result = 31 * result + meta;
-            return result;
-        }
-    }
-
-    public Map<Short, BlockMeta> getIntStateMap() {
+    public Map<Short, BlockState> getIntStateMap() {
         return intStateMap;
     }
 
-    public Map<BlockMeta, UniqueItem> getIntStackMap() {
+    public Map<BlockState, UniqueItem> getIntStackMap() {
         return intStackMap;
     }
 
-    public void addToMap(BlockMeta mapState) {
+    public void addToMap(BlockState mapState) {
         if (findSlot(mapState) == -1) {
             short nextSlot = (short) intStateMap.size();
             nextSlot++;
@@ -70,14 +41,14 @@ public class BlockMapIntState {
         }
     }
 
-    public void addToStackMap(UniqueItem uniqueItem, BlockMeta blockState) {
+    public void addToStackMap(UniqueItem uniqueItem, BlockState blockState) {
         if (findStackSlot(uniqueItem) != blockState) {
             intStackMap.put(blockState, uniqueItem);
         }
     }
 
-    public Short findSlot(BlockMeta mapState) {
-        for (Map.Entry<Short, BlockMeta> entry : intStateMap.entrySet()) {
+    public Short findSlot(BlockState mapState) {
+        for (Map.Entry<Short, BlockState> entry : intStateMap.entrySet()) {
             if (entry.getValue() == mapState) {
                 return entry.getKey();
             }
@@ -86,8 +57,8 @@ public class BlockMapIntState {
     }
 
     @Nullable
-    private BlockMeta findStackSlot(UniqueItem uniqueItem) {
-        for (Map.Entry<BlockMeta, UniqueItem> entry : intStackMap.entrySet()) {
+    private BlockState findStackSlot(UniqueItem uniqueItem) {
+        for (Map.Entry<BlockState, UniqueItem> entry : intStackMap.entrySet()) {
             if (entry.getValue().item == uniqueItem.item && entry.getValue().meta == uniqueItem.meta) {
                 return entry.getKey();
             }
@@ -95,32 +66,32 @@ public class BlockMapIntState {
         return null;
     }
 
-    public BlockMeta getStateFromSlot(Short slot) {
+    public BlockState getStateFromSlot(Short slot) {
         return intStateMap.get(slot);
     }
 
-    public UniqueItem getStackFromSlot(BlockMeta blockState) {//TODO unused
+    public UniqueItem getStackFromSlot(BlockState blockState) {//TODO unused
         return intStackMap.get(blockState);
     }
 
-    public Map<Short, BlockMeta> getIntStateMapFromNBT(NBTTagList tagList) {
-        intStateMap = new HashMap<Short, BlockMeta>();
+    public Map<Short, BlockState> getIntStateMapFromNBT(NBTTagList tagList) {
+        intStateMap = new HashMap<Short, BlockState>();
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
 
             var mapSlot = compound.getShort("mapSlot");
             var decoded = NBTTool.blockFromCompound(compound.getCompoundTag("mapState"));
 
-            intStateMap.put(mapSlot, new BlockMeta(decoded.getBlock(), decoded.getMeta()));
+            intStateMap.put(mapSlot, new BlockState(decoded.getBlock(), decoded.getMetadata()));
         }
         return intStateMap;
     }
 
     public NBTTagList putIntStateMapIntoNBT() {
         NBTTagList tagList = new NBTTagList();
-        for (Map.Entry<Short, BlockMeta> entry : intStateMap.entrySet()) {
+        for (Map.Entry<Short, BlockState> entry : intStateMap.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
-            NBTTagCompound state = NBTTool.blockToCompound(entry.getValue().block, entry.getValue().meta);
+            NBTTagCompound state = NBTTool.blockToCompound(entry.getValue());
             compound.setShort("mapSlot", entry.getKey());
             compound.setTag("mapState", state);
             tagList.appendTag(compound);
@@ -128,13 +99,13 @@ public class BlockMapIntState {
         return tagList;
     }
 
-    public Map<BlockMeta, UniqueItem> getIntStackMapFromNBT(NBTTagList tagList) {
-        intStackMap = new HashMap<BlockMeta, UniqueItem>();
+    public Map<BlockState, UniqueItem> getIntStackMapFromNBT(NBTTagList tagList) {
+        intStackMap = new HashMap<BlockState, UniqueItem>();
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
 
             var state = NBTTool.blockFromCompound(compound.getCompoundTag("state"));
-            var bm = new BlockMeta(state.getBlock(), state.getMeta());
+            var bm = new BlockState(state.getBlock(), state.getMetadata());
             var ui = new UniqueItem(Item.getItemById(compound.getInteger("item")), compound.getInteger("meta"));
 
             intStackMap.put(bm, ui);
@@ -145,13 +116,13 @@ public class BlockMapIntState {
 
     public NBTTagList putIntStackMapIntoNBT() {
         NBTTagList tagList = new NBTTagList();
-        for (Map.Entry<BlockMeta, UniqueItem> entry : intStackMap.entrySet()) {
+        for (Map.Entry<BlockState, UniqueItem> entry : intStackMap.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger("item", Item.getIdFromItem(entry.getValue().item));
             compound.setInteger("meta", entry.getValue().meta);
 
             var state = entry.getKey();
-            compound.setTag("state", NBTTool.blockToCompound(state.block, state.meta));
+            compound.setTag("state", NBTTool.blockToCompound(state));
             tagList.appendTag(compound);
         }
 
@@ -159,17 +130,17 @@ public class BlockMapIntState {
     }
 
     @Nonnull
-    public static UniqueItem blockStateToUniqueItem(BlockMeta state, EntityPlayer player, ChunkCoordinates pos) {
+    public static UniqueItem blockStateToUniqueItem(BlockState state, EntityPlayer player, ChunkCoordinates pos) {
         ItemStack itemStack;
 
         try {
-            itemStack = state.block.getPickBlock(null, player.worldObj, pos.posX, pos.posY, pos.posZ, player);
+            itemStack = state.getBlock().getPickBlock(null, player.worldObj, pos.posX, pos.posY, pos.posZ, player);
         } catch (Exception e) {
-            itemStack = InventoryManipulation.getSilkTouchDrop(state.block, state.meta);
+            itemStack = InventoryManipulation.getSilkTouchDrop(state.getBlock(), state.getMetadata());
         }
 
         if (itemStack == null) {
-            itemStack = InventoryManipulation.getSilkTouchDrop(state.block, state.meta);
+            itemStack = InventoryManipulation.getSilkTouchDrop(state.getBlock(), state.getMetadata());
         }
 
         if (itemStack != null) {
@@ -181,7 +152,7 @@ public class BlockMapIntState {
 
     public void makeStackMapFromStateMap(EntityPlayer player) {
         intStackMap.clear();
-        for (Map.Entry<Short, BlockMeta> entry : intStateMap.entrySet()) {
+        for (Map.Entry<Short, BlockState> entry : intStateMap.entrySet()) {
             try {
                 intStackMap.put(entry.getValue(), blockStateToUniqueItem(entry.getValue(), player, new ChunkCoordinates(0, 0, 0)));
             } catch (IllegalArgumentException e) {

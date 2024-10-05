@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.Region;
@@ -37,8 +37,8 @@ public class ExchangingSurfaceMode extends AbstractMode {
         boolean fuzzy = GadgetGeneric.getFuzzy(tool);
         Region region = Wall.clickedSide(hit, sideHit, range).getBoundingBox();
         if (GadgetGeneric.getConnectedArea(tool))
-            return ConnectedSurface.create(player.world, region, pos -> pos, hit, sideHit, fuzzy);
-        return Surface.create(player.world, hit, region, pos -> pos, fuzzy);
+            return ConnectedSurface.create(player.worldObj, region, pos -> pos, hit, sideHit, fuzzy);
+        return Surface.create(player.worldObj, hit, region, pos -> pos, fuzzy);
     }
 
     @Override

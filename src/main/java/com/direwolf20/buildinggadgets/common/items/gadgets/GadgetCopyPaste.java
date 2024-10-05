@@ -157,33 +157,33 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return GadgetUtils.getDIMFromNBT(stack, "lastBuild");
     }
 
-    //
-//    public static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound) {
-//        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, "startPos"));
-//    }
-//
-//    private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
-//        List<BlockMap> blockMap = new ArrayList<BlockMap>();
-//        if (tagCompound == null) {
-//            tagCompound = new NBTTagCompound();
-//        }
-//        NBTTagList MapIntStateTag = (NBTTagList) tagCompound.getTag("mapIntState");
-//        if (MapIntStateTag == null) {
-//            MapIntStateTag = new NBTTagList();
-//        }
-//
-//        BlockMapIntState MapIntState = new BlockMapIntState();
-//        MapIntState.getIntStateMapFromNBT(MapIntStateTag);
-//        int[] posIntArray = tagCompound.getIntArray("posIntArray");
-//        int[] stateIntArray = tagCompound.getIntArray("stateIntArray");
-//        for (int i = 0; i < posIntArray.length; i++) {
-//            int p = posIntArray[i];
-//            ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
-//            short IntState = (short) stateIntArray[i];
-//            blockMap.add(new BlockMap(pos, MapIntState.getStateFromSlot(IntState), (byte) ((p & 0xff0000) >> 16), (byte) ((p & 0x00ff00) >> 8), (byte) (p & 0x0000ff)));
-//        }
-//        return blockMap;
-//    }
+
+    public static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound) {
+        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, "startPos"));
+    }
+
+    private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
+        List<BlockMap> blockMap = new ArrayList<BlockMap>();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+        }
+        NBTTagList MapIntStateTag = (NBTTagList) tagCompound.getTag("mapIntState");
+        if (MapIntStateTag == null) {
+            MapIntStateTag = new NBTTagList();
+        }
+
+        BlockMapIntState MapIntState = new BlockMapIntState();
+        MapIntState.getIntStateMapFromNBT(MapIntStateTag);
+        int[] posIntArray = tagCompound.getIntArray("posIntArray");
+        int[] stateIntArray = tagCompound.getIntArray("stateIntArray");
+        for (int i = 0; i < posIntArray.length; i++) {
+            int p = posIntArray[i];
+            ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
+            short IntState = (short) stateIntArray[i];
+            blockMap.add(new BlockMap(pos, MapIntState.getStateFromSlot(IntState), (byte) ((p & 0xff0000) >> 16), (byte) ((p & 0x00ff00) >> 8), (byte) (p & 0x0000ff)));
+        }
+        return blockMap;
+    }
 
     public static BlockMapIntState getBlockMapIntState(@Nullable NBTTagCompound tagCompound) {
         if (tagCompound == null) {

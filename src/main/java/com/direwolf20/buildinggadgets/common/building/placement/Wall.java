@@ -5,6 +5,7 @@ import java.util.Spliterator;
 
 import javax.annotation.Nonnull;
 
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
@@ -61,7 +62,7 @@ public final class Wall implements IPlacementSequence {
 
         if (extendingSize != 0) {
 
-            if (WorldUtils.isEnumFacingPositive(extendingSide)) {
+            if (DirectionUtils.isEnumFacingPositive(extendingSide)) {
                 this.region = new Region(
                     region.getMin(),
                     WorldUtils.offset(region.getMax(), extendingSide, extendingSize));

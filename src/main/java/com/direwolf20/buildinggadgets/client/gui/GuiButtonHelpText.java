@@ -13,9 +13,11 @@ public class GuiButtonHelpText extends GuiButton implements IHoverHelpText {
 
     @Override
     public boolean isHovered(int mouseX, int mouseY) {
-        return isMouseOver();
+        return mouseX >= this.xPosition &&
+                mouseY >= this.yPosition &&
+                mouseX < this.xPosition + this.width &&
+                mouseY < this.yPosition + this.height;
     }
-
     @Override
     public String getHoverHelpText() {
         return IHoverHelpText.get("button." + helpTextKey);
@@ -23,7 +25,7 @@ public class GuiButtonHelpText extends GuiButton implements IHoverHelpText {
 
     @Override
     public void drawRect(Gui gui, int color) {
-        gui.drawRect(x, y, x + width, y + height, color);
+        drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, color);
     }
 
 }

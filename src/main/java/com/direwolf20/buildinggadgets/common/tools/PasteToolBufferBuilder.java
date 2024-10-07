@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 import org.lwjgl.opengl.GL11;
 
+import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.TEMPLATE_COPY_COUNT;
+
 public class PasteToolBufferBuilder {
 
     private static Map<String, NBTTagCompound> tagMap = new HashMap<String, NBTTagCompound>();
@@ -21,7 +23,7 @@ public class PasteToolBufferBuilder {
     private static int getCopyCounter(String UUID) {
         if (tagMap.containsKey(UUID)) {
             return tagMap.get(UUID)
-                    .getInteger("copycounter");
+                    .getInteger(TEMPLATE_COPY_COUNT);
         }
         return -1;
     }

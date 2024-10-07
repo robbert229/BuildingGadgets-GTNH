@@ -2,7 +2,11 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManager;
+
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.MathHelper;
 
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModBlocks {
@@ -19,8 +23,8 @@ public class ModBlocks {
     @GameRegistry.ObjectHolder("constructionblockpowder")
     public static ConstructionBlockPowder constructionBlockPowder;
 
-    // @GameRegistry.ObjectHolder("templatemanager")
-    // public static TemplateManager templateManager;
+    @GameRegistry.ObjectHolder("templatemanager")
+    public static TemplateManager templateManager;
 
     public static void init() {
         constructionBlockDense = new ConstructionBlockDense();
@@ -34,5 +38,8 @@ public class ModBlocks {
 
         effectBlock = new EffectBlock();
         GameRegistry.registerBlock(effectBlock, effectBlock.getUnlocalizedName());
+
+        templateManager = new TemplateManager();
+        GameRegistry.registerBlock(templateManager, templateManager.getUnlocalizedName());
     }
 }

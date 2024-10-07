@@ -24,12 +24,16 @@ public class WorldUtils {
         return new ChunkCoordinates(first.posX + second.posX, first.posY + second.posY, first.posZ + second.posZ);
     }
 
+    public static ChunkCoordinates add(int firstX, int firstY, int firstZ, int secondX, int secondY, int secondZ) {
+        return new ChunkCoordinates(firstX + secondX, firstY + secondY, firstZ + secondZ);
+    }
+
     public static ChunkCoordinates up(ChunkCoordinates coordinates, int y) {
         return new ChunkCoordinates(coordinates.posX, coordinates.posY + y, coordinates.posZ);
     }
 
     public static ChunkCoordinates up(ChunkCoordinates coordinates) {
-    return up(coordinates, 1);
+        return up(coordinates, 1);
     }
 
     public static ChunkCoordinates down(ChunkCoordinates coordinates) {

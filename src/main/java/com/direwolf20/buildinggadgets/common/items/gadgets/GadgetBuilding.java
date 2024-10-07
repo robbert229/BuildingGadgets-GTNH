@@ -42,11 +42,11 @@ public class GadgetBuilding extends GadgetGeneric {
         return SyncedConfig.damageCostBuilder;
     }
 
-    // private static void setToolMode(ItemStack tool, BuildingModes mode) {
-    // //Store the tool's mode in NBT as a string
-    // NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
-    // tagCompound.setString("mode", mode.getRegistryName());
-    // }
+     private static void setToolMode(ItemStack tool, BuildingModes mode) {
+     //Store the tool's mode in NBT as a string
+     NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);
+     tagCompound.setString("mode", mode.getRegistryName());
+     }
 
     public static BuildingModes getToolMode(ItemStack tool) {
         NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);

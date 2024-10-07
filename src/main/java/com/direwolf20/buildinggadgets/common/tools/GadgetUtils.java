@@ -8,6 +8,8 @@ package com.direwolf20.buildinggadgets.common.tools;
 // import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 // import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +29,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -73,17 +76,22 @@ public class GadgetUtils {
         return "the following stack: [" + stack + "]";
     }
 
-    //
-    // @Nullable
-    // public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
-    // throws IOException {
-    // NBTTagCompound withText = name != null && !name.isEmpty() ? compound.copy() : compound;
-    // if (name != null && !name.isEmpty()) withText.setString("name", name);
-    // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    // CompressedStreamTools.writeCompressed(withText, baos);
-    // return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
-    // }
-    //
+
+    @Nullable
+    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
+            throws IOException {
+        NBTTagCompound withText = name != null && !name.isEmpty()
+                ? (NBTTagCompound) compound.copy()
+                : compound;
+        if (name != null && !name.isEmpty()) {
+            withText.setString("name", name);
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CompressedStreamTools.writeCompressed(withText, baos);
+        return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
+    }
+
 
     public static NBTTagCompound getStackTag(ItemStack stack) {
         NBTTagCompound tag = stack.getTagCompound();
@@ -538,6 +546,7 @@ public class GadgetUtils {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
+
         if (string.equals(null)) {
             if (tagCompound.getTag(tagName) != null) {
                 tagCompound.removeTag(tagName);

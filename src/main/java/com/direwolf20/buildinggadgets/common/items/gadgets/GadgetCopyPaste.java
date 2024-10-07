@@ -3,45 +3,31 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 //import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 //import com.direwolf20.buildinggadgets.common.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
-import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 //import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 //import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tools.*;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 //import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 //import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 //import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 //import net.minecraft.util.EnumFacing.Axis;
 //import net.minecraft.util.text.TextComponentString;
 //import net.minecraft.util.text.TextComponentTranslation;
 //import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.BlockSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+
+import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.GADGET_START_POS;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -159,7 +145,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
 
     public static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound) {
-        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, "startPos"));
+        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, GADGET_START_POS));
     }
 
     private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
@@ -347,7 +333,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 //        tagCompound.setIntArray("posIntArray", posIntArray);
 //        tagCompound.setIntArray("stateIntArray", stateIntArray);
 //        tool.incrementCopyCounter(stack);
-//        tagCompound.setInteger("copycounter", tool.getCopyCounter(stack));
+//        tagCompound.setInteger(TEMPLATE_COPY_COUNT, tool.getCopyCounter(stack));
 //        worldSave.addToMap(tool.getUUID(stack), tagCompound);
 //        worldSave.markForSaving();
 //        PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
@@ -451,8 +437,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 //        tagCompound.setIntArray("posIntArray", posIntArray);
 //        tagCompound.setIntArray("stateIntArray", stateIntArray);
 //
-//        tagCompound.setTag("startPos", NBTUtil.createPosTag(start));
-//        tagCompound.setTag("endPos", NBTUtil.createPosTag(end));
+//        tagCompound.setTag(GADGET_START_POS, NBTUtil.createPosTag(start));
+//        tagCompound.setTag(GADGET_END_POS, NBTUtil.createPosTag(end));
 //        tagCompound.setInteger("dim", player.dimension);
 //        tagCompound.setString("UUID", tool.getUUID(stack));
 //        tagCompound.setString("owner", player.getName());

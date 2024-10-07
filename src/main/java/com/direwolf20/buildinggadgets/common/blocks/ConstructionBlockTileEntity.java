@@ -1,69 +1,69 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-import javax.annotation.Nullable;
-
 public class ConstructionBlockTileEntity extends TileEntity {
-    private BlockState blockState;
-    private BlockState actualBlockState;
+    private Block block;
+    private int blockMeta;
+    private Block actualBlock;
+    private int actualBlockMeta;
 
-    public boolean setBlockState(BlockState state) {
-        blockState = state;
+    public boolean setBlockState(Block block, int meta) {
+        this.block = block;
+        this.blockMeta = meta;
         markDirtyClient();
         return true;
     }
 
-
-    public boolean setActualBlockState(BlockState state) {
-        actualBlockState = state;
+    public boolean setActualBlockState(Block block, int meta) {
+        this.actualBlock = block;
+        this.actualBlockMeta = meta;
         markDirtyClient();
         return true;
     }
 
-    @Nullable
-    public BlockState getBlockState() {
-        if (blockState == null || blockState.isAir()) {
+    public Block getBlock() {
+        if (block == null || block == Blocks.air) {
             return null;
         }
-
-        return blockState;
+        return block;
     }
 
-    @Nullable
-    public BlockState getActualBlockState() {
-        if (actualBlockState == null || actualBlockState.isAir()) {
+    public int getBlockMeta() {
+        return blockMeta;
+    }
+
+    public Block getActualBlock() {
+        if (actualBlock == null || actualBlock == Blocks.air) {
             return null;
         }
+        return actualBlock;
+    }
 
-        return actualBlockState;
+    public int getActualBlockMeta() {
+        return actualBlockMeta;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        blockState = NBTTool.blockFromCompound(compound.getCompoundTag("blockState"));
-        actualBlockState = NBTTool.blockFromCompound(compound.getCompoundTag("actualBlockState"));
+        this.block = Block.getBlockById(compound.getInteger("blockId"));
+        this.blockMeta = compound.getInteger("blockMeta");
+        this.actualBlock = Block.getBlockById(compound.getInteger("actualBlockId"));
+        this.actualBlockMeta = compound.getInteger("actualBlockMeta");
         markDirtyClient();
     }
 
     private void markDirtyClient() {
         markDirty();
-
-        var world = getWorldObj();
-        if (world != null) {
-            var state = WorldUtils.getBlockState(world, xCoord, yCoord, zCoord);
-            world.markBlockForUpdate(xCoord, yCoord, zCoord);
-
-            // TODO(johnrowl) maybe overload this?
-            world.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, state.getBlock());
+        if (this.worldObj != null) {
+            this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
         }
     }
 
@@ -71,20 +71,19 @@ public class ConstructionBlockTileEntity extends TileEntity {
     public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         writeToNBT(nbtTag);
-        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbtTag);
+        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, nbtTag);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        BlockState oldMimicBlock = getBlockState();
+        Block oldBlock = getBlock();
+        int oldMeta = getBlockMeta();
         NBTTagCompound tagCompound = packet.func_148857_g();
-
         super.onDataPacket(net, packet);
         readFromNBT(tagCompound);
-
-        if (getWorldObj().isRemote) {
-            if (getBlockState() != oldMimicBlock) {
-                getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+        if (this.worldObj.isRemote) {
+            if (getBlock() != oldBlock || getBlockMeta() != oldMeta) {
+                this.worldObj.markBlockRangeForRenderUpdate(this.xCoord, this.yCoord, this.zCoord, this.xCoord, this.yCoord, this.zCoord);
             }
         }
     }
@@ -92,14 +91,13 @@ public class ConstructionBlockTileEntity extends TileEntity {
     @Override
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        if (blockState != null) {
-            var blockStateTag = NBTTool.blockToCompound(blockState);
-            compound.setTag("blockState", blockStateTag);
-
-            if (actualBlockState != null) {
-                NBTTagCompound actualBlockStateTag = NBTTool.blockToCompound(actualBlockState);
-                compound.setTag("actualBlockState", actualBlockStateTag);
-            }
+        if (block != null) {
+            compound.setInteger("blockId", Block.getIdFromBlock(block));
+            compound.setInteger("blockMeta", blockMeta);
+        }
+        if (actualBlock != null) {
+            compound.setInteger("actualBlockId", Block.getIdFromBlock(actualBlock));
+            compound.setInteger("actualBlockMeta", actualBlockMeta);
         }
     }
 }

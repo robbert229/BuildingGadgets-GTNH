@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.*;
+
 public interface ITemplate {
 
     @Nullable
@@ -41,36 +43,36 @@ public interface ITemplate {
     }
 
     default int getCopyCounter(ItemStack stack) {
-        return GadgetUtils.getStackTag(stack).getInteger("copycounter");
+        return GadgetUtils.getStackTag(stack).getInteger(TEMPLATE_COPY_COUNT);
     }
 
     default void setCopyCounter(ItemStack stack, int counter) {//TODO unused
         NBTTagCompound tagCompound = GadgetUtils.getStackTag(stack);
-        tagCompound.setInteger("copycounter", counter);
+        tagCompound.setInteger(TEMPLATE_COPY_COUNT, counter);
         stack.setTagCompound(tagCompound);
     }
 
     default void incrementCopyCounter(ItemStack stack) {
         NBTTagCompound tagCompound = GadgetUtils.getStackTag(stack);
-        tagCompound.setInteger("copycounter", tagCompound.getInteger("copycounter") + 1);
+        tagCompound.setInteger(TEMPLATE_COPY_COUNT, tagCompound.getInteger(TEMPLATE_COPY_COUNT) + 1);
         stack.setTagCompound(tagCompound);
     }
 
     default void setStartPos(ItemStack stack, ChunkCoordinates startPos) {
-        GadgetUtils.writePOSToNBT(stack, startPos, "startPos");
+        GadgetUtils.writePOSToNBT(stack, startPos, GADGET_START_POS);
     }
 
     @Nullable
     default ChunkCoordinates getStartPos(ItemStack stack) {
-        return GadgetUtils.getPOSFromNBT(stack, "startPos");
+        return GadgetUtils.getPOSFromNBT(stack, GADGET_START_POS);
     }
 
     default void setEndPos(ItemStack stack, ChunkCoordinates startPos) {
-        GadgetUtils.writePOSToNBT(stack, startPos, "endPos");
+        GadgetUtils.writePOSToNBT(stack, startPos, GADGET_END_POS);
     }
 
     @Nullable
     default ChunkCoordinates getEndPos(ItemStack stack) {
-        return GadgetUtils.getPOSFromNBT(stack, "endPos");
+        return GadgetUtils.getPOSFromNBT(stack, GADGET_END_POS);
     }
 }

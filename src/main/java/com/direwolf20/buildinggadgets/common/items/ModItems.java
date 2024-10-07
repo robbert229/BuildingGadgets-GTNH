@@ -50,6 +50,9 @@ public class ModItems {
     public static GadgetDestruction gadgetDestruction;
 
     public static void init() {
+        template = new Template();
+        GameRegistry.registerItem(template, template.getUnlocalizedName());
+
         gadgetBuilding = new GadgetBuilding();
         GameRegistry.registerItem(gadgetBuilding, gadgetBuilding.getUnlocalizedName());
 

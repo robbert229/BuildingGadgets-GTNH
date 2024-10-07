@@ -1,24 +1,14 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-
-/*
-
-import com.direwolf20.buildinggadgets.common.blocks.Models.BlockstateProperty;
-import com.direwolf20.buildinggadgets.common.blocks.Models.ConstructionBakedModel;
-
-*/
-
-import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.tools.MetadataUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -28,7 +18,6 @@ import net.minecraft.world.IBlockAccess;
 
 import com.cricketcraft.chisel.api.IFacade;
 
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.World;
 
@@ -39,17 +28,8 @@ import java.util.Random;
 @Optional.Interface(iface = "com.cricketcraft.chisel.api.IFacade", modid = "ChiselAPI")
 public class ConstructionBlock extends BlockModBase implements IFacade {
 
-    // public static final ConstructionProperty FACADEID = new ConstructionProperty("facadeid");
-    // public static final PropertyBool BRIGHT = PropertyBool.create("bright");
-    // public static final PropertyBool NEIGHBOR_BRIGHTNESS = PropertyBool.create("neighbor_brightness");
-
-    // public static final IUnlistedProperty<IBlockState> FACADE_ID = new BlockstateProperty("facadestate");
-    // public static final IUnlistedProperty<IBlockState> FACADE_EXT_STATE = new BlockstateProperty("facadeextstate");
-
     public ConstructionBlock() {
         super(Material.rock, 2F, "constructionblock");
-        // setDefaultState(blockState.getBaseState().withProperty(BRIGHT, true).withProperty(NEIGHBOR_BRIGHTNESS,
-        // false));
     }
 
     @Override
@@ -102,15 +82,13 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
             return false;
         }
 
-        //IBlockState newState = Block.getBlockFromItem(heldItem.getItem()).getStateFromMeta(heldItem.getMetadata());
-        int newState = heldItem.getItem().getDamage(heldItem);
-        te.blockMetadata = newState;
+        var block = Block.getBlockFromItem(heldItem.getItem());
+        te.blockMetadata = block.getDamageValue(world, x, y, z);
+
         world.setTileEntity(x, y, z, te);
         //te.setBlockState(newState);
         //te.setActualBlockState(newState);
         return true;
-
-
         //System.out.println("Failed: " + newState + ":" + te.getBlockState() + ":" + world.isRemote + ":" +
         //        te.getActualBlockState());
 
@@ -136,7 +114,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         try {
             TileEntity te = blockAccess.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
             if (te instanceof ConstructionBlockTileEntity) {
-                return ((ConstructionBlockTileEntity) te).getBlockType();
+                return te.getBlockType();
             }
             return null;
         } catch (Exception var8) {

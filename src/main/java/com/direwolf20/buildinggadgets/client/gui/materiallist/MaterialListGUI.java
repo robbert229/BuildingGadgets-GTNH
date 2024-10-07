@@ -4,24 +4,24 @@ import com.direwolf20.buildinggadgets.client.gui.DireButton;
 import com.direwolf20.buildinggadgets.client.gui.base.GuiBase;
 import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
 import com.direwolf20.buildinggadgets.client.util.RenderUtil;
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -175,7 +175,8 @@ public class MaterialListGUI extends GuiBase {
 
         int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int my = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        this.scrollingList.handleMouseInput(mx, my);
+        // TODO(johnrowl) implement this
+//        this.scrollingList.handleMouseInput(mx, my);
     }
 
     @Override
@@ -198,7 +199,7 @@ public class MaterialListGUI extends GuiBase {
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
                 else
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.player.sendStatusMessage(new TextComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
+                mc.thePlayer.addChatMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type));
                 return;
         }
         this.scrollingList.actionPerformed(button);
@@ -229,7 +230,7 @@ public class MaterialListGUI extends GuiBase {
 
         for (GuiButton button : buttonList) {
             button.width = buttonWidth;
-            button.x = nextX;
+            button.xPosition = nextX;
             nextX += buttonWidth + BUTTONS_PADDING;
         }
     }

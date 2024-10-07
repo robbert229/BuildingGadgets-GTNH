@@ -8,13 +8,22 @@ package com.direwolf20.buildinggadgets.common.proxy;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 // import com.direwolf20.buildinggadgets.common.building.CapabilityBlockProvider;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
+import com.direwolf20.buildinggadgets.common.config.CompatConfig;
+import com.direwolf20.buildinggadgets.common.entities.ModEntities;
+import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+
+import java.io.File;
 
 // @Mod.EventBusSubscriber
 public class CommonProxy {
@@ -24,31 +33,33 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent e) {
         ModItems.init();
         ModBlocks.init();
+        ModEntities.init();
 
-        // ModEntities.init();
-        // PacketHandler.registerMessages();
-        // File cfgFile = new File(e.getModConfigurationDirectory(), "BuildingGadgets.cfg");
-        // if (cfgFile.exists()) {
-        // BuildingGadgets.logger.info("Preparing to migrate old config Data to new Format");
-        // applyCompatConfig = CompatConfig.readConfig(cfgFile);
-        // }
-        // IntegrationHandler.preInit(e);
+        PacketHandler.registerMessages();
+
+        File cfgFile = new File(e.getModConfigurationDirectory(), "BuildingGadgets.cfg");
+        if (cfgFile.exists()) {
+            BuildingGadgets.LOG.info("Preparing to migrate old config Data to new Format");
+            applyCompatConfig = CompatConfig.readConfig(cfgFile);
+        }
+
+        IntegrationHandler.preInit(e);
     }
 
     public void init(FMLInitializationEvent event) {
-        // CapabilityBlockProvider.register();
-        //
-        // NetworkRegistry.INSTANCE.registerGuiHandler(BuildingGadgets.instance, new GuiProxy());
-        // if (applyCompatConfig) {
-        // BuildingGadgets.logger.info("Migrating old config Data.");
-        // CompatConfig.applyCompatConfig();
-        // }
-        // IntegrationHandler.init();
+        NetworkRegistry.INSTANCE.registerGuiHandler(BuildingGadgets.instance, new GuiProxy());
+        if (applyCompatConfig) {
+            BuildingGadgets.LOG.info("Migrating old config Data.");
+            CompatConfig.applyCompatConfig();
+        }
+
+        IntegrationHandler.init();
     }
 
     public void postInit(FMLPostInitializationEvent event) {
-        // IntegrationHandler.postInit();
+        IntegrationHandler.postInit();
     }
+
     /*
      * @SubscribeEvent
      * public static void registerBlocks(RegistryEvent.Register<Block> event) {

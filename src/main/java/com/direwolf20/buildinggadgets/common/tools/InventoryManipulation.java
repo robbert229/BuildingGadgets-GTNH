@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.direwolf20.buildinggadgets.common.integration.IItemAccess;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -26,9 +28,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class InventoryManipulation {
 
     private enum InventoryType {
-        PLAYER,
-        LINKED,
-        OTHER
+        PLAYER, LINKED, OTHER
     }
 
 //     private static IProperty AXIS = PropertyEnum.create("axis", EnumFacing.Axis.class);
@@ -47,9 +47,7 @@ public class InventoryManipulation {
         }
 
         // Attempt to dump any construction paste back in it's container.
-        ItemStack target = targetStack.getItem() instanceof ConstructionPaste
-                ? addPasteToContainer(player, targetStack)
-                : targetStack;
+        ItemStack target = targetStack.getItem() instanceof ConstructionPaste ? addPasteToContainer(player, targetStack) : targetStack;
 
         if (target.stackSize == 0) {
             return null;
@@ -76,11 +74,9 @@ public class InventoryManipulation {
             }
 
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if ((containerItem != null && containerItem.getItem() != null) && containerItem.getItem() == target.getItem() &&
-                    containerItem.getItemDamage() == target.getItemDamage()) {
+            if ((containerItem != null && containerItem.getItem() != null) && containerItem.getItem() == target.getItem() && containerItem.getItemDamage() == target.getItemDamage()) {
                 // Chunk and calculate how much to insert per stack.
-                int insertCount = (target.stackSize - containerItem.stackSize) > containerItem.getMaxStackSize() ?
-                        (target.stackSize - containerItem.stackSize) : target.stackSize;
+                int insertCount = (target.stackSize - containerItem.stackSize) > containerItem.getMaxStackSize() ? (target.stackSize - containerItem.stackSize) : target.stackSize;
 
                 if (containerItem.stackSize + insertCount > target.getMaxStackSize()) {
                     continue;
@@ -106,15 +102,13 @@ public class InventoryManipulation {
             }
 
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if ((containerItem != null && containerItem.getItem() != null) || !inventory.isItemValidForSlot(i, target) ||
-                    type == InventoryType.PLAYER && i == 40) {
+            if ((containerItem != null && containerItem.getItem() != null) || !inventory.isItemValidForSlot(i, target) || type == InventoryType.PLAYER && i == 40) {
                 continue;
 
             }
 
             ItemStack insertStack = target.copy();
-            insertStack.stackSize = target.stackSize > target.getMaxStackSize() ? containerItem.getMaxStackSize() :
-                    target.stackSize;
+            insertStack.stackSize = target.stackSize > target.getMaxStackSize() ? containerItem.getMaxStackSize() : target.stackSize;
 
             inventory.setInventorySlotContents(i, insertStack);
             // TODO(johnrowl) come back here and verify everything is sane later.
@@ -275,13 +269,13 @@ public class InventoryManipulation {
         return MathTool.longToInt(count);
     }
 
-    // public static IntList countItems(List<ItemStack> items, EntityPlayer player) {
-    // IntList result = new IntArrayList();
-    // for (ItemStack item : items) {
-    // result.add(countItem(item, player, player.world));
-    // }
-    // return result;
-    // }
+    public static IntList countItems(List<ItemStack> items, EntityPlayer player) {
+        IntList result = new IntArrayList();
+        for (ItemStack item : items) {
+            result.add(countItem(item, player, player.worldObj));
+        }
+        return result;
+    }
 
     public static int countPaste(EntityPlayer player) {
         if (player.capabilities.isCreativeMode) {
@@ -449,6 +443,10 @@ public class InventoryManipulation {
 
     public static ItemStack getSilkTouchDrop(Block block, int meta) {
         Item item = Item.getItemFromBlock(block);
+        if (item == null) {
+            return null;
+        }
+
         int i = 0;
 
         if (item.getHasSubtypes()) {

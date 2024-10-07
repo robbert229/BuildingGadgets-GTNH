@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.util.ResourceLocation;
 
 public class SlotTemplateManager extends Slot {
 
@@ -11,8 +12,8 @@ public class SlotTemplateManager extends Slot {
         super(inventory, index, xPosition, yPosition);
         // TODO(johnrowl) resolve background texture issues.
 
-        // this.backgroundLoc = backgroundLoc;
-        // this.setBackgroundIconTexture(new ResourceLocation(backgroundLoc));
+        this.backgroundLoc = backgroundLoc;
+        this.setBackgroundIconTexture(new ResourceLocation(backgroundLoc));
     }
 
     @Override

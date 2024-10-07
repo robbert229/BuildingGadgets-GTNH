@@ -74,7 +74,7 @@ public class BlockMapIntState {
         return intStackMap.get(blockState);
     }
 
-    public Map<Short, BlockState> getIntStateMapFromNBT(NBTTagList tagList) {
+    public void getIntStateMapFromNBT(NBTTagList tagList) {
         intStateMap = new HashMap<Short, BlockState>();
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
@@ -82,9 +82,12 @@ public class BlockMapIntState {
             var mapSlot = compound.getShort("mapSlot");
             var decoded = NBTTool.blockFromCompound(compound.getCompoundTag("mapState"));
 
-            intStateMap.put(mapSlot, new BlockState(decoded.getBlock(), decoded.getMetadata()));
+            if (decoded.isAir()) {
+                continue;
+            }
+
+            intStateMap.put(mapSlot, decoded);
         }
-        return intStateMap;
     }
 
     public NBTTagList putIntStateMapIntoNBT() {
@@ -152,6 +155,7 @@ public class BlockMapIntState {
 
     public void makeStackMapFromStateMap(EntityPlayer player) {
         intStackMap.clear();
+
         for (Map.Entry<Short, BlockState> entry : intStateMap.entrySet()) {
             try {
                 intStackMap.put(entry.getValue(), blockStateToUniqueItem(entry.getValue(), player, new ChunkCoordinates(0, 0, 0)));

@@ -1,16 +1,14 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-//import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
-//import net.minecraft.client.util.ITooltipFlag;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-//import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -63,20 +61,20 @@ public class Template extends ItemModBase implements ITemplate {
         EventTooltip.addTemplatePadding(stack, list);
     }
 
-    /*
+
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, ChunkCoordinates pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         // Open GUI
-        onItemRightClick(world, player, hand);
-        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+        onItemRightClick(stack, world, player);
+        return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
             player.openGui(BuildingGadgets.instance, GuiProxy.MaterialListID, world, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-    }*/
+        return stack;  // Return the same item stack as per 1.7.10 convention
+    }
 
 }

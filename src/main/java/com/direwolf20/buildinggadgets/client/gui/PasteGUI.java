@@ -5,21 +5,19 @@
 
 package com.direwolf20.buildinggadgets.client.gui;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.PacketPasteGUI;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-
-import java.io.IOException;
+import net.minecraft.util.StatCollector;
 
 public class PasteGUI extends GuiScreen {
     public static final int WIDTH = 256;
@@ -42,24 +40,19 @@ public class PasteGUI extends GuiScreen {
         this.tool = tool;
     }
 
-    /*@Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-    }*/
-
     @Override
     public void initGui() {
         super.initGui();
 
-        X = new GuiTextField(0, this.fontRenderer, this.guiLeft + 80, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        X = new GuiTextField(this.fontRendererObj, this.guiLeft + 80, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT);
         X.setMaxStringLength(50);
         X.setVisible(true);
 
-        Y = new GuiTextField(1, this.fontRenderer, this.guiLeft + 200, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        Y = new GuiTextField(this.fontRendererObj, this.guiLeft + 200, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT);
         Y.setMaxStringLength(50);
         Y.setVisible(true);
 
-        Z = new GuiTextField(2, this.fontRenderer, this.guiLeft + 320, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        Z = new GuiTextField(this.fontRendererObj, this.guiLeft + 320, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT);
         Z.setMaxStringLength(50);
         Z.setVisible(true);
 
@@ -98,9 +91,9 @@ public class PasteGUI extends GuiScreen {
         this.X.drawTextBox();
         this.Y.drawTextBox();
         this.Z.drawTextBox();
-        fontRenderer.drawStringWithShadow("X", this.guiLeft + 55, this.guiTop + 100, 0xFFFFFF);
-        fontRenderer.drawStringWithShadow("Y", this.guiLeft + 175, this.guiTop + 100, 0xFFFFFF);
-        fontRenderer.drawStringWithShadow("Z", this.guiLeft + 296, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("X", this.guiLeft + 55, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Y", this.guiLeft + 175, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Z", this.guiLeft + 296, this.guiTop + 100, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -134,9 +127,9 @@ public class PasteGUI extends GuiScreen {
                 PacketHandler.INSTANCE.sendToServer(new PacketPasteGUI(Integer.parseInt(X.getText()), Integer.parseInt(Y.getText()), Integer.parseInt(Z.getText())));
                 this.mc.displayGuiScreen(null);
             } else {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
+                var message = new ChatComponentText(ChatFormatting.RED + StatCollector.translateToLocal("message.gadget.destroysizeerror"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(message);
             }
-
         } else if (b.id == 2) {
             this.mc.displayGuiScreen(null);
         } else if (b.id == 3) {
@@ -166,7 +159,7 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode)  {
+    protected void keyTyped(char typedChar, int keyCode) {
         if (this.X.textboxKeyTyped(typedChar, keyCode) || this.Y.textboxKeyTyped(typedChar, keyCode) || this.Z.textboxKeyTyped(typedChar, keyCode)) {
 
         } else {
@@ -175,44 +168,41 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton)  {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 1) {
-            if (this.X.mouseClicked(mouseX, mouseY, 0)) {
+            this.X.mouseClicked(mouseX, mouseY, 0);
+            this.Y.mouseClicked(mouseX, mouseY, 0);
+            this.Z.mouseClicked(mouseX, mouseY, 0);
+
+            if (this.X.isFocused()) {
                 X.setText("");
-            } else if (this.Y.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (this.Y.isFocused()) {
                 Y.setText("");
-            } else if (this.Z.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (this.Z.isFocused()) {
                 Z.setText("");
             } else {
-                //startX.setFocused(false);
                 super.mouseClicked(mouseX, mouseY, mouseButton);
             }
         } else {
-            if (this.X.mouseClicked(mouseX, mouseY, mouseButton)) {
+            this.X.mouseClicked(mouseX, mouseY, mouseButton);
+            this.Y.mouseClicked(mouseX, mouseY, mouseButton);
+            this.Z.mouseClicked(mouseX, mouseY, mouseButton);
+
+            if (this.X.isFocused()) {
                 X.setFocused(true);
-            } else if (this.Y.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (this.Y.isFocused()) {
                 Y.setFocused(true);
-            } else if (this.Z.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (this.Z.isFocused()) {
                 Z.setFocused(true);
             } else {
-                //startX.setFocused(false);
                 super.mouseClicked(mouseX, mouseY, mouseButton);
             }
         }
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-    }
-
-
-    @Override
-    public void handleMouseInput()  {
+    public void handleMouseInput() {
         super.handleMouseInput();
-        //System.out.println(Mouse.getEventDWheel());
-        //System.out.println(zoom);
-
     }
 
     @Override

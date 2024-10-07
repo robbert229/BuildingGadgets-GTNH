@@ -301,8 +301,7 @@ public class TemplateManagerGUI extends GuiContainer {
             TemplateManagerCommands.copyTemplate(container);
         } else if (b.id == 3) {
             String CBString = getClipboardString();
-            //System.out.println("CBString Length: " + CBString.length());
-            //System.out.println(CBString);
+
             if (GadgetUtils.mightBeLink(CBString)) {
                 Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.pastefailed.linkcopied").getUnformattedComponentText()),false);
                 return;

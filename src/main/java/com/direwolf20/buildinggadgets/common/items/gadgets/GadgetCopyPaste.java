@@ -4,17 +4,30 @@ import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 //import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 //import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 //import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
+import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
+import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
+import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 //import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
+import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tools.*;
 //import net.minecraft.block.state.IBlockState;
 //import net.minecraft.client.util.ITooltipFlag;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 //import net.minecraft.init.Enchantments;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 //import net.minecraft.util.EnumFacing.Axis;
 //import net.minecraft.util.text.TextComponentString;
@@ -27,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.GADGET_END_POS;
 import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.GADGET_START_POS;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
@@ -228,7 +242,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         ToolMode mode = ToolMode.values()[modeInt];
         setToolMode(heldItem, mode);
     }
-//
+
+    //
 //    @Override
 //    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 //        ItemStack stack = player.getHeldItem(hand);
@@ -341,122 +356,141 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 //                + new TextComponentTranslation("message.gadget." + (player.isSneaking() ? "mirrored" : "rotated")).getUnformattedComponentText()), true);
 //    }
 //
-//    public static void copyBlocks(ItemStack stack, EntityPlayer player, World world, ChunkCoordinates startPos, ChunkCoordinates endPos) {
-//        if (startPos != null && endPos != null) {
-//            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
-//            if (findBlocks(world, startPos, endPos, stack, player, tool)) {
-//                tool.setStartPos(stack, startPos);
-//                tool.setEndPos(stack, endPos);
-//            }
-//        }
-//    }
-//
-//    private static boolean findBlocks(World world, ChunkCoordinates start, ChunkCoordinates end, ItemStack stack, EntityPlayer player, GadgetCopyPaste tool) {
-//        setLastBuild(stack, null, 0);
-//        int foundTE = 0;
-//        int startX = start.getX();
-//        int startY = start.getY();
-//        int startZ = start.getZ();
-//
-//        int endX = end.getX();
-//        int endY = end.getY();
-//        int endZ = end.getZ();
-//
-//        if (Math.abs(startX - endX) >= 125 || Math.abs(startY - endY) >= 125 || Math.abs(startZ - endZ) >= 125) {
-//            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.toobigarea").getUnformattedComponentText()), true);
-//            return false;
-//        }
-//
-//        int iStartX = startX < endX ? startX : endX;
-//        int iStartY = startY < endY ? startY : endY;
-//        int iStartZ = startZ < endZ ? startZ : endZ;
-//        int iEndX = startX < endX ? endX : startX;
-//        int iEndY = startY < endY ? endY : startY;
-//        int iEndZ = startZ < endZ ? endZ : startZ;
-//        WorldSave worldSave = WorldSave.getWorldSave(world);
-//        NBTTagCompound tagCompound = new NBTTagCompound();
-//        List<Integer> posIntArrayList = new ArrayList<Integer>();
-//        List<Integer> stateIntArrayList = new ArrayList<Integer>();
-//        BlockMapIntState blockMapIntState = new BlockMapIntState();
-//        Multiset<UniqueItem> itemCountMap = HashMultiset.create();
-//
-//        int blockCount = 0;
-//
-//        for (int x = iStartX; x <= iEndX; x++) {
-//            for (int y = iStartY; y <= iEndY; y++) {
-//                for (int z = iStartZ; z <= iEndZ; z++) {
-//                    ChunkCoordinates tempPos = new ChunkCoordinates(x, y, z);
-//                    IBlockState tempState = world.getBlockState(tempPos);
-//                    if (!(tempState.getBlock() instanceof EffectBlock) && tempState != Blocks.AIR.getDefaultState() && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
-//                        TileEntity te = world.getTileEntity(tempPos);
-//                        IBlockState assignState = InventoryManipulation.getSpecificStates(tempState, world, player, tempPos, stack);
-//                        IBlockState actualState = assignState.getActualState(world, tempPos);
-//                        if (te instanceof ConstructionBlockTileEntity) {
-//                            actualState = ((ConstructionBlockTileEntity) te).getActualBlockState();
-//                        }
-//                        if (actualState != null) {
-//                            UniqueItem uniqueItem = BlockMapIntState.blockStateToUniqueItem(actualState, player, tempPos);
-//                            if (uniqueItem.item != Items.AIR) {
-//                                posIntArrayList.add(GadgetUtils.relPosToInt(start, tempPos));
-//                                blockMapIntState.addToMap(actualState);
-//                                stateIntArrayList.add((int) blockMapIntState.findSlot(actualState));
-//
-//                                blockMapIntState.addToStackMap(uniqueItem, actualState);
-//                                blockCount++;
-//                                if (blockCount > 32768) {
-//                                    player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.toomanyblocks").getUnformattedComponentText()), true);
-//                                    return false;
-//                                }
-//                                NonNullList<ItemStack> drops = NonNullList.create();
-//                                if (actualState != null)
-//                                    actualState.getBlock().getDrops(drops, world, new ChunkCoordinates(0, 0, 0), actualState, 0);
-//
-//                                int neededItems = 0;
-//                                for (ItemStack drop : drops) {
-//                                    if (drop.getItem().equals(uniqueItem.item)) {
-//                                        neededItems++;
-//                                    }
-//                                }
-//                                if (neededItems == 0) {
-//                                    neededItems = 1;
-//                                }
-//                                itemCountMap.add(uniqueItem, neededItems);
-//                            }
-//                        }
-//                    } else if ((world.getTileEntity(tempPos) != null) && !(world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity)) {
-//                        foundTE++;
-//                    }
-//                }
-//            }
-//        }
-//        tool.setItemCountMap(stack, itemCountMap);
-//        tagCompound.setTag("mapIntState", blockMapIntState.putIntStateMapIntoNBT());
-//        tagCompound.setTag("mapIntStack", blockMapIntState.putIntStackMapIntoNBT());
-//        int[] posIntArray = posIntArrayList.stream().mapToInt(i -> i).toArray();
-//        int[] stateIntArray = stateIntArrayList.stream().mapToInt(i -> i).toArray();
-//        tagCompound.setIntArray("posIntArray", posIntArray);
-//        tagCompound.setIntArray("stateIntArray", stateIntArray);
-//
-//        tagCompound.setTag(GADGET_START_POS, NBTUtil.createPosTag(start));
-//        tagCompound.setTag(GADGET_END_POS, NBTUtil.createPosTag(end));
-//        tagCompound.setInteger("dim", player.dimension);
-//        tagCompound.setString("UUID", tool.getUUID(stack));
-//        tagCompound.setString("owner", player.getName());
-//        tool.incrementCopyCounter(stack);
-//        tagCompound.setInteger("copycounter", tool.getCopyCounter(stack));
-//
-//        worldSave.addToMap(tool.getUUID(stack), tagCompound);
-//        worldSave.markForSaving();
-//        PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
-//
-//        if (foundTE > 0) {
-//            player.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + new TextComponentTranslation("message.gadget.TEinCopy").getUnformattedComponentText() + ": " + foundTE), true);
-//        } else {
-//            player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.copied").getUnformattedComponentText()), true);
-//        }
-//        return true;
-//    }
-//
+    public static void copyBlocks(ItemStack stack, EntityPlayer player, World world, ChunkCoordinates startPos, ChunkCoordinates endPos) {
+        if (startPos != null && endPos != null) {
+            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
+            if (findBlocks(world, startPos, endPos, stack, player, tool)) {
+                tool.setStartPos(stack, startPos);
+                tool.setEndPos(stack, endPos);
+            }
+        }
+    }
+
+    private static boolean findBlocks(World world, ChunkCoordinates start, ChunkCoordinates end, ItemStack stack, EntityPlayer player, GadgetCopyPaste tool) {
+        setLastBuild(stack, null, 0);
+        int foundTE = 0;
+        int startX = start.posX;
+        int startY = start.posY;
+        int startZ = start.posZ;
+
+        int endX = end.posX;
+        int endY = end.posY;
+        int endZ = end.posZ;
+
+        if (Math.abs(startX - endX) >= 125 || Math.abs(startY - endY) >= 125 || Math.abs(startZ - endZ) >= 125) {
+            player.addChatMessage(new ChatComponentText(ChatFormatting.RED + new ChatComponentTranslation("message.gadget.toobigarea").getUnformattedText()));
+
+            return false;
+        }
+
+        int iStartX = Math.min(startX, endX);
+        int iStartY = Math.min(startY, endY);
+        int iStartZ = Math.min(startZ, endZ);
+        int iEndX = Math.max(startX, endX);
+        int iEndY = Math.max(startY, endY);
+        int iEndZ = Math.max(startZ, endZ);
+        WorldSave worldSave = WorldSave.getWorldSave(world);
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        List<Integer> posIntArrayList = new ArrayList<Integer>();
+        List<Integer> stateIntArrayList = new ArrayList<Integer>();
+        BlockMapIntState blockMapIntState = new BlockMapIntState();
+        Multiset<UniqueItem> itemCountMap = HashMultiset.create();
+
+        int blockCount = 0;
+
+        for (int x = iStartX; x <= iEndX; x++) {
+            for (int y = iStartY; y <= iEndY; y++) {
+                for (int z = iStartZ; z <= iEndZ; z++) {
+                    ChunkCoordinates tempPos = new ChunkCoordinates(x, y, z);
+                    BlockState tempState = WorldUtils.getBlockState(world, tempPos);
+
+//                    var notBlacklisted = !SyncedConfig.blockBlacklist.contains(tempState.getBlock());
+                    var notBlacklisted = true;
+
+                    if (!(tempState.getBlock() instanceof EffectBlock)
+                            && !tempState.isAir()
+                            && (world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) == null || world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) instanceof ConstructionBlockTileEntity)
+                            && !tempState.getMaterial().isLiquid()
+                            && notBlacklisted) {
+
+                        TileEntity te = world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ);
+                        BlockState assignState = InventoryManipulation.getSpecificStates(tempState, world, player, tempPos, stack);
+                        //BlockState actualState = assignState.getActualState(world, tempPos);
+                        var actualState = assignState;
+
+                        if (te instanceof ConstructionBlockTileEntity cbte) {
+                            if (cbte.getActualBlock() != null) {
+                                actualState = new BlockState(cbte.getActualBlock(), cbte.getActualBlockMeta());
+                            }
+                        }
+
+                        if (actualState != null) {
+                            UniqueItem uniqueItem = BlockMapIntState.blockStateToUniqueItem(actualState, player, tempPos);
+                            if (uniqueItem.item != null) {
+                                posIntArrayList.add(GadgetUtils.relPosToInt(start, tempPos));
+                                blockMapIntState.addToMap(actualState);
+                                stateIntArrayList.add((int) blockMapIntState.findSlot(actualState));
+
+                                blockMapIntState.addToStackMap(uniqueItem, actualState);
+                                blockCount++;
+                                if (blockCount > 32768) {
+                                    player.addChatMessage(new ChatComponentText(ChatFormatting.RED + new ChatComponentTranslation("message.gadget.toomanyblocks").getUnformattedText()));
+                                    return false;
+                                }
+
+                                List<ItemStack> drops = new ArrayList<>();
+                                if (actualState != null) {
+                                    drops = actualState.getBlock().getDrops(world, 0, 0, 0, actualState.getMetadata(), 0);
+                                }
+
+                                int neededItems = 0;
+                                for (ItemStack drop : drops) {
+                                    if (drop.getItem().equals(uniqueItem.item)) {
+                                        neededItems++;
+                                    }
+                                }
+                                if (neededItems == 0) {
+                                    neededItems = 1;
+                                }
+                                itemCountMap.add(uniqueItem, neededItems);
+                            }
+                        }
+                    } else if ((world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) != null) && !(world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) instanceof ConstructionBlockTileEntity)) {
+                        foundTE++;
+                    }
+                }
+            }
+        }
+        tool.setItemCountMap(stack, itemCountMap);
+        tagCompound.setTag("mapIntState", blockMapIntState.putIntStateMapIntoNBT());
+        tagCompound.setTag("mapIntStack", blockMapIntState.putIntStackMapIntoNBT());
+        int[] posIntArray = posIntArrayList.stream().mapToInt(i -> i).toArray();
+        int[] stateIntArray = stateIntArrayList.stream().mapToInt(i -> i).toArray();
+        tagCompound.setIntArray("posIntArray", posIntArray);
+        tagCompound.setIntArray("stateIntArray", stateIntArray);
+
+        tagCompound.setTag(GADGET_START_POS, NBTTool.createPosTag(start));
+        tagCompound.setTag(GADGET_END_POS, NBTTool.createPosTag(end));
+        tagCompound.setInteger("dim", player.dimension);
+        tagCompound.setString("UUID", tool.getUUID(stack));
+        tagCompound.setString("owner", player.getDisplayName());
+        tool.incrementCopyCounter(stack);
+        tagCompound.setInteger("copycounter", tool.getCopyCounter(stack));
+
+        worldSave.addToMap(tool.getUUID(stack), tagCompound);
+        worldSave.markForSaving();
+        PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
+
+        if (foundTE > 0) {
+            player.addChatMessage(new ChatComponentText(ChatFormatting.YELLOW + new ChatComponentTranslation("message.gadget.TEinCopy").getUnformattedText() + ": " + foundTE));
+
+        } else {
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copied").getUnformattedText()));
+        }
+        return true;
+    }
+
+    //
 //    private void buildBlockMap(World world, ChunkCoordinates startPos, ItemStack stack, EntityPlayer player) {
 ////        long time = System.nanoTime();
 //
@@ -546,60 +580,85 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 //
 //    }
 //
-//    public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
-//        ChunkCoordinates currentAnchor = getAnchor(stack);
-//        if (currentAnchor == null) {
-//            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-//            if (lookingAt == null) {
-//                return;
-//            }
-//            currentAnchor = VectorTools.getPosFromMovingObjectPosition(lookingAt);
-//            setAnchor(stack, currentAnchor);
-//            player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
-//        } else {
-//            setAnchor(stack, null);
-//            player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
-//        }
-//    }
-//
-//    public void undoBuild(EntityPlayer player, ItemStack heldItem) {
-////        long time = System.nanoTime();
-//        NBTTagCompound tagCompound = WorldSave.getWorldSave(player.world).getCompoundFromUUID(ModItems.gadgetCopyPaste.getUUID(heldItem));
-//        World world = player.world;
-//        if (world.isRemote) {
-//            return;
-//        }
-//        ChunkCoordinates startPos = getLastBuild(heldItem);
-//        if (startPos == null)
-//            return;
-//
-//        Integer dimension = getLastBuildDim(heldItem);
-//        ItemStack silkTool = heldItem.copy(); //Setup a Silk Touch version of the tool so we can return stone instead of cobblestone, etc.
-//        silkTool.addEnchantment(Enchantments.SILK_TOUCH, 1);
-//        List<BlockMap> blockMapList = getBlockMapList(tagCompound, startPos);
-//        boolean success = true;
-//        for (BlockMap blockMap : blockMapList) {
-//            double distance = blockMap.pos.getDistance(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
-//            boolean sameDim = (player.dimension == dimension);
-//            IBlockState currentBlock = world.getBlockState(blockMap.pos);
-//
-//            boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, blockMap.pos, currentBlock, player);
-//            if (distance < 256 && !cancelled && sameDim) { //Don't allow us to undo a block while its still being placed or too far away
-//                if (currentBlock.getBlock() == blockMap.state.getBlock() || currentBlock.getBlock() instanceof ConstructionBlock) {
-//                    if (currentBlock.getBlockHardness(world, blockMap.pos) >= 0) {
-//                        if( !player.capabilities.isCreativeMode )
-//                            currentBlock.getBlock().harvestBlock(world, player, blockMap.pos, currentBlock, world.getTileEntity(blockMap.pos), silkTool);
-//                        world.spawnEntity(new BlockBuildEntity(world, blockMap.pos, player, currentBlock, 2, currentBlock, false));
-//                    }
-//                }
-//            } else {
-//                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
-//                success = false;
-//            }
-//            //System.out.printf("Undid %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
-//        }
-//        if (success) setLastBuild(heldItem, null, 0);
-//    }
+    public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
+        ChunkCoordinates currentAnchor = getAnchor(stack);
+        if (currentAnchor == null) {
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+            if (lookingAt == null) {
+                return;
+            }
+            currentAnchor = VectorTools.getPosFromMovingObjectPosition(lookingAt);
+            setAnchor(stack, currentAnchor);
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedText()));
+        } else {
+            setAnchor(stack, null);
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+        }
+    }
+
+
+    public void undoBuild(EntityPlayer player, ItemStack heldItem) {
+        NBTTagCompound tagCompound = WorldSave.getWorldSave(player.worldObj).getCompoundFromUUID(ModItems.gadgetCopyPaste.getUUID(heldItem));
+        World world = player.worldObj;
+        if (world.isRemote) {
+            return;
+        }
+        ChunkCoordinates startPos = getLastBuild(heldItem);
+        if (startPos == null)
+            return;
+
+
+        Integer dimension = getLastBuildDim(heldItem);
+        ItemStack silkTool = heldItem.copy(); //Setup a Silk Touch version of the tool so we can return stone instead of cobblestone, etc.
+
+        silkTool.addEnchantment(Enchantment.silkTouch, 1);
+        List<BlockMap> blockMapList = getBlockMapList(tagCompound, startPos);
+        boolean success = true;
+        for (BlockMap blockMap : blockMapList) {
+
+            var distance = Math.sqrt(player.getDistanceSq(blockMap.pos.posX, blockMap.pos.posY, blockMap.pos.posZ));
+
+            boolean sameDim = (player.dimension == dimension);
+
+            var currentBlock = WorldUtils.getBlockState(world, blockMap.pos);
+
+            boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, blockMap.pos, currentBlock.getBlock(), player);
+            if (distance < 256 && !cancelled && sameDim) { //Don't allow us to undo a block while its still being placed or too far away
+                if (currentBlock.getBlock() == blockMap.state.getBlock() || currentBlock.getBlock() instanceof ConstructionBlock) {
+                    if (currentBlock.getBlockHardness(world, blockMap.pos) >= 0) {
+                        if (!player.capabilities.isCreativeMode) {
+                            // TODO(johnrowl) silk touch is currently busted. The 1.12.x version allowed you to pass in a silk touch tool, while the 1.7.10 does not.
+//                            currentBlock.getBlock().harvestBlock(
+//                                    world,
+//                                    player,
+//                                    blockMap.pos,
+//                                    currentBlock,
+//                                    world.getTileEntity(blockMap.pos.posX, blockMap.pos.posY, blockMap.pos.posZ),
+//                                    silkTool
+//                                    );
+                            currentBlock.getBlock().harvestBlock(
+                                    world,
+                                    player,
+                                    blockMap.pos.posX,
+                                    blockMap.pos.posY,
+                                    blockMap.pos.posZ,
+                                    currentBlock.getMetadata()
+                            );
+                        }
+                        world.spawnEntityInWorld(new BlockBuildEntity(world, blockMap.pos, player, currentBlock, 2, currentBlock, false));
+
+                    }
+                }
+            } else {
+                player.addChatMessage(new ChatComponentText(ChatFormatting.RED + new ChatComponentTranslation("message.gadget.undofailed").getUnformattedText()));
+                success = false;
+            }
+            //System.out.printf("Undid %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
+        }
+        if (success) {
+            setLastBuild(heldItem, null, 0);
+        }
+    }
 
     public static ItemStack getGadget(EntityPlayer player) {
         ItemStack stack = GadgetGeneric.getGadget(player);
@@ -608,5 +667,4 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         return stack;
     }
-
 }

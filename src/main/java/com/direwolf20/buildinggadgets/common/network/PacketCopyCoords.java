@@ -2,15 +2,15 @@ package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -22,14 +22,14 @@ public class PacketCopyCoords implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        start = ChunkCoordinates.fromLong(buf.readLong());
-        end = ChunkCoordinates.fromLong(buf.readLong());
+        start = WorldUtils.fromLong(buf.readLong());
+        end = WorldUtils.fromLong(buf.readLong());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(start.toLong());
-        buf.writeLong(end.toLong());
+        buf.writeLong(WorldUtils.toLong(start));
+        buf.writeLong(WorldUtils.toLong(end));
     }
 
     public PacketCopyCoords() {
@@ -56,23 +56,23 @@ public class PacketCopyCoords implements IMessage {
         private void handle(PacketCopyCoords message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
-            // TODO(johnrowl) re-enable
+            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
+            if (heldItem == null) {
+                return;
+            }
 
-//            ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
-//            if (heldItem.isEmpty()) return;
-//
-//            ChunkCoordinates startPos = message.start;
-//            ChunkCoordinates endPos = message.end;
-//            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
-//            if (startPos.equals(new ChunkCoordinates(0,0,0)) && endPos.equals(new ChunkCoordinates(0,0,0))) {
-//                tool.setStartPos(heldItem, null);
-//                tool.setEndPos(heldItem, null);
-//                playerEntity.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
-//            } else {
-//                tool.setStartPos(heldItem, startPos);
-//                tool.setEndPos(heldItem, endPos);
-//                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.world, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
-//            }
+            ChunkCoordinates startPos = message.start;
+            ChunkCoordinates endPos = message.end;
+            GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
+            if (startPos.equals(new ChunkCoordinates(0, 0, 0)) && endPos.equals(new ChunkCoordinates(0, 0, 0))) {
+                tool.setStartPos(heldItem, null);
+                tool.setEndPos(heldItem, null);
+                playerEntity.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
+            } else {
+                tool.setStartPos(heldItem, startPos);
+                tool.setEndPos(heldItem, endPos);
+                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.worldObj, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
+            }
         }
     }
 }

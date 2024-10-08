@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.config.fieldmap;
 
+import com.direwolf20.buildinggadgets.common.config.PatternList;
+
 import java.util.function.Function;
 
 /**
@@ -28,11 +30,11 @@ public class FieldMapper<FieldVal, SyncedVal> {
      * ImmutableList.class,String[].class);
      */
 
-    // public static final FieldMapper<PatternList, String[]> PATTERN_LIST_MAPPER = of(
-    // PatternList::toArray,
-    // PatternList::ofResourcePattern,
-    // PatternList.class,
-    // String[].class);
+    public static final FieldMapper<PatternList, String[]> PATTERN_LIST_MAPPER = of(
+     PatternList::toArray,
+     PatternList::ofResourcePattern,
+     PatternList.class,
+     String[].class);
 
     private final Function<FieldVal, SyncedVal> fieldToSync;
     private final Function<SyncedVal, FieldVal> syncToField;

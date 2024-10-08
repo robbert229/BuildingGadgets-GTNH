@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-// import com.direwolf20.buildinggadgets.common.integration.IItemAccess;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,10 +17,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionPaste;
 import com.direwolf20.buildinggadgets.common.items.pastes.GenericPasteContainer;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -131,48 +130,96 @@ public class InventoryManipulation {
      * inventories returned.
      *
      * @return boolean based on if the method was able to supply any amount of items. If the method is called requiring
-     *         10 items and we only find 5 we still return true. We only return false if no items where supplied.
-     *         This is by design.
+     * 10 items and we only find 5 we still return true. We only return false if no items where supplied.
+     * This is by design.
      * @implNote Call {@link GadgetUtils#clearCachedRemoteInventory GadgetUtils#clearCachedRemoteInventory} when done
-     *           using this method
+     * using this method
      */
-    // public static boolean useItem(ItemStack target, EntityPlayer player, int amountRequired, World world) {
-    // if (player.capabilities.isCreativeMode) return true;
-    //
-    // int amountLeft = amountRequired;
-    // for (Pair<InventoryType, IItemHandler> inv : collectInventories(GadgetGeneric.getGadget(player), player, world,
-    // NetworkIO.Operation.EXTRACT)) {
-    // amountLeft -= extractFromInventory(inv.getValue(), target, amountLeft, player);
-    //
-    // if (amountLeft <= 0) return true;
-    // }
-    //
-    // return amountLeft < amountRequired;
-    // }
+    public static boolean useItem(ItemStack target, EntityPlayer player, int amountRequired, World world) {
+        if (player.capabilities.isCreativeMode) return true;
 
-    // private static int extractFromInventory(IInventory inventory, ItemStack target, int amountRequired, EntityPlayer
-    // player) {
-    // int amountSaturated = 0;
-    // if (inventory == null) return amountSaturated;
-    //
-    // if (inventory instanceof IItemAccess) {
-    // amountSaturated += ((IItemAccess) inventory).extractItems(target, amountRequired - amountSaturated, player);
-    // return amountSaturated;
-    // }
-    //
-    // for (int i = 0; i < inventory.getSlots(); i++) {
-    // ItemStack containerItem = inventory.getStackInSlot(i);
-    // if (containerItem.getItem() == target.getItem() && containerItem.getMetadata() == target.getMetadata()) {
-    // ItemStack stack = inventory.extractItem(i, amountRequired, false);
-    // amountSaturated += stack.getCount();
-    // }
-    //
-    // // Don't continue to check if we've saturated the amount.
-    // if (amountSaturated >= amountRequired) break;
-    // }
-    //
-    // return amountSaturated;
-    // }
+        int amountLeft = amountRequired;
+        for (Pair<InventoryType, IInventory> inv : collectInventories(GadgetGeneric.getGadget(player), player, world,
+                NetworkIO.Operation.EXTRACT)) {
+            amountLeft -= extractFromInventory(inv.getValue(), target, amountLeft, player);
+
+            if (amountLeft <= 0) return true;
+        }
+
+        return amountLeft < amountRequired;
+    }
+
+    private static int extractFromInventory(IInventory inventory, ItemStack target, int amountRequired, EntityPlayer
+            player) {
+        int amountSaturated = 0;
+        if (inventory == null) {
+            return amountSaturated;
+        }
+
+        if (inventory instanceof IItemAccess) {
+            amountSaturated += ((IItemAccess) inventory).extractItems(target, amountRequired - amountSaturated, player);
+            return amountSaturated;
+        }
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack containerItem = inventory.getStackInSlot(i);
+            if (containerItem.getItem() == target.getItem() && containerItem.getItemDamage() == target.getItemDamage()) {
+                ItemStack stack = extractItem(inventory, i, amountRequired, false);
+
+                amountSaturated += stack.stackSize;
+            }
+
+            // Don't continue to check if we've saturated the amount.
+            if (amountSaturated >= amountRequired) break;
+        }
+
+        return amountSaturated;
+    }
+
+    /**
+     * Simulates the behavior of extractItem from IItemHandler for Minecraft 1.7.10.
+     * Tries to extract the specified amount of items from a given slot.
+     *
+     * @param inventory The inventory from which to extract the item.
+     * @param slot      The slot index from which to extract the item.
+     * @param amount    The amount of items to extract.
+     * @param simulate  If true, will only simulate the extraction (won't actually modify the inventory).
+     * @return The extracted ItemStack. If nothing was extracted, returns null or an empty stack.
+     */
+    public static ItemStack extractItem(IInventory inventory, int slot, int amount, boolean simulate) {
+        if (inventory == null || slot < 0 || slot >= inventory.getSizeInventory()) {
+            return null;
+        }
+
+        // Get the current item in the slot
+        ItemStack stackInSlot = inventory.getStackInSlot(slot);
+
+        // If the slot is empty or invalid amount requested, return null or an empty stack
+        if (stackInSlot == null || amount <= 0) {
+            return null;
+        }
+
+        // Determine how much we can extract (the smaller of the amount requested and the stack size)
+        int extractAmount = Math.min(amount, stackInSlot.stackSize);
+
+        // Simulate mode, return the extracted stack but don't modify the inventory
+        if (simulate) {
+            ItemStack simulatedStack = stackInSlot.copy();
+            simulatedStack.stackSize = extractAmount;
+            return simulatedStack;
+        }
+
+        // If not simulating, actually extract the items
+        ItemStack extractedStack = stackInSlot.splitStack(extractAmount);
+
+        // If the slot becomes empty, set the slot to null (as required by 1.7.10 mechanics)
+        if (stackInSlot.stackSize <= 0) {
+            inventory.setInventorySlotContents(slot, null);
+        }
+
+        // Return the extracted stack
+        return extractedStack;
+    }
 
     /**
      * Collect all the inventories and return them in a pretty order to allow for inventory flowing (where the system
@@ -456,40 +503,45 @@ public class InventoryManipulation {
         return new ItemStack(item, 1, i);
     }
 
-    // public static IBlockState getSpecificStates(IBlockState originalState, World world, EntityPlayer player,
-    // ChunkCoordinates pos, ItemStack tool) {
-    // IBlockState placeState;
-    // Block block = originalState.getBlock();
-    //
-    // ItemStack item;
-    // try {
-    // item = block.getPickBlock(originalState, null, world, pos, player);
-    // } catch (Exception ignored) {
-    // // This may introduce issues. I hope it doesn't
-    // item = InventoryManipulation.getSilkTouchDrop(originalState);
-    // }
-    //
-    // int meta = item.getMetadata();
-    // try {
-    // placeState = originalState.getBlock().getStateForPlacement(world, pos, EnumFacing.UP, 0, 0, 0, meta, player,
-    // EnumHand.MAIN_HAND);
-    // } catch (Exception var8) {
-    // placeState = originalState.getBlock().getDefaultState();
-    // }
-    // for (IProperty prop : placeState.getPropertyKeys()) {
-    // if (tool.getItem() instanceof GadgetCopyPaste) {
-    // if (SAFE_PROPERTIES_COPY_PASTE.contains(prop)) {
-    // placeState = placeState.withProperty(prop, originalState.getValue(prop));
-    // }
-    // } else {
-    // if (SAFE_PROPERTIES.contains(prop)) {
-    // placeState = placeState.withProperty(prop, originalState.getValue(prop));
-    // }
-    // }
-    // }
-    // return placeState;
-    //
-    // }
+    public static BlockState getSpecificStates(BlockState originalState, World world, EntityPlayer player,
+                                               ChunkCoordinates pos, ItemStack tool) {
+        BlockState placeState;
+        Block block = originalState.getBlock();
+
+        ItemStack item;
+        try {
+            // item = block.getPickBlock(originalState, null, world, pos, player);
+            item = block.getPickBlock(null, world, pos.posX, pos.posY, pos.posZ);
+        } catch (Exception ignored) {
+            // This may introduce issues. I hope it doesn't
+            item = InventoryManipulation.getSilkTouchDrop(originalState.getBlock(), originalState.getMetadata());
+        }
+
+        int meta = item.getItemDamage();
+
+        // TODO(johnrowl) this is questionable now.
+        try {
+
+            placeState = new BlockState(originalState.getBlock(), meta);
+        } catch (Exception var8) {
+            placeState = new BlockState(originalState.getBlock(), 0);
+        }
+
+        // TODO(johnrowl) figure out what to do with the properties.
+//        for (IProperty prop : placeState.getPropertyKeys()) {
+//            if (tool.getItem() instanceof GadgetCopyPaste) {
+//                if (SAFE_PROPERTIES_COPY_PASTE.contains(prop)) {
+//                    placeState = placeState.withProperty(prop, originalState.getValue(prop));
+//                }
+//            } else {
+//                if (SAFE_PROPERTIES.contains(prop)) {
+//                    placeState = placeState.withProperty(prop, originalState.getValue(prop));
+//                }
+//            }
+//        }
+        return placeState;
+
+    }
 
     /**
      * Find an item stack in either hand that delegates to the given {@code itemClass}.

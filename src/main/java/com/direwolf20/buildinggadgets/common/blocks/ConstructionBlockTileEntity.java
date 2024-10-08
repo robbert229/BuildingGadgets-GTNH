@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
+import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,11 +22,28 @@ public class ConstructionBlockTileEntity extends TileEntity {
         return true;
     }
 
+    public boolean setBlockState(BlockState blockState) {
+        return this.setBlockState(blockState.getBlock(), blockState.getMetadata());
+    }
+
     public boolean setActualBlockState(Block block, int meta) {
         this.actualBlock = block;
         this.actualBlockMeta = meta;
         markDirtyClient();
         return true;
+    }
+
+    public boolean setActualBlockState(BlockState blockState) {
+        return this.setActualBlockState(blockState.getBlock(), blockState.getMetadata());
+    }
+
+
+    public BlockState getBlockState() {
+        return new BlockState(this.getBlock(), this.getBlockMeta());
+    }
+
+    public BlockState getActualBlockState() {
+        return new BlockState(this.getActualBlock(), this.getActualBlockMeta());
     }
 
     public Block getBlock() {

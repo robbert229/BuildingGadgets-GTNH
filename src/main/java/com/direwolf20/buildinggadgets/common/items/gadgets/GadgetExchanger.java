@@ -8,6 +8,7 @@ import com.direwolf20.buildinggadgets.common.tools.*;
 //import net.minecraft.block.state.IBlockState;
 //import net.minecraft.client.resources.I18n;
 //import net.minecraft.client.util.ITooltipFlag;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 //import net.minecraft.entity.player.EntityPlayer;
@@ -126,18 +127,18 @@ public class GadgetExchanger extends GadgetGeneric {
         ExchangingModes mode = ExchangingModes.values()[modeInt];
         setToolMode(heldItem, mode);
     }
-//
-//    public void rangeChange(EntityPlayer player, ItemStack heldItem) {
-//        int range = getToolRange(heldItem);
-//        int changeAmount = (getToolMode(heldItem) == ExchangingModes.Grid || (range % 2 == 0)) ? 1 : 2;
-//        if (player.isSneaking()) {
-//            range = (range <= 1) ? SyncedConfig.maxRange : range - changeAmount;
-//        } else {
-//            range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
-//        }
-//        setToolRange(heldItem, range);
-//        player.sendStatusMessage(new TextComponentString(TextFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
-//    }
+
+    public void rangeChange(EntityPlayer player, ItemStack heldItem) {
+        int range = GadgetUtils.getToolRange(heldItem);
+        int changeAmount = (getToolMode(heldItem) == ExchangingModes.Grid || (range % 2 == 0)) ? 1 : 2;
+        if (player.isSneaking()) {
+            range = (range <= 1) ? SyncedConfig.maxRange : range - changeAmount;
+        } else {
+            range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
+        }
+        GadgetUtils.setToolRange(heldItem, range);
+        player.addChatMessage(new ChatComponentText(ChatFormatting.DARK_AQUA + new ChatComponentTranslation("message.gadget.toolrange").getUnformattedText() + ": " + range));
+    }
 //
 //    private boolean exchange(EntityPlayer player, ItemStack stack) {
 //        World world = player.world;

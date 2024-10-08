@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import com.direwolf20.buildinggadgets.common.items.gadgets.*;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -35,14 +36,21 @@ public class PacketChangeRange implements IMessage {
     public static class Handler implements IMessageHandler<PacketChangeRange, IMessage> {
         @Override
         public IMessage onMessage(PacketChangeRange message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            // TODO(johnrowl) is this the right way? Ignore the addScheduled task, and just manually handle things?
+            //FMLCommonHandler.instance().get(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            if (ctx.side == Side.CLIENT) {
+                return null;
+            }
+
+            this.handle(message, ctx);
+
             return null;
         }
 
         private void handle(PacketChangeRange message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
-            if (heldItem.isEmpty())
+            if (heldItem == null)
                 return;
 
             if (message.range >= 0)

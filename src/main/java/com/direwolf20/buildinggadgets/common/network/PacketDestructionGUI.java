@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -46,15 +47,23 @@ public class PacketDestructionGUI implements IMessage {
     public static class Handler implements IMessageHandler<PacketDestructionGUI, IMessage> {
         @Override
         public IMessage onMessage(PacketDestructionGUI message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+//            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            if (ctx.side == Side.CLIENT) {
+                return null;
+            }
+
+            this.handle(message, ctx);
+
             return null;
         }
 
         private void handle(PacketDestructionGUI message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
             ItemStack heldItem = GadgetDestruction.getGadget(playerEntity);
-            if (heldItem.isEmpty()) return;
+            if (heldItem == null) {
+                return;
+            }
 
             GadgetDestruction.setToolValue(heldItem, message.left, "left");
             GadgetDestruction.setToolValue(heldItem, message.right, "right");

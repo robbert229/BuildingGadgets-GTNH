@@ -19,11 +19,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import cofh.lib.util.helpers.MathHelper;
+import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -34,7 +38,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.*;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
@@ -78,11 +82,8 @@ public class GadgetUtils {
 
 
     @Nullable
-    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
-            throws IOException {
-        NBTTagCompound withText = name != null && !name.isEmpty()
-                ? (NBTTagCompound) compound.copy()
-                : compound;
+    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name) throws IOException {
+        NBTTagCompound withText = name != null && !name.isEmpty() ? (NBTTagCompound) compound.copy() : compound;
         if (name != null && !name.isEmpty()) {
             withText.setString("name", name);
         }
@@ -102,89 +103,95 @@ public class GadgetUtils {
     }
 
     //
-    // public static void pushUndoList(ItemStack stack, UndoState undoState) {
-    // //When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // if (tagCompound == null) {
-    // tagCompound = new NBTTagCompound();
-    // }
-    // NBTTagList undoStates = (NBTTagList) tagCompound.getTag("undoStack");
-    // if (undoStates == null) {
-    // undoStates = new NBTTagList();
-    // }
-    // if (undoStates.tagCount() >= 10) {
-    // undoStates.removeTag(0);
-    // }
-    // undoStates.appendTag(undoStateToNBT(undoState));
-    // tagCompound.setTag("undoStack", undoStates);
-    // stack.setTagCompound(tagCompound);
-    // }
+    public static void pushUndoList(ItemStack stack, UndoState undoState) {
+        //When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+        }
+        NBTTagList undoStates = (NBTTagList) tagCompound.getTag("undoStack");
+        if (undoStates == null) {
+            undoStates = new NBTTagList();
+        }
+        if (undoStates.tagCount() >= 10) {
+            undoStates.removeTag(0);
+        }
+        undoStates.appendTag(undoStateToNBT(undoState));
+        tagCompound.setTag("undoStack", undoStates);
+        stack.setTagCompound(tagCompound);
+    }
+
     //
-    // @Nullable
-    // public static UndoState popUndoList(ItemStack stack) {
-    // //Get the most recent Undo Coordinate set from the list in NBT
-    // NBTTagCompound tagCompound = stack.getTagCompound();
-    // if (tagCompound == null) {
-    // return null;
-    // }
-    // NBTTagList undoStates = (NBTTagList) tagCompound.getTag("undoStack");
-    // if (undoStates == null || undoStates.tagCount() == 0) {
-    // return null;
-    // }
-    // UndoState undoState = NBTToUndoState(undoStates.getCompoundTagAt(undoStates.tagCount() - 1));
-    // undoStates.removeTag(undoStates.tagCount() - 1);
-    // tagCompound.setTag("undoStack", undoStates);
-    // return undoState;
-    // }
+    @Nullable
+    public static UndoState popUndoList(ItemStack stack) {
+        //Get the most recent Undo Coordinate set from the list in NBT
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound == null) {
+            return null;
+        }
+        NBTTagList undoStates = (NBTTagList) tagCompound.getTag("undoStack");
+        if (undoStates == null || undoStates.tagCount() == 0) {
+            return null;
+        }
+        UndoState undoState = NBTToUndoState(undoStates.getCompoundTagAt(undoStates.tagCount() - 1));
+        undoStates.removeTag(undoStates.tagCount() - 1);
+        tagCompound.setTag("undoStack", undoStates);
+        return undoState;
+    }
+
     //
-    // private static NBTTagCompound undoStateToNBT(UndoState undoState) {
-    // //Convert an UndoState object into NBT data. Uses ints to store relative positions to a start block for data
-    // compression..
-    // NBTTagCompound compound = new NBTTagCompound();
-    // compound.setInteger("dim", undoState.dimension);
-    // ChunkCoordinates startBlock = undoState.coordinates.get(0);
-    // int[] array = new int[undoState.coordinates.size()];
-    // int idx = 0;
-    // for (ChunkCoordinates coord : undoState.coordinates) {
-    // //Converts relative chunkCoordinates coordinates to a single integer value. Max range 127 due to 8 bits.
-    // int px = (((coord.posX - startBlock.posX) & 0xff) << 16);
-    // int py = (((coord.posY - startBlock.posY) & 0xff) << 8);
-    // int pz = (((coord.posZ - startBlock.posZ) & 0xff));
-    // int p = (px + py + pz);
-    // array[idx++] = p;
-    // }
-    // compound.setTag("startBlock", NBTUtil.createPosTag(startBlock));
-    // compound.setIntArray("undoIntCoords", array);
-    // return compound;
-    // }
-    //
-    // private static UndoState NBTToUndoState(NBTTagCompound compound) {
-    // //Convert an integer list stored in NBT into UndoState
-    // int dim = compound.getInteger("dim");
-    // List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
-    // int[] array = compound.getIntArray("undoIntCoords");
-    // ChunkCoordinates startBlock = NBTUtil.getPosFromTag(compound.getCompoundTag("startBlock"));
-    // for (int i = 0; i <= array.length - 1; i++) {
-    // int p = array[i];
-    // int x = startBlock.getX() + (byte) ((p & 0xff0000) >> 16);
-    // int y = startBlock.getY() + (byte) ((p & 0x00ff00) >> 8);
-    // int z = startBlock.getZ() + (byte) (p & 0x0000ff);
-    // coordinates.add(new ChunkCoordinates(x, y, z));
-    // }
-    // UndoState undoState = new UndoState(dim, coordinates);
-    // return undoState;
-    // }
-    //
+    private static NBTTagCompound undoStateToNBT(UndoState undoState) {
+        //Convert an UndoState object into NBT data. Uses ints to store relative positions to a start block for data
+        // compression..
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("dim", undoState.dimension);
+        ChunkCoordinates startBlock = undoState.coordinates.get(0);
+        int[] array = new int[undoState.coordinates.size()];
+        int idx = 0;
+        for (ChunkCoordinates coord : undoState.coordinates) {
+            //Converts relative chunkCoordinates coordinates to a single integer value. Max range 127 due to 8 bits.
+            int px = (((coord.posX - startBlock.posX) & 0xff) << 16);
+            int py = (((coord.posY - startBlock.posY) & 0xff) << 8);
+            int pz = (((coord.posZ - startBlock.posZ) & 0xff));
+            int p = (px + py + pz);
+            array[idx++] = p;
+        }
+        compound.setTag("startBlock", NBTTool.createPosTag(startBlock));
+        compound.setIntArray("undoIntCoords", array);
+        return compound;
+    }
+
+    private static UndoState NBTToUndoState(NBTTagCompound compound) {
+        //Convert an integer list stored in NBT into UndoState
+        int dim = compound.getInteger("dim");
+        List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
+        int[] array = compound.getIntArray("undoIntCoords");
+
+        ChunkCoordinates startBlock = NBTTool.getPosFromTag(compound.getCompoundTag("startBlock"));
+        for (int i = 0; i <= array.length - 1; i++) {
+            int p = array[i];
+            int x = startBlock.posX + (byte) ((p & 0xff0000) >> 16);
+            int y = startBlock.posY + (byte) ((p & 0x00ff00) >> 8);
+            int z = startBlock.posZ + (byte) (p & 0x0000ff);
+            coordinates.add(new ChunkCoordinates(x, y, z));
+        }
+
+        return new UndoState(dim, coordinates);
+    }
+
     public static void setAnchor(ItemStack stack, List<ChunkCoordinates> coordinates) {
         //Store 1 set of ChunkCoordinates in NBT to anchor the Ghost Blocks in the world when the anchor key is pressed
         NBTTagCompound tagCompound = stack.getTagCompound();
         NBTTagList coords = new NBTTagList();
+
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
+
         for (ChunkCoordinates coord : coordinates) {
             coords.appendTag(NBTTool.createPosTag(coord));
         }
+
         tagCompound.setTag("anchorcoords", coords);
         stack.setTagCompound(tagCompound);
     }
@@ -228,21 +235,21 @@ public class GadgetUtils {
         return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
     }
 
-    // public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,
-    // IBlockState state) {
-    // if (operation == PacketRotateMirror.Operation.MIRROR)
-    // return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT :
-    // Mirror.FRONT_BACK);
-    //
-    // return state.withRotation(Rotation.CLOCKWISE_90);
-    // }
-    //
-    // public static void rotateOrMirrorToolBlock(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation
-    // operation) {
-    // setToolBlock(stack, rotateOrMirrorBlock(player, operation, getToolBlock(stack)));
-    // setToolActualBlock(stack, rotateOrMirrorBlock(player, operation, getToolActualBlock(stack)));
-    // }
-    //
+//     public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,
+//     IBlockState state) {
+//     if (operation == PacketRotateMirror.Operation.MIRROR)
+//     return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT :
+//     Mirror.FRONT_BACK);
+//
+//     return state.withRotation(Rotation.CLOCKWISE_90);
+//     }
+//
+//     public static void rotateOrMirrorToolBlock(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation
+//     operation) {
+//     setToolBlock(stack, rotateOrMirrorBlock(player, operation, getToolBlock(stack)));
+//     setToolActualBlock(stack, rotateOrMirrorBlock(player, operation, getToolActualBlock(stack)));
+//     }
+
     private static void setToolBlock(ItemStack stack, @Nullable BlockState state) {
         //Store the selected block in the tool's NBT
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -343,58 +350,60 @@ public class GadgetUtils {
     // return EnumActionResult.FAIL;
     // }
     //
-    // public static boolean anchorBlocks(EntityPlayer player, ItemStack stack) {
-    // //Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual
-    // render
-    // World world = player.world;
-    // List<ChunkCoordinates> currentCoords = getAnchor(stack);
-    // if (currentCoords.size() == 0) { //If we don't have an anchor, find the block we're supposed to anchor to
-    // MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-    // if (lookingAt == null) { //If we aren't looking at anything, exit
-    // return false;
-    // }
-    // ChunkCoordinates startBlock = VectorTools.getPosFromMovingObjectPosition(lookingAt);
-    // EnumFacing sideHit = lookingAt.sideHit;
-    // if (startBlock == null || world.getBlockState(startBlock) == Blocks.AIR.getDefaultState()) { //If we are looking
-    // at air, exit
-    // return false;
-    // }
-    // List<ChunkCoordinates> coords = new ArrayList<ChunkCoordinates>();
-    // if (stack.getItem() instanceof GadgetBuilding) {
-    // coords = BuildingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock); // Build the
-    // positions list based on tool mode and range
-    // } else if (stack.getItem() instanceof GadgetExchanger) {
-    // coords = ExchangingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock); // Build the
-    // positions list based on tool mode and range
-    // }
-    // setAnchor(stack, coords); //Set the anchor NBT
-    // player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new
-    // TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
-    // } else { //If theres already an anchor, remove it.
-    // setAnchor(stack, new ArrayList<ChunkCoordinates>());
-    // player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new
-    // TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
-    // }
-    // return true;
-    // }
-    //
-    // public static boolean setRemoteInventory(EntityPlayer player, ItemStack tool, ChunkCoordinates pos, int dim,
-    // World world) {
-    // if (getRemoteInventory(pos, dim, world, player) != null) {
-    // boolean same = pos.equals(getPOSFromNBT(tool, "boundTE"));
-    // writePOSToNBT(tool, same ? null : pos, "boundTE", dim);
-    // player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new
-    // TextComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedComponentText()),
-    // true);
-    // return true;
-    // }
-    // return false;
-    // }
-    //
-    // public static void clearCachedRemoteInventory() {
-    // remoteInventorySupplier = null;
-    // }
-    //
+    public static boolean anchorBlocks(EntityPlayer player, ItemStack stack) {
+        //Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual
+        // render
+        World world = player.worldObj;
+        List<ChunkCoordinates> currentCoords = getAnchor(stack);
+        if (currentCoords.isEmpty()) { //If we don't have an anchor, find the block we're supposed to anchor to
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+            if (lookingAt == null) { //If we aren't looking at anything, exit
+                return false;
+            }
+            ChunkCoordinates startBlock = VectorTools.getPosFromMovingObjectPosition(lookingAt);
+            var startBlockBlock = world.getBlock(startBlock.posX, startBlock.posY, startBlock.posZ);
+
+            int sideHit = lookingAt.sideHit;
+            if (startBlock == null || startBlockBlock == Blocks.air || startBlockBlock == null) {
+                //If we are looking
+                // at air, exit
+                return false;
+            }
+            var side = BlockModBase.BlockSide.fromValue(sideHit);
+            List<ChunkCoordinates> coords = new ArrayList<ChunkCoordinates>();
+
+            if (stack.getItem() instanceof GadgetBuilding) {
+                coords = BuildingModes.collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build the
+                //positions list based on tool mode and range
+            } else if (stack.getItem() instanceof GadgetExchanger) {
+                coords = ExchangingModes.collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build the
+                // positions list based on tool mode and range
+            }
+
+            setAnchor(stack, coords); //Set the anchor NBT
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedText()));
+        } else {
+            //If there's already an anchor, remove it.
+            setAnchor(stack, new ArrayList<ChunkCoordinates>());
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+        }
+        return true;
+    }
+
+    public static boolean setRemoteInventory(EntityPlayer player, ItemStack tool, ChunkCoordinates pos, int dim, World world) {
+        if (getRemoteInventory(pos, dim, world, player) != null) {
+            boolean same = pos.equals(getPOSFromNBT(tool, "boundTE"));
+            writePOSToNBT(tool, same ? null : pos, "boundTE", dim);
+            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedText()));
+            return true;
+        }
+        return false;
+    }
+
+    public static void clearCachedRemoteInventory() {
+        remoteInventorySupplier = null;
+    }
+
     @Nullable
     public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
         return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);

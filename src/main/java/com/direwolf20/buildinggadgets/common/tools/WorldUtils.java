@@ -7,6 +7,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+
+import javax.annotation.Nullable;
 
 public class WorldUtils {
     public static ChunkCoordinates offset(ChunkCoordinates coordinates, EnumFacing facing, int distance) {
@@ -42,6 +45,13 @@ public class WorldUtils {
 
     public static ChunkCoordinates down(ChunkCoordinates coordinates, int y) {
         return up(coordinates, -1 * y);
+    }
+
+    public static double getDistance(ChunkCoordinates first, ChunkCoordinates second) {
+        double dx = first.posX - second.posX;
+        double dy = first.posY - second.posY;
+        double dz = first.posZ - second.posZ;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     public static double distanceSqToCenter(ChunkCoordinates first, ChunkCoordinates second) {
@@ -82,17 +92,24 @@ public class WorldUtils {
         return toLong(new ChunkCoordinates(x, y, z));
     }
 
+    @Nullable
     public static BlockState getBlockState(World world, int x, int y, int z) {
         var block = world.getBlock(x, y, z);
+        if (block == null) {
+            return null;
+        }
+
         var metadata = world.getBlockMetadata(x, y, z);
 
         return new BlockState(block, metadata);
     }
 
+    @Nullable
     public static BlockState getBlockState(World world, ChunkCoordinates coordinates) {
         return getBlockState(world, coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
+    @Nullable
     public static Block getBlock(World world, ChunkCoordinates coordinates) {
         return world.getBlock(coordinates.posX, coordinates.posY, coordinates.posZ);
     }

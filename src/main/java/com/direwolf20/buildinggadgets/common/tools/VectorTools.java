@@ -32,6 +32,10 @@ public class VectorTools {
     }
 
     public static ChunkCoordinates getPosFromMovingObjectPosition(MovingObjectPosition movingObjectPosition) {
+        if (movingObjectPosition == null) {
+            return null;
+        }
+
         // @TODO(johnrowl) movingObjectPosition may be null in some cases. We should make sure that we handle it.
         return new ChunkCoordinates(
             movingObjectPosition.blockX,
@@ -69,13 +73,23 @@ public class VectorTools {
     }
 
     public static EnumFacing rotateY(EnumFacing facing) {
-        switch (facing) {
-            case NORTH: return EnumFacing.EAST;
-            case EAST: return EnumFacing.SOUTH;
-            case SOUTH: return EnumFacing.WEST;
-            case WEST: return EnumFacing.NORTH;
-            default: return facing; // If it's vertical (UP/DOWN), no rotation is applied
-        }
+        return switch (facing) {
+            case NORTH -> EnumFacing.EAST;
+            case EAST -> EnumFacing.SOUTH;
+            case SOUTH -> EnumFacing.WEST;
+            case WEST -> EnumFacing.NORTH;
+            default -> facing; // If it's vertical (UP/DOWN), no rotation is applied
+        };
+    }
+
+    public static EnumFacing rotateYCCW(EnumFacing facing) {
+        return switch (facing) {
+            case NORTH -> EnumFacing.WEST;
+            case EAST -> EnumFacing.NORTH;
+            case SOUTH -> EnumFacing.EAST;
+            case WEST -> EnumFacing.SOUTH;
+            default -> facing; // If it's vertical (UP/DOWN), no rotation is applied
+        };
     }
 
     public static int getAxisValue(ChunkCoordinates pos, EnumFacing axis) {

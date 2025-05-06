@@ -32,10 +32,10 @@ public class ModItems {
     public static ConstructionPasteContainer constructionPasteContainer;
 
     @GameRegistry.ObjectHolder("constructionpastecontainert2")
-    public static ConstructionPasteContainer constructionPasteContainert2;
+    public static ConstructionPasteContainer constructionPasteContainerT2;
 
     @GameRegistry.ObjectHolder("constructionpastecontainert3")
-    public static ConstructionPasteContainer constructionPasteContainert3;
+    public static ConstructionPasteContainer constructionPasteContainerT3;
 
     @GameRegistry.ObjectHolder("constructionpastecontainercreative")
     public static ConstructionPasteContainerCreative constructionPasteContainerCreative;
@@ -76,15 +76,15 @@ public class ModItems {
             RegularPasteContainerTypes.T1.capacitySupplier);
         GameRegistry.registerItem(constructionPasteContainer, constructionPasteContainer.getUnlocalizedName());
 
-        constructionPasteContainert2 = new ConstructionPasteContainer(
+        constructionPasteContainerT2 = new ConstructionPasteContainer(
             RegularPasteContainerTypes.T2.itemSuffix,
             RegularPasteContainerTypes.T2.capacitySupplier);
-        GameRegistry.registerItem(constructionPasteContainert2, constructionPasteContainert2.getUnlocalizedName());
+        GameRegistry.registerItem(constructionPasteContainerT2, constructionPasteContainerT2.getUnlocalizedName());
 
-        constructionPasteContainert3 = new ConstructionPasteContainer(
+        constructionPasteContainerT3 = new ConstructionPasteContainer(
             RegularPasteContainerTypes.T3.itemSuffix,
             RegularPasteContainerTypes.T3.capacitySupplier);
-        GameRegistry.registerItem(constructionChunkDense, constructionChunkDense.getUnlocalizedName());
+        GameRegistry.registerItem(constructionPasteContainerT3, constructionPasteContainerT3.getUnlocalizedName());
 
         constructionPasteContainerCreative = new ConstructionPasteContainerCreative();
         GameRegistry

@@ -1,9 +1,10 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 /**
  * Wraps an {@link IBlockProvider} such that all access to the provider will be translated by the given amount as the

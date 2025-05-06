@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common;
 
+import net.minecraft.util.ResourceLocation;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
 
-import net.minecraft.util.ResourceLocation;
-
 public enum ModSounds {
+
     BEEP("beep");
 
     private final ResourceLocation sound;

@@ -2,8 +2,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
-import cofh.api.energy.IEnergyContainerItem;
-import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,8 +19,11 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
+
+import cofh.api.energy.IEnergyContainerItem;
 
 public abstract class GadgetGeneric extends ItemModBase {
 
@@ -36,12 +37,12 @@ public abstract class GadgetGeneric extends ItemModBase {
         return SyncedConfig.energyMax;
     }
 
-//     @Override
-//     @Nullable
-//     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound tag) {
-//     return new MultiCapabilityProvider(new CapabilityProviderEnergy(stack, this::getEnergyMax), new
-//     CapabilityProviderBlockProvider(stack));
-//     }
+    // @Override
+    // @Nullable
+    // public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound tag) {
+    // return new MultiCapabilityProvider(new CapabilityProviderEnergy(stack, this::getEnergyMax), new
+    // CapabilityProviderBlockProvider(stack));
+    // }
 
     @Override
     public boolean isDamageable() {
@@ -57,20 +58,21 @@ public abstract class GadgetGeneric extends ItemModBase {
     public double getDurabilityForDisplay(ItemStack stack) {
         if (stack.getItem() instanceof IEnergyContainerItem energyContainerItem) {
 
-            return 1D - ((double) energyContainerItem.getEnergyStored(stack) / (double) energyContainerItem.getMaxEnergyStored(stack));
+            return 1D - ((double) energyContainerItem.getEnergyStored(stack)
+                / (double) energyContainerItem.getMaxEnergyStored(stack));
         }
 
         return super.getDurabilityForDisplay(stack);
     }
 
-
-//    public int getRGBDurabilityForDisplay(ItemStack stack) {
-//        if (stack.getItem() instanceof IEnergyContainerItem energyItem) {
-//            float energyRatio = Math.max(0.0F, (float) energyItem.getEnergyStored(stack) / (float) energyItem.getMaxEnergyStored(stack));
-//            return MathHelper.hsvToRGB(energyRatio / 3.0F, 1.0F, 1.0F);
-//        }
-//        return super.getRGBDurabilityForDisplay(stack);
-//    }
+    // public int getRGBDurabilityForDisplay(ItemStack stack) {
+    // if (stack.getItem() instanceof IEnergyContainerItem energyItem) {
+    // float energyRatio = Math.max(0.0F, (float) energyItem.getEnergyStored(stack) / (float)
+    // energyItem.getMaxEnergyStored(stack));
+    // return MathHelper.hsvToRGB(energyRatio / 3.0F, 1.0F, 1.0F);
+    // }
+    // return super.getRGBDurabilityForDisplay(stack);
+    // }
 
     @Override
     public boolean isDamaged(ItemStack stack) {
@@ -83,7 +85,8 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("creative")) {
+        if (stack.hasTagCompound() && stack.getTagCompound()
+            .hasKey("creative")) {
             return false;
         }
 
@@ -144,61 +147,67 @@ public abstract class GadgetGeneric extends ItemModBase {
             return;
         }
         if (stack.getItem() instanceof IEnergyContainerItem energyItem) {
-            list.add(ChatFormatting.WHITE + I18n.format("tooltip.gadget.energy") + ": " +
-                    energyItem.getEnergyStored(stack) + "/" + energyItem.getMaxEnergyStored(stack));
+            list.add(
+                ChatFormatting.WHITE + I18n.format("tooltip.gadget.energy")
+                    + ": "
+                    + energyItem.getEnergyStored(stack)
+                    + "/"
+                    + energyItem.getMaxEnergyStored(stack));
         }
     }
+
     public static boolean getFuzzy(ItemStack stack) {
         return NBTTool.getOrNewTag(stack)
-                .getBoolean("fuzzy");
+            .getBoolean("fuzzy");
     }
 
     public static void toggleFuzzy(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-                .setBoolean("fuzzy", !getFuzzy(stack));
+            .setBoolean("fuzzy", !getFuzzy(stack));
         player.addChatComponentMessage(
-                new ChatComponentText(
-                        ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.fuzzymode").getUnformattedTextForChat()
-                                + ": "
-                                + getFuzzy(stack)));
+            new ChatComponentText(
+                ChatFormatting.AQUA
+                    + new ChatComponentTranslation("message.gadget.fuzzymode").getUnformattedTextForChat()
+                    + ": "
+                    + getFuzzy(stack)));
     }
 
     public static boolean getConnectedArea(ItemStack stack) {
         return !NBTTool.getOrNewTag(stack)
-                .getBoolean("unconnectedarea");
+            .getBoolean("unconnectedarea");
     }
 
     public static void toggleConnectedArea(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-                .setBoolean("unconnectedarea", getConnectedArea(stack));
+            .setBoolean("unconnectedarea", getConnectedArea(stack));
         String suffix = stack.getItem() instanceof GadgetDestruction ? "area" : "surface";
         player.addChatComponentMessage(
-                new ChatComponentText(
-                        ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.connected" + suffix).getUnformattedTextForChat()
-                                + ": "
-                                + getConnectedArea(stack)));
+            new ChatComponentText(
+                ChatFormatting.AQUA
+                    + new ChatComponentTranslation("message.gadget.connected" + suffix).getUnformattedTextForChat()
+                    + ": "
+                    + getConnectedArea(stack)));
     }
 
     public static boolean shouldRayTraceFluid(ItemStack stack) {
         return NBTTool.getOrNewTag(stack)
-                .getBoolean("raytrace_fluid");
+            .getBoolean("raytrace_fluid");
     }
 
     public static void toggleRayTraceFluid(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-                .setBoolean("raytrace_fluid", !shouldRayTraceFluid(stack));
+            .setBoolean("raytrace_fluid", !shouldRayTraceFluid(stack));
         player.addChatComponentMessage(
-                new ChatComponentText(
-                        ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.raytrace_fluid").getUnformattedTextForChat()
-                                + ": "
-                                + shouldRayTraceFluid(stack)));
+            new ChatComponentText(
+                ChatFormatting.AQUA
+                    + new ChatComponentTranslation("message.gadget.raytrace_fluid").getUnformattedTextForChat()
+                    + ": "
+                    + shouldRayTraceFluid(stack)));
     }
 
     public static void addInformationRayTraceFluid(List<String> tooltip, ItemStack stack) {
-        tooltip.add(ChatFormatting.BLUE + I18n.format("tooltip.gadget.raytrace_fluid") + ": " + shouldRayTraceFluid(stack));
+        tooltip.add(
+            ChatFormatting.BLUE + I18n.format("tooltip.gadget.raytrace_fluid") + ": " + shouldRayTraceFluid(stack));
     }
 
     public static class EmitEvent {
@@ -206,20 +215,21 @@ public abstract class GadgetGeneric extends ItemModBase {
         protected static boolean breakBlock(World world, ChunkCoordinates pos, Block block, EntityPlayer player) {
             // TODO(johnrowl) do I need to introduce a specific metadata?
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(
-                    pos.posX,
-                    pos.posY,
-                    pos.posZ,
-                    world,
-                    block,
-                    0,
-                    player);
+                pos.posX,
+                pos.posY,
+                pos.posZ,
+                world,
+                block,
+                0,
+                player);
             MinecraftForge.EVENT_BUS.post(breakEvent);
 
             return !breakEvent.isCanceled();
         }
 
         protected static boolean placeBlock(EntityPlayer player, BlockSnapshot snapshot, EnumFacing direction) {
-            BlockEvent.PlaceEvent event = ForgeEventFactory.onPlayerBlockPlace(player, snapshot, DirectionUtils.toForgeDirection(direction));
+            BlockEvent.PlaceEvent event = ForgeEventFactory
+                .onPlayerBlockPlace(player, snapshot, DirectionUtils.toForgeDirection(direction));
             return !event.isCanceled();
         }
     }

@@ -1,13 +1,15 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+
 public class TemplateManagerContainer extends Container {
+
     public static final String TEXTURE_LOC_SLOT_TOOL = BuildingGadgets.MODID + ":gui/slot_copypastetool";
     public static final String TEXTURE_LOC_SLOT_TEMPLATE = BuildingGadgets.MODID + ":gui/slot_template";
     private final TemplateManagerTileEntity te;
@@ -56,7 +58,8 @@ public class TemplateManagerContainer extends Container {
             itemstack = itemstack1.copy();
 
             if (index < TemplateManagerTileEntity.SIZE) {
-                if (!this.mergeItemStack(itemstack1, TemplateManagerTileEntity.SIZE, this.inventorySlots.size(), true)) {
+                if (!this
+                    .mergeItemStack(itemstack1, TemplateManagerTileEntity.SIZE, this.inventorySlots.size(), true)) {
                     return null;
                 }
             } else if (!this.mergeItemStack(itemstack1, 0, TemplateManagerTileEntity.SIZE, false)) {

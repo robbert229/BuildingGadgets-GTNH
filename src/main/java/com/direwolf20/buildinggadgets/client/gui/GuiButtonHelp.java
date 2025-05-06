@@ -2,9 +2,11 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+
 import org.lwjgl.opengl.GL11;
 
 public class GuiButtonHelp extends GuiButtonSelect {
+
     public GuiButtonHelp(int buttonId, int x, int y) {
         super(buttonId, x, y, 12, 12, "?", "");
     }
@@ -21,10 +23,9 @@ public class GuiButtonHelp extends GuiButtonSelect {
 
         GL11.glColor4f(1, 1, 1, 1);
 
-        boolean hovered = mouseX >= this.xPosition &&
-                mouseY >= this.yPosition &&
-                mouseX < this.xPosition + width &&
-                mouseY < this.yPosition + height;
+        boolean hovered = mouseX >= this.xPosition && mouseY >= this.yPosition
+            && mouseX < this.xPosition + width
+            && mouseY < this.yPosition + height;
 
         float x = this.xPosition + 5.5F;
         int y = this.yPosition + 6;
@@ -53,11 +54,7 @@ public class GuiButtonHelp extends GuiButtonSelect {
         for (int k = 0; k <= s; k++) {
             double angle = (Math.PI * 2 * k / s) + Math.toRadians(180);
 
-            tessellator.addVertex(
-                    x + Math.sin(angle) * radius,
-                    y + Math.cos(angle) * radius,
-                    0
-            );
+            tessellator.addVertex(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0);
         }
         tessellator.draw();
 
@@ -77,11 +74,10 @@ public class GuiButtonHelp extends GuiButtonSelect {
         }
 
         mc.fontRenderer.drawString(
-                displayString,
-                this.xPosition + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2,
-                this.yPosition + (height - 8) / 2,
-                colorText
-        );
+            displayString,
+            this.xPosition + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2,
+            this.yPosition + (height - 8) / 2,
+            colorText);
     }
 
 }

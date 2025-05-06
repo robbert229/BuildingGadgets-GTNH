@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.util.MetadataUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import com.direwolf20.buildinggadgets.util.MetadataUtils;
 
 public class MetadataUtilsTest {
 

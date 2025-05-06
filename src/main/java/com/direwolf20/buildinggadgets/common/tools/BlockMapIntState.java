@@ -1,7 +1,11 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.util.NBTTool;
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,10 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class BlockMapIntState {
 
@@ -69,7 +71,7 @@ public class BlockMapIntState {
         return intStateMap.get(slot);
     }
 
-    public UniqueItem getStackFromSlot(BlockState blockState) {//TODO unused
+    public UniqueItem getStackFromSlot(BlockState blockState) {// TODO unused
         return intStackMap.get(blockState);
     }
 
@@ -136,7 +138,8 @@ public class BlockMapIntState {
         ItemStack itemStack;
 
         try {
-            itemStack = state.getBlock().getPickBlock(null, player.worldObj, pos.posX, pos.posY, pos.posZ, player);
+            itemStack = state.getBlock()
+                .getPickBlock(null, player.worldObj, pos.posX, pos.posY, pos.posZ, player);
         } catch (Exception e) {
             itemStack = InventoryManipulation.getSilkTouchDrop(state.getBlock(), state.getMetadata());
         }
@@ -157,7 +160,9 @@ public class BlockMapIntState {
 
         for (Map.Entry<Short, BlockState> entry : intStateMap.entrySet()) {
             try {
-                intStackMap.put(entry.getValue(), blockStateToUniqueItem(entry.getValue(), player, new ChunkCoordinates(0, 0, 0)));
+                intStackMap.put(
+                    entry.getValue(),
+                    blockStateToUniqueItem(entry.getValue(), player, new ChunkCoordinates(0, 0, 0)));
             } catch (IllegalArgumentException e) {
                 //
             }

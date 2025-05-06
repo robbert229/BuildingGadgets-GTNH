@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.block.Block;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
@@ -13,6 +12,7 @@ import net.minecraft.world.IBlockAccess;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 

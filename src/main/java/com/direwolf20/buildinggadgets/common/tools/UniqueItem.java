@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import net.minecraft.item.Item;
 
 public final class UniqueItem {
+
     public final int meta;
     public final Item item;
 
@@ -12,7 +13,7 @@ public final class UniqueItem {
     }
 
     public boolean equals(UniqueItem uniqueItem) {
-        //item.equals will fall back to reference Equality
+        // item.equals will fall back to reference Equality
         return uniqueItem.item.equals(item) && uniqueItem.meta == meta;
     }
 

@@ -1,13 +1,15 @@
 package com.direwolf20.buildinggadgets.common.network;
 
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import cpw.mods.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 
 public class PacketPasteGUI implements IMessage {
 
@@ -38,6 +40,7 @@ public class PacketPasteGUI implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketPasteGUI, IMessage> {
+
         @Override
         public IMessage onMessage(PacketPasteGUI message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {

@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 import javax.annotation.Nullable;
 
 public class ActionPressed {
+
     private Runnable action;
 
     public ActionPressed(@Nullable Runnable action) {
@@ -10,8 +11,7 @@ public class ActionPressed {
     }
 
     public boolean pressed(boolean pressed) {
-        if (pressed && action != null)
-            action.run();
+        if (pressed && action != null) action.run();
 
         return pressed;
     }

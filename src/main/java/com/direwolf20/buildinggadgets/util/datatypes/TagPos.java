@@ -1,10 +1,12 @@
 package com.direwolf20.buildinggadgets.util.datatypes;
 
-import com.direwolf20.buildinggadgets.util.NBTTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
+import com.direwolf20.buildinggadgets.util.NBTTool;
+
 public class TagPos {
+
     public NBTTagCompound tag;
     public ChunkCoordinates pos;
 
@@ -36,7 +38,7 @@ public class TagPos {
 
     public NBTTagCompound getTag() {
         NBTTagCompound compoundTag = new NBTTagCompound();
-        compoundTag.setTag(NBT_TILE_ENTITY_DATA_KEY,  tag);
+        compoundTag.setTag(NBT_TILE_ENTITY_DATA_KEY, tag);
         compoundTag.setTag(NBT_BLOCK_CHUNK_COORDINATES, NBTTool.createPosTag(pos));
         return compoundTag;
     }

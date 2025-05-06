@@ -1,17 +1,14 @@
 package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
-import com.direwolf20.buildinggadgets.client.gui.DireButton;
-import com.direwolf20.buildinggadgets.client.gui.base.GuiBase;
-import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
-import com.direwolf20.buildinggadgets.client.util.RenderUtil;
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.items.ITemplate;
-import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
-import it.unimi.dsi.fastutil.ints.IntList;
+import static codechicken.lib.gui.GuiDraw.fontRenderer;
+
+import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -21,15 +18,20 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.client.gui.DireButton;
+import com.direwolf20.buildinggadgets.client.gui.base.GuiBase;
+import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
+import com.direwolf20.buildinggadgets.client.util.RenderUtil;
+import com.direwolf20.buildinggadgets.common.items.ITemplate;
+import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 
-import static codechicken.lib.gui.GuiDraw.fontRenderer;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 /**
  * This class is adapted from Lunatrius's Schematica mod, 1.12.2 version.
- * <a href="github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/gui/control/GuiSchematicMaterials.java">Github</a>
+ * <a href=
+ * "github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/gui/control/GuiSchematicMaterials.java">Github</a>
  */
 
 public class MaterialListGUI extends GuiBase {
@@ -37,7 +39,9 @@ public class MaterialListGUI extends GuiBase {
     public static final int BUTTON_HEIGHT = 20;
     public static final int BUTTONS_PADDING = 4;
 
-    public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(BuildingGadgets.MODID, "textures/gui/material_list.png");
+    public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(
+        BuildingGadgets.MODID,
+        "textures/gui/material_list.png");
     public static final int BACKGROUND_WIDTH = 256;
     public static final int BACKGROUND_HEIGHT = 200;
     public static final int BORDER_SIZE = 4;
@@ -100,60 +104,86 @@ public class MaterialListGUI extends GuiBase {
 
         this.title = I18n.format("gui.buildinggadgets.materialList.title");
 
-        this.titleTop = AlignmentUtil.getYForAlignedCenter(fontRendererObj.FONT_HEIGHT, backgroundY, getWindowTopY() + ScrollingMaterialList.TOP);
-        this.titleLeft = AlignmentUtil.getXForAlignedCenter(fontRendererObj.getStringWidth(title), backgroundX, getWindowRightX());
+        this.titleTop = AlignmentUtil.getYForAlignedCenter(
+            fontRendererObj.FONT_HEIGHT,
+            backgroundY,
+            getWindowTopY() + ScrollingMaterialList.TOP);
+        this.titleLeft = AlignmentUtil
+            .getXForAlignedCenter(fontRendererObj.getStringWidth(title), backgroundX, getWindowRightX());
 
-        this.materials = item.getItemCountMap(template).entrySet().stream()
-                .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
-                .collect(Collectors.toList());
+        this.materials = item.getItemCountMap(template)
+            .entrySet()
+            .stream()
+            .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
+            .collect(Collectors.toList());
         this.sortMaterialList();
         this.updateAvailableMaterials();
         this.scrollingList = new ScrollingMaterialList(this, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         int buttonY = getWindowBottomY() - (ScrollingMaterialList.BOTTOM / 2 + BUTTON_HEIGHT / 2);
-        this.buttonClose = new DireButton(BUTTON_CLOSE_ID, 0, buttonY, 0, BUTTON_HEIGHT, I18n.format("gui.buildinggadgets.materialList.button.close"));
-        this.buttonSortingModes = new DireButton(BUTTON_SORTING_MODES_ID, 0, buttonY, 0, BUTTON_HEIGHT, sortingMode.getLocalizedName());
-        this.buttonCopyList = new DireButton(BUTTON_COPY_LIST_ID, 0, buttonY, 0, BUTTON_HEIGHT, I18n.format("gui.buildinggadgets.materialList.button.copyList"));
+        this.buttonClose = new DireButton(
+            BUTTON_CLOSE_ID,
+            0,
+            buttonY,
+            0,
+            BUTTON_HEIGHT,
+            I18n.format("gui.buildinggadgets.materialList.button.close"));
+        this.buttonSortingModes = new DireButton(
+            BUTTON_SORTING_MODES_ID,
+            0,
+            buttonY,
+            0,
+            BUTTON_HEIGHT,
+            sortingMode.getLocalizedName());
+        this.buttonCopyList = new DireButton(
+            BUTTON_COPY_LIST_ID,
+            0,
+            buttonY,
+            0,
+            BUTTON_HEIGHT,
+            I18n.format("gui.buildinggadgets.materialList.button.copyList"));
 
         buttonList.add(buttonSortingModes);
         buttonList.add(buttonCopyList);
         buttonList.add(buttonClose);
-        //this.addButton(buttonSortingModes);
-        //this.addButton(buttonCopyList);
-        //this.addButton(buttonClose);
+        // this.addButton(buttonSortingModes);
+        // this.addButton(buttonCopyList);
+        // this.addButton(buttonClose);
 
         this.calculateButtonsWidthAndX();
     }
 
     private String stringify(boolean detailed) {
-        if (detailed)
-            return stringifyDetailed();
+        if (detailed) return stringifyDetailed();
         return stringifySimple();
     }
 
     private String stringifyDetailed() {
         return materials.stream()
-                .map(item -> String.format(PATTERN_DETAILED,
-                        item.getDisplayName(),
-                        item.stackSize,
-                        item.getItem().getUnlocalizedName(),
-                        InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.stackSize)))
-                .collect(Collectors.joining("\n"));
+            .map(
+                item -> String.format(
+                    PATTERN_DETAILED,
+                    item.getDisplayName(),
+                    item.stackSize,
+                    item.getItem()
+                        .getUnlocalizedName(),
+                    InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.stackSize)))
+            .collect(Collectors.joining("\n"));
     }
 
     private String stringifySimple() {
         return materials.stream()
-                .map(item -> String.format(PATTERN_SIMPLE,
-                        item.getDisplayName(),
-                        item.stackSize))
-                .collect(Collectors.joining("\n"));
+            .map(item -> String.format(PATTERN_SIMPLE, item.getDisplayName(), item.stackSize))
+            .collect(Collectors.joining("\n"));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float particleTicks) {
         // drawDefaultBackground();
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(BACKGROUND_TEXTURE);
         RenderUtil.drawTexturedModalRect(backgroundX, backgroundY, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.scrollingList.drawScreen(mouseX, mouseY, particleTicks);
@@ -163,24 +193,24 @@ public class MaterialListGUI extends GuiBase {
         if (hoveringText != null) {
             RenderHelper.enableGUIStandardItemLighting();
             drawHoveringText(hoveringText, hoveringTextX, hoveringTextY, fontRenderer);
-//            GlStateManager.disableLighting();
+            // GlStateManager.disableLighting();
             GL11.glDisable(GL11.GL_LIGHTING);
             hoveringText = null;
         }
     }
 
     @Override
-    public void handleMouseInput()  {
+    public void handleMouseInput() {
         super.handleMouseInput();
 
         int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int my = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
         // TODO(johnrowl) implement this
-//        this.scrollingList.handleMouseInput(mx, my);
+        // this.scrollingList.handleMouseInput(mx, my);
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)  {
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case BUTTON_CLOSE_ID:
                 Minecraft.getMinecraft().thePlayer.closeScreen();
@@ -197,9 +227,9 @@ public class MaterialListGUI extends GuiBase {
                 String type;
                 if (detailed)
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
-                else
-                    type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.thePlayer.addChatMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type));
+                else type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
+                mc.thePlayer.addChatMessage(
+                    new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type));
                 return;
         }
         this.scrollingList.actionPerformed(button);
@@ -218,7 +248,8 @@ public class MaterialListGUI extends GuiBase {
     }
 
     private void calculateButtonsWidthAndX() {
-        // This part would can create narrower buttons when there are too few of them, due to the vanilla button texture is 200 pixels wide
+        // This part would can create narrower buttons when there are too few of them, due to the vanilla button texture
+        // is 200 pixels wide
         int amountButtons = buttonList.size();
         int amountMargins = amountButtons - 1;
         int totalMarginWidth = amountMargins * BUTTONS_PADDING;

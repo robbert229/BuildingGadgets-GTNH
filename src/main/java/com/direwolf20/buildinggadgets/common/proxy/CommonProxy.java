@@ -8,25 +8,22 @@ package com.direwolf20.buildinggadgets.common.proxy;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 // import com.direwolf20.buildinggadgets.common.building.CapabilityBlockProvider;
 
+import java.io.File;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
-import com.direwolf20.buildinggadgets.common.ModSounds;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.config.CompatConfig;
 import com.direwolf20.buildinggadgets.common.entities.ModEntities;
 import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
-
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import net.minecraftforge.client.event.sound.SoundEvent;
-
-import java.io.File;
 
 // @Mod.EventBusSubscriber
 public class CommonProxy {
@@ -107,12 +104,12 @@ public class CommonProxy {
      * }
      */
 
-//    @SubscribeEvent
-//    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-//        for (ModSounds sound : ModSounds.values()) {
-//            event.getRegistry().register(sound.getSound());
-//        }
-//    }
+    // @SubscribeEvent
+    // public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+    // for (ModSounds sound : ModSounds.values()) {
+    // event.getRegistry().register(sound.getSound());
+    // }
+    // }
 
     public void serverStarting(FMLServerStartingEvent event) {
 

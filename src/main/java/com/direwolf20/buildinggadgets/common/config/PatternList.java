@@ -23,8 +23,8 @@ public final class PatternList {
     public static String getName(Item item) {
         String name = Item.itemRegistry.getNameForObject(item);
         if (name == null) throw new IllegalArgumentException(
-                "A registry name for the following IForgeRegistryEntry (" + item.getClass()
-                        .getName() + ") could not be found: " + item);
+            "A registry name for the following IForgeRegistryEntry (" + item.getClass()
+                .getName() + ") could not be found: " + item);
 
         return name;
     }
@@ -32,8 +32,8 @@ public final class PatternList {
     @Nonnull
     static String[] getNames(Item... blocks) {
         return Stream.of(blocks)
-                .map(PatternList::getName)
-                .toArray(String[]::new);
+            .map(PatternList::getName)
+            .toArray(String[]::new);
     }
 
     public static PatternList ofResourcePattern(String... regex) {
@@ -48,10 +48,11 @@ public final class PatternList {
         if (convertToResourceLocations) // this is done, so that users can continue omitting the Minecraft namespace,
             // etc.
             strings = strings.map(ResourceLocation::new)
-                    .map(ResourceLocation::toString);
+                .map(ResourceLocation::toString);
         return new PatternList(
-                ImmutableList.copyOf(strings.map(Pattern::compile)
-                        .collect(Collectors.toList())));
+            ImmutableList.copyOf(
+                strings.map(Pattern::compile)
+                    .collect(Collectors.toList())));
 
     }
 
@@ -61,7 +62,7 @@ public final class PatternList {
 
     public boolean containsOre(ItemStack stack) {
         return !(stack != null && stack.getItem() != null)
-                && (contains(stack.getItem()) || IntStream.of(OreDictionary.getOreIDs(stack))
+            && (contains(stack.getItem()) || IntStream.of(OreDictionary.getOreIDs(stack))
                 .mapToObj(OreDictionary::getOreName)
                 .anyMatch(this::contains));
     }
@@ -72,14 +73,14 @@ public final class PatternList {
 
     public boolean contains(String s) {
         return patterns.stream()
-                .anyMatch(
-                        p -> p.matcher(s)
-                                .matches());
+            .anyMatch(
+                p -> p.matcher(s)
+                    .matches());
     }
 
     public String[] toArray() {
         return patterns.stream()
-                .map(Pattern::toString)
-                .toArray(String[]::new);
+            .map(Pattern::toString)
+            .toArray(String[]::new);
     }
 }

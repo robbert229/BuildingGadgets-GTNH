@@ -60,11 +60,16 @@ public class VectorTools {
         int direction = MathHelper.floor_double((yaw * 4.0F / 360.0F) + 0.5D) & 3;
 
         switch (direction) {
-            case 0: return EnumFacing.SOUTH;
-            case 1: return EnumFacing.WEST;
-            case 2: return EnumFacing.NORTH;
-            case 3: return EnumFacing.EAST;
-            default: return EnumFacing.NORTH; // Fallback
+            case 0:
+                return EnumFacing.SOUTH;
+            case 1:
+                return EnumFacing.WEST;
+            case 2:
+                return EnumFacing.NORTH;
+            case 3:
+                return EnumFacing.EAST;
+            default:
+                return EnumFacing.NORTH; // Fallback
         }
     }
 

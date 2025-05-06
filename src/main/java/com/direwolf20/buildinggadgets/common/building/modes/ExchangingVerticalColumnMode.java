@@ -1,5 +1,11 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -7,11 +13,6 @@ import com.direwolf20.buildinggadgets.common.building.placement.Column;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.util.MathTool;
 import com.direwolf20.buildinggadgets.util.VectorTools;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ChunkCoordinates;
 
 /**
  * Vertical column mode for Exchanging Gadget.
@@ -32,13 +33,16 @@ public class ExchangingVerticalColumnMode extends AbstractMode {
     }
 
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit,
+        ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         int radius = MathTool.floorToOdd(range);
 
         // @TODO(johnrowl) this is suspicious.
-        //return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getAxis() : Axis.Y), radius);
-        var facing = (VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player) : EnumFacing.UP);
+        // return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getAxis() :
+        // Axis.Y), radius);
+        var facing = (VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player)
+            : EnumFacing.UP);
         return Column.centerAt(hit, facing, radius);
     }
 

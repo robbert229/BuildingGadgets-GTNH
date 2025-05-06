@@ -1,22 +1,26 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import org.lwjgl.opengl.GL11;
+import java.awt.Color;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Color;
-import javax.annotation.Nullable;
+import org.lwjgl.opengl.GL11;
 
 public class GuiButtonIcon extends GuiButtonColor {
+
     private Icon iconSelected, iconDeselected;
     private ActionPressed action;
     private float alpha = 1F;
 
-    public GuiButtonIcon(int x, int y, int width, int height, String helpTextKey, Color colorSelected, Color colorDeselected,
-                         @Nullable Color colorHovered, ResourceLocation textureSelected, @Nullable Runnable action) {
+    public GuiButtonIcon(int x, int y, int width, int height, String helpTextKey, Color colorSelected,
+        Color colorDeselected, @Nullable Color colorHovered, ResourceLocation textureSelected,
+        @Nullable Runnable action) {
         super(0, x, y, width, height, "", helpTextKey, colorSelected, colorDeselected, colorHovered);
         iconDeselected = new Icon(textureSelected);
         this.action = new ActionPressed(action);
@@ -41,14 +45,20 @@ public class GuiButtonIcon extends GuiButtonColor {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        TextureManager textureManager = Minecraft.getMinecraft()
+            .getTextureManager();
         if (iconSelected == null) {
             ResourceLocation texture = iconDeselected.getModifiedTexture("selected");
-            iconSelected = iconDeselected.isTextureMissing(textureManager, texture) ? iconDeselected : new Icon(texture);
+            iconSelected = iconDeselected.isTextureMissing(textureManager, texture) ? iconDeselected
+                : new Icon(texture);
         }
         Icon icon = selected ? iconSelected : iconDeselected;
         if (selected) {
-            GL11.glColor4f(colorSelected.getRed() / 255F, colorSelected.getGreen() / 255F, colorSelected.getBlue() / 255F, alpha);
+            GL11.glColor4f(
+                colorSelected.getRed() / 255F,
+                colorSelected.getGreen() / 255F,
+                colorSelected.getBlue() / 255F,
+                alpha);
         } else {
             GL11.glColor4f(1F, 1F, 1F, alpha);
         }
@@ -69,10 +79,11 @@ public class GuiButtonIcon extends GuiButtonColor {
         tessellator.addVertexWithUV(x + width, y + height, zLevel, 1, 1);
         tessellator.addVertexWithUV(x + width, y + 0, zLevel, 1, 0);
         tessellator.addVertexWithUV(x + 0, y + 0, zLevel, 0, 0);
-        tessellator.draw();  // Finish drawing
+        tessellator.draw(); // Finish drawing
     }
 
     private static class Icon {
+
         private ResourceLocation texture, textureColored;
 
         public Icon(ResourceLocation texture) {
@@ -80,7 +91,9 @@ public class GuiButtonIcon extends GuiButtonColor {
         }
 
         public ResourceLocation getModifiedTexture(String suffix) {
-            return new ResourceLocation(texture.toString().replace(".png", String.format("_%s.png", suffix)));
+            return new ResourceLocation(
+                texture.toString()
+                    .replace(".png", String.format("_%s.png", suffix)));
         }
 
         public boolean isTextureMissing(TextureManager textureManager, ResourceLocation texture) {
@@ -100,8 +113,7 @@ public class GuiButtonIcon extends GuiButtonColor {
         }
 
         public boolean bindTexture(TextureManager textureManager) {
-            if (texture == null)
-                return false;
+            if (texture == null) return false;
 
             textureManager.bindTexture(texture);
             return true;

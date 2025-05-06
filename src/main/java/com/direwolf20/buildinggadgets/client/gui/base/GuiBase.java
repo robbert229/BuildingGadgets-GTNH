@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.gui.base;
 
 import net.minecraft.client.gui.GuiScreen;
+
 import org.lwjgl.input.Keyboard;
 
 public abstract class GuiBase extends GuiScreen {

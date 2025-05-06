@@ -1,18 +1,19 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
-import com.direwolf20.buildinggadgets.common.tools.WorldSave;
-import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
-import com.google.common.collect.Multiset;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
+import com.direwolf20.buildinggadgets.common.tools.WorldSave;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
+import com.google.common.collect.Multiset;
 
 public interface ITemplate {
 
@@ -34,18 +35,20 @@ public interface ITemplate {
     @Nonnull
     default Multiset<UniqueItem> getItemCountMap(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
-        Multiset<UniqueItem> tagMap = tagCompound == null ? null : GadgetUtils.nbtToItemCount((NBTTagList) tagCompound.getTag("itemcountmap"));
-        if (tagMap == null)
-            throw new IllegalArgumentException("ITemplate#getItemCountMap failed to retrieve tag map from " + GadgetUtils.getStackErrorSuffix(stack));
+        Multiset<UniqueItem> tagMap = tagCompound == null ? null
+            : GadgetUtils.nbtToItemCount((NBTTagList) tagCompound.getTag("itemcountmap"));
+        if (tagMap == null) throw new IllegalArgumentException(
+            "ITemplate#getItemCountMap failed to retrieve tag map from " + GadgetUtils.getStackErrorSuffix(stack));
 
         return tagMap;
     }
 
     default int getCopyCounter(ItemStack stack) {
-        return GadgetUtils.getStackTag(stack).getInteger(NBTKeys.TEMPLATE_COPY_COUNT);
+        return GadgetUtils.getStackTag(stack)
+            .getInteger(NBTKeys.TEMPLATE_COPY_COUNT);
     }
 
-    default void setCopyCounter(ItemStack stack, int counter) {//TODO unused
+    default void setCopyCounter(ItemStack stack, int counter) {// TODO unused
         NBTTagCompound tagCompound = GadgetUtils.getStackTag(stack);
         tagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, counter);
         stack.setTagCompound(tagCompound);

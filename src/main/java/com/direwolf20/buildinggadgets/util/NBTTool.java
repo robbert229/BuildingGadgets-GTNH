@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -18,6 +17,8 @@ import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ChunkCoordinates;
 
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -26,6 +27,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
  * NBT-Objects by Minecraft.
  */
 public class NBTTool {
+
     public static final String NBT_CHUNK_COORDINATE_X = "x";
     public static final String NBT_CHUNK_COORDINATE_Y = "y";
     public static final String NBT_CHUNK_COORDINATE_Z = "z";
@@ -315,13 +317,13 @@ public class NBTTool {
     }
 
     public static int[] readIntList(NBTBase list) {
-//        byte[] bytes = list.func_150292_c();
-//        Boolean[] res = new Boolean[bytes.length];
-//        for (int i = 0; i < bytes.length; ++i) {
-//            res[i] = bytes[i] == 0;
-//        }
-//
-//        return null;
+        // byte[] bytes = list.func_150292_c();
+        // Boolean[] res = new Boolean[bytes.length];
+        // for (int i = 0; i < bytes.length; ++i) {
+        // res[i] = bytes[i] == 0;
+        // }
+        //
+        // return null;
 
         return null;
     }
@@ -336,7 +338,7 @@ public class NBTTool {
     }
 
     public static <K, V> NBTTagList serializeMap(Map<K, V> map, Function<K, NBTBase> keySerializer,
-                                                 Function<V, NBTBase> valueSerializer) {
+        Function<V, NBTBase> valueSerializer) {
         NBTTagList list = new NBTTagList();
         for (Map.Entry<K, V> entry : map.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -348,15 +350,15 @@ public class NBTTool {
     }
 
     public static <K, V> Map<K, V> deserializeMap(NBTTagList list, Map<K, V> toAppendTo,
-                                                  Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
+        Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
 
         for (int i = 0; i < list.tagCount(); i++) {
             NBTBase nbt = list.getCompoundTagAt(i);
             if (nbt instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) nbt;
                 toAppendTo.put(
-                        keyDeserializer.apply(compound.getTag("key")),
-                        valueDeserializer.apply(compound.getTag("val")));
+                    keyDeserializer.apply(compound.getTag("key")),
+                    valueDeserializer.apply(compound.getTag("val")));
             }
         }
         return toAppendTo;

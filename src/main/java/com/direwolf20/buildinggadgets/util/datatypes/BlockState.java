@@ -1,14 +1,15 @@
 package com.direwolf20.buildinggadgets.util.datatypes;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 public class BlockState {
+
     private final int metadata;
     private final Block block;
 
@@ -68,18 +69,15 @@ public class BlockState {
         return result;
     }
 
-    public boolean isAir(IBlockAccess world, int x, int y, int z)
-    {
+    public boolean isAir(IBlockAccess world, int x, int y, int z) {
         return this.isAir();
     }
 
-    public boolean isAir(IBlockAccess world, ChunkCoordinates coordinates)
-    {
+    public boolean isAir(IBlockAccess world, ChunkCoordinates coordinates) {
         return this.isAir();
     }
 
-    public boolean isAir(BlockState blockState, IBlockAccess world, ChunkCoordinates coordinates)
-    {
+    public boolean isAir(BlockState blockState, IBlockAccess world, ChunkCoordinates coordinates) {
         return this.isAir();
     }
 
@@ -87,9 +85,7 @@ public class BlockState {
         return this.block.getBlockHardness(world, coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
-
-    public boolean isAir()
-    {
+    public boolean isAir() {
         return block.getMaterial() == Material.air;
     }
 

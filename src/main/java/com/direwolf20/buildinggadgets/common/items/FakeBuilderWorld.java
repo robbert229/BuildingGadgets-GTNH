@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.items;
 
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -11,9 +12,10 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.util.Set;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class FakeBuilderWorld implements IBlockAccess {
+
     private Set<ChunkCoordinates> positions;
     private BlockState state;
     private World realWorld;
@@ -76,6 +78,7 @@ public class FakeBuilderWorld implements IBlockAccess {
     }
 
     public WorldType getWorldType() {
-        return realWorld.getWorldInfo().getTerrainType();
+        return realWorld.getWorldInfo()
+            .getTerrainType();
     }
 }

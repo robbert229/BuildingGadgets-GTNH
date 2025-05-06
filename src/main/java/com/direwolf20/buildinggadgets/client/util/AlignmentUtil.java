@@ -1,12 +1,13 @@
 package com.direwolf20.buildinggadgets.client.util;
 
+import net.minecraft.util.ResourceLocation;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.google.common.base.Preconditions;
-import net.minecraft.util.ResourceLocation;
 
 public final class AlignmentUtil {
 
-    private AlignmentUtil() { }
+    private AlignmentUtil() {}
 
     /**
      * Size in pixels of a vanilla slot background
@@ -16,10 +17,12 @@ public final class AlignmentUtil {
     /**
      * {@link ResourceLocation} of vanilla item slot background.
      */
-    public static final ResourceLocation SLOT_BACKGROUND = new ResourceLocation(BuildingGadgets.MODID, "textures/gui/item_slot_background.png");
+    public static final ResourceLocation SLOT_BACKGROUND = new ResourceLocation(
+        BuildingGadgets.MODID,
+        "textures/gui/item_slot_background.png");
 
     /**
-     * @return Left x value if the box is  aligned to the right
+     * @return Left x value if the box is aligned to the right
      */
     public static int getXForAlignedRight(int width, int rightX) {
         return rightX - width;

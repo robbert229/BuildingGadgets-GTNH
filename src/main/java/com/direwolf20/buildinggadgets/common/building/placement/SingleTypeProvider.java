@@ -1,12 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
-import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
-import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import com.direwolf20.buildinggadgets.util.NBTTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
+import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
+import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 /**
  * Immutable block provider that always return the same block state regardless of which position is requested.

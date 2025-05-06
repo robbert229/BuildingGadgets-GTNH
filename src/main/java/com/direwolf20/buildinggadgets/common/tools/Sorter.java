@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import it.unimi.dsi.fastutil.doubles.*;
+import java.util.*;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 
-import java.util.*;
+import it.unimi.dsi.fastutil.doubles.*;
 
 /**
  * Sorter
@@ -30,12 +31,10 @@ public class Sorter {
             Double2ObjectMap<ChunkCoordinates> rangeMap = new Double2ObjectArrayMap<>(list.size());
             DoubleSortedSet distances = new DoubleRBTreeSet();
 
-            double x = player.posX,
-                    y = player.posY + player.getEyeHeight(),
-                    z = player.posZ;
+            double x = player.posX, y = player.posY + player.getEyeHeight(), z = player.posZ;
 
             list.forEach(pos -> {
-                double distance = pos.getDistanceSquared((int)(x), (int)(y), (int)(z));
+                double distance = pos.getDistanceSquared((int) (x), (int) (y), (int) (z));
 
                 rangeMap.put(distance, pos);
                 distances.add(distance);

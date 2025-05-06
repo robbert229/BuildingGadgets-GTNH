@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.util.NBTTool;
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
-import javax.annotation.Nullable;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 /**
  * Used to store a single Blocks Position along with it's state
@@ -17,6 +18,7 @@ import javax.annotation.Nullable;
  * for any code that uses this data to store to the world save.
  */
 public class BlockPosState {
+
     private static final String NBT_BLOCK_POS = "block_pos";
     private static final String NBT_BLOCK_STATE = "block_state";
     private static final String NBT_BLOCK_PASTE = "block_is_paste";
@@ -76,10 +78,9 @@ public class BlockPosState {
         // Retrieve position
         NBTTagCompound posCompound = compound.getCompoundTag(NBT_BLOCK_POS);
         ChunkCoordinates pos = new ChunkCoordinates(
-                posCompound.getInteger("x"),
-                posCompound.getInteger("y"),
-                posCompound.getInteger("z")
-        );
+            posCompound.getInteger("x"),
+            posCompound.getInteger("y"),
+            posCompound.getInteger("z"));
 
         // Retrieve block and metadata
         var blockState = NBTTool.blockFromCompound(compound.getCompoundTag(NBT_BLOCK_STATE));

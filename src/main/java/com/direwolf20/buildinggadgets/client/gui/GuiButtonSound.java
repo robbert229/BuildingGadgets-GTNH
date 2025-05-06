@@ -6,6 +6,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonSound extends GuiButtonSelect {
+
     private ResourceLocation soundSelect, soundDeselect;
     private float pitchSelect, pitchDeselect;
     private boolean silent;
@@ -25,7 +26,8 @@ public class GuiButtonSound extends GuiButtonSelect {
         setSounds(soundSelect, soundDeselect, 1, 1);
     }
 
-    public void setSounds(ResourceLocation soundSelect, ResourceLocation soundDeselect, float pitchSelect, float pitchDeselect) {
+    public void setSounds(ResourceLocation soundSelect, ResourceLocation soundDeselect, float pitchSelect,
+        float pitchDeselect) {
         this.soundSelect = soundSelect;
         this.soundDeselect = soundDeselect;
         this.pitchSelect = pitchSelect;

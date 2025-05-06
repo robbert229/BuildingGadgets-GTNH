@@ -1,15 +1,15 @@
 package com.direwolf20.buildinggadgets.util;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
 import java.util.Objects;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ItemStackKey {
-    public final Item item;  // In 1.7.10, just store the Item directly
-    public final NBTTagCompound nbt;  // Use NBTTagCompound for item data
+
+    public final Item item; // In 1.7.10, just store the Item directly
+    public final NBTTagCompound nbt; // Use NBTTagCompound for item data
     private final int hash;
 
     public ItemStackKey(ItemStack stack, boolean compareNBT) {
@@ -22,7 +22,7 @@ public class ItemStackKey {
     public ItemStack getStack() {
         ItemStack stack = new ItemStack(item, 1);
         if (nbt != null) {
-            stack.setTagCompound((NBTTagCompound) nbt.copy());  // Copy the NBT data into the new stack
+            stack.setTagCompound((NBTTagCompound) nbt.copy()); // Copy the NBT data into the new stack
         }
         return stack;
     }
@@ -38,7 +38,6 @@ public class ItemStackKey {
             return false;
         }
 
-        return other.item == this.item
-                && Objects.equals(other.nbt, this.nbt);
+        return other.item == this.item && Objects.equals(other.nbt, this.nbt);
     }
 }

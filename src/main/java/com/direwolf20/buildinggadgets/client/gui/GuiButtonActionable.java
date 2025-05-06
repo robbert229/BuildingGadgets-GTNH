@@ -1,17 +1,19 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.ModSounds;
+import java.awt.*;
+import java.util.function.Predicate;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.util.function.Predicate;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.common.ModSounds;
 
 /**
  * A one stop shop for all your icon screens related needs. We support colors,
@@ -19,6 +21,7 @@ import java.util.function.Predicate;
  * down!
  */
 public class GuiButtonActionable extends GuiButton {
+
     private Predicate<Boolean> action;
     private boolean selected;
     private boolean isSelectable;
@@ -32,7 +35,8 @@ public class GuiButtonActionable extends GuiButton {
 
     private float alpha = 1f;
 
-    public GuiButtonActionable(int x, int y, String texture, String message, boolean isSelectable, Predicate<Boolean> action) {
+    public GuiButtonActionable(int x, int y, String texture, String message, boolean isSelectable,
+        Predicate<Boolean> action) {
         super(0, x, y, 25, 25, message);
         this.activeColor = deselectedColor;
         this.isSelectable = isSelectable;
@@ -44,7 +48,8 @@ public class GuiButtonActionable extends GuiButton {
         String assetLocation = "textures/gui/setting/%s.png";
 
         this.deselectedTexture = new ResourceLocation(BuildingGadgets.MODID, String.format(assetLocation, texture));
-        this.selectedTexture = !isSelectable ? this.deselectedTexture : new ResourceLocation(BuildingGadgets.MODID, String.format(assetLocation, texture + "_selected"));
+        this.selectedTexture = !isSelectable ? this.deselectedTexture
+            : new ResourceLocation(BuildingGadgets.MODID, String.format(assetLocation, texture + "_selected"));
     }
 
     /**
@@ -71,7 +76,6 @@ public class GuiButtonActionable extends GuiButton {
         return selected;
     }
 
-
     public void playPressSound(SoundHandler soundHandlerIn) {
         soundHandlerIn.playSound(PositionedSoundRecord.func_147674_a(ModSounds.BEEP.getSound(), selected ? .6F : 1F));
     }
@@ -83,8 +87,9 @@ public class GuiButtonActionable extends GuiButton {
             return true;
         }
 
-        if (!(mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height))
-            return false;
+        if (!(mouseX >= this.xPosition && mouseY >= this.yPosition
+            && mouseX < this.xPosition + this.width
+            && mouseY < this.yPosition + this.height)) return false;
 
         this.action.test(true);
         if (!this.isSelectable) return false;
@@ -95,8 +100,7 @@ public class GuiButtonActionable extends GuiButton {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        if (!visible)
-            return;
+        if (!visible) return;
 
         // Enable blending and set blend function using GL11
         GL11.glEnable(GL11.GL_BLEND);
@@ -116,7 +120,8 @@ public class GuiButtonActionable extends GuiButton {
         GL11.glColor4f(1, 1, 1, alpha);
 
         // Bind the texture (either selected or deselected) and draw it
-        mc.getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
+        mc.getTextureManager()
+            .bindTexture(selected ? selectedTexture : deselectedTexture);
         drawTexturedModalRect(this.xPosition, this.yPosition, 0, 0, this.width, this.height);
 
         // Get the screen resolution
@@ -124,7 +129,8 @@ public class GuiButtonActionable extends GuiButton {
 
         // Check if the mouse is hovering over the button and render the display string
         if (mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height) {
-            int textX = (mouseX > (scaledResolution.getScaledWidth() / 2)) ? mouseX + 2 : mouseX - mc.fontRenderer.getStringWidth(this.displayString);
+            int textX = (mouseX > (scaledResolution.getScaledWidth() / 2)) ? mouseX + 2
+                : mouseX - mc.fontRenderer.getStringWidth(this.displayString);
             mc.fontRenderer.drawString(this.displayString, textX, mouseY - 10, activeColor.getRGB());
         }
     }

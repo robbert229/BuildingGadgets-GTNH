@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.util.ref;
 
 public final class JsonKeys {
+
     public static final String MATERIAL_LIST_ITEM_NAME = "name";
     public static final String MATERIAL_LIST_ITEM_ID = "id";
     public static final String MATERIAL_LIST_ITEM_COUNT = "count";

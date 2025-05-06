@@ -1,21 +1,24 @@
 package com.direwolf20.buildinggadgets.common.network;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+
 import com.direwolf20.buildinggadgets.common.items.gadgets.*;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import cpw.mods.fml.relauncher.Side;
-import net.minecraft.entity.player.EntityPlayerMP;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
 
 public class PacketAnchor extends PacketEmpty {
 
     public static class Handler implements IMessageHandler<PacketAnchor, IMessage> {
+
         @Override
         public IMessage onMessage(PacketAnchor message, MessageContext ctx) {
             // TODO(johnrowl) do I need to move this to another thread?
-//            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(ctx));
+            // FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(ctx));
             if (ctx.side == Side.CLIENT) {
                 return null;
             }

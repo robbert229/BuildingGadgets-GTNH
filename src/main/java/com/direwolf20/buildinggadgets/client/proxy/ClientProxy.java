@@ -7,36 +7,27 @@ package com.direwolf20.buildinggadgets.client.proxy;
 
 import java.awt.Color;
 
-import com.direwolf20.buildinggadgets.client.KeyBindings;
-import com.direwolf20.buildinggadgets.client.events.EventClientTick;
-import com.direwolf20.buildinggadgets.client.events.EventKeyInput;
-import com.direwolf20.buildinggadgets.client.events.EventTooltip;
-import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
-import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntityRender;
-import com.direwolf20.buildinggadgets.common.entities.ModEntities;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 
+import com.direwolf20.buildinggadgets.client.KeyBindings;
+import com.direwolf20.buildinggadgets.client.events.EventClientTick;
+import com.direwolf20.buildinggadgets.client.events.EventKeyInput;
+import com.direwolf20.buildinggadgets.common.entities.ModEntities;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.proxy.CommonProxy;
+import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.client.event.sound.SoundEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
 
@@ -53,10 +44,12 @@ public class ClientProxy extends CommonProxy {
         KeyBindings.init();
         EventKeyInput.init();
         EventClientTick.init();
-        //EventTooltip.init();
+        // EventTooltip.init();
 
         MinecraftForge.EVENT_BUS.register(this);
-        FMLCommonHandler.instance().bus().register(this);
+        FMLCommonHandler.instance()
+            .bus()
+            .register(this);
     }
 
     @SubscribeEvent
@@ -70,21 +63,22 @@ public class ClientProxy extends CommonProxy {
             ToolRenders.renderDestructionOverlay(evt, player, heldItem);
         }
 
-//          if (heldItem.getItem() instanceof GadgetBuilding) {
-//          ToolRenders.renderBuilderOverlay(evt, player, heldItem);
-//          } else if (heldItem.getItem() instanceof GadgetExchanger) {
-//          ToolRenders.renderExchangerOverlay(evt, player, heldItem);
-//          } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
-//          ToolRenders.renderPasteOverlay(evt, player, heldItem);
-//          } else if (heldItem.getItem() instanceof GadgetDestruction) {
-//          ToolRenders.renderDestructionOverlay(evt, player, heldItem);
-//          }
-
+        // if (heldItem.getItem() instanceof GadgetBuilding) {
+        // ToolRenders.renderBuilderOverlay(evt, player, heldItem);
+        // } else if (heldItem.getItem() instanceof GadgetExchanger) {
+        // ToolRenders.renderExchangerOverlay(evt, player, heldItem);
+        // } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
+        // ToolRenders.renderPasteOverlay(evt, player, heldItem);
+        // } else if (heldItem.getItem() instanceof GadgetDestruction) {
+        // ToolRenders.renderDestructionOverlay(evt, player, heldItem);
+        // }
 
     }
 
     public static void playSound(ResourceLocation sound, float pitch) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(sound, pitch));
+        Minecraft.getMinecraft()
+            .getSoundHandler()
+            .playSound(PositionedSoundRecord.func_147674_a(sound, pitch));
     }
 
     public static Color getColor(Color color, int alpha) {

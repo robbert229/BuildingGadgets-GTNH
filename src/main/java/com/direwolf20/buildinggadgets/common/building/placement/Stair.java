@@ -4,13 +4,13 @@ import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.MutableChunkCoordinates;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 

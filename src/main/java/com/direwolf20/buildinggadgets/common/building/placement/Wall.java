@@ -5,13 +5,13 @@ import java.util.Spliterator;
 
 import javax.annotation.Nonnull;
 
-import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 

@@ -1,18 +1,19 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Stair;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ChunkCoordinates;
+import com.direwolf20.buildinggadgets.util.VectorTools;
 
 /**
  * Stair mode for Building Gadget.
@@ -32,21 +33,24 @@ public class StairMode extends AtopSupportedMode {
     }
 
     @Override
-    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed,
+        ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
-        EnumFacing side = VectorTools.isAxisVertical(sideHit) ? DirectionUtils.getOppositeEnumFacing(VectorTools.getHorizontalFacingFromPlayer(player)) : sideHit;
+        EnumFacing side = VectorTools.isAxisVertical(sideHit)
+            ? DirectionUtils.getOppositeEnumFacing(VectorTools.getHorizontalFacingFromPlayer(player))
+            : sideHit;
 
-        if (original.posY > player.posY + 1)
-            return Stair.create(transformed, side, EnumFacing.DOWN, range);
-        else if (original.posY < player.posY - 2)
-            return Stair.create(transformed, side, EnumFacing.UP, range);
+        if (original.posY > player.posY + 1) return Stair.create(transformed, side, EnumFacing.DOWN, range);
+        else if (original.posY < player.posY - 2) return Stair.create(transformed, side, EnumFacing.UP, range);
         return Stair.create(transformed, DirectionUtils.getOppositeEnumFacing(side), EnumFacing.UP, range);
     }
 
     @Override
-    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
+    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit,
+        ItemStack tool) {
         if (hit.posY > player.posY + 1) {
-            EnumFacing side = VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player) : sideHit;
+            EnumFacing side = VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player)
+                : sideHit;
             return ChunkCoordinateUtils.offset(ChunkCoordinateUtils.down(hit), side);
         }
 

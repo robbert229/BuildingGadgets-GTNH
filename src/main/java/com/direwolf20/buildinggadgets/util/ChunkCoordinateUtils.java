@@ -4,11 +4,12 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
 public class ChunkCoordinateUtils {
+
     public static ChunkCoordinates offset(ChunkCoordinates coordinates, EnumFacing facing, int distance) {
         return new ChunkCoordinates(
-                coordinates.posX + (facing.getFrontOffsetX() * distance),
-                coordinates.posY + (facing.getFrontOffsetY() * distance),
-                coordinates.posZ + (facing.getFrontOffsetZ() * distance));
+            coordinates.posX + (facing.getFrontOffsetX() * distance),
+            coordinates.posY + (facing.getFrontOffsetY() * distance),
+            coordinates.posZ + (facing.getFrontOffsetZ() * distance));
     }
 
     public static ChunkCoordinates offset(ChunkCoordinates coordinates, EnumFacing facing) {
@@ -48,7 +49,8 @@ public class ChunkCoordinateUtils {
     }
 
     public static long toLong(ChunkCoordinates coordinates) {
-        return ((long) coordinates.posX & 0x3FFFFFF) << 38 | ((long) coordinates.posY & 0xFFF) << 26 | ((long) coordinates.posZ & 0x3FFFFFF);
+        return ((long) coordinates.posX & 0x3FFFFFF) << 38 | ((long) coordinates.posY & 0xFFF) << 26
+            | ((long) coordinates.posZ & 0x3FFFFFF);
     }
 
     public static long toLong(int x, int y, int z) {

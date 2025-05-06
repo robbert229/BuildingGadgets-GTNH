@@ -1,14 +1,15 @@
 package com.direwolf20.buildinggadgets.common.network;
 
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
-import cpw.mods.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.FMLCommonHandler;
+
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 
 public class PacketDestructionGUI implements IMessage {
 
@@ -45,9 +46,10 @@ public class PacketDestructionGUI implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketDestructionGUI, IMessage> {
+
         @Override
         public IMessage onMessage(PacketDestructionGUI message, MessageContext ctx) {
-//            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            // FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             if (ctx.side == Side.CLIENT) {
                 return null;
             }

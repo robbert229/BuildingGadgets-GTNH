@@ -1,38 +1,42 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.direwolf20.buildinggadgets.common.integration.IItemAccess;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
-import com.direwolf20.buildinggadgets.util.MathTool;
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionPaste;
-import com.direwolf20.buildinggadgets.common.items.pastes.GenericPasteContainer;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+
 import org.apache.commons.lang3.tuple.Pair;
+
+import com.direwolf20.buildinggadgets.common.integration.IItemAccess;
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+import com.direwolf20.buildinggadgets.common.items.pastes.ConstructionPaste;
+import com.direwolf20.buildinggadgets.common.items.pastes.GenericPasteContainer;
+import com.direwolf20.buildinggadgets.util.MathTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 public class InventoryManipulation {
 
     private enum InventoryType {
-        PLAYER, LINKED, OTHER
+        PLAYER,
+        LINKED,
+        OTHER
     }
 
-//     private static IProperty AXIS = PropertyEnum.create("axis", EnumFacing.Axis.class);
+    // private static IProperty AXIS = PropertyEnum.create("axis", EnumFacing.Axis.class);
     // private static final Set<IProperty> SAFE_PROPERTIES = ImmutableSet.of(BlockSlab.HALF, BlockStairs.HALF,
     // BlockLog.LOG_AXIS, AXIS, BlockDirectional.FACING, BlockStairs.FACING, BlockTrapDoor.HALF, BlockTorch.FACING,
     // BlockStairs.SHAPE, BlockLever.FACING, BlockLever.POWERED, BlockRedstoneRepeater.DELAY, BlockStoneSlab.VARIANT,
@@ -48,14 +52,19 @@ public class InventoryManipulation {
         }
 
         // Attempt to dump any construction paste back in it's container.
-        ItemStack target = targetStack.getItem() instanceof ConstructionPaste ? addPasteToContainer(player, targetStack) : targetStack;
+        ItemStack target = targetStack.getItem() instanceof ConstructionPaste ? addPasteToContainer(player, targetStack)
+            : targetStack;
 
         if (target.stackSize == 0) {
             return null;
         }
 
         ItemStack tool = GadgetGeneric.getGadget(player);
-        for (Pair<InventoryType, IInventory> inv : collectInventories(tool, player, world, NetworkIO.Operation.INSERT)) {
+        for (Pair<InventoryType, IInventory> inv : collectInventories(
+            tool,
+            player,
+            world,
+            NetworkIO.Operation.INSERT)) {
             target = insertIntoInventory(inv.getValue(), target, inv.getKey());
             if (target == null) {
                 return null;
@@ -75,9 +84,13 @@ public class InventoryManipulation {
             }
 
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if ((containerItem != null && containerItem.getItem() != null) && containerItem.getItem() == target.getItem() && containerItem.getItemDamage() == target.getItemDamage()) {
+            if ((containerItem != null && containerItem.getItem() != null)
+                && containerItem.getItem() == target.getItem()
+                && containerItem.getItemDamage() == target.getItemDamage()) {
                 // Chunk and calculate how much to insert per stack.
-                int insertCount = (target.stackSize - containerItem.stackSize) > containerItem.getMaxStackSize() ? (target.stackSize - containerItem.stackSize) : target.stackSize;
+                int insertCount = (target.stackSize - containerItem.stackSize) > containerItem.getMaxStackSize()
+                    ? (target.stackSize - containerItem.stackSize)
+                    : target.stackSize;
 
                 if (containerItem.stackSize + insertCount > target.getMaxStackSize()) {
                     continue;
@@ -103,24 +116,26 @@ public class InventoryManipulation {
             }
 
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if ((containerItem != null && containerItem.getItem() != null) || !inventory.isItemValidForSlot(i, target) || type == InventoryType.PLAYER && i == 40) {
+            if ((containerItem != null && containerItem.getItem() != null) || !inventory.isItemValidForSlot(i, target)
+                || type == InventoryType.PLAYER && i == 40) {
                 continue;
 
             }
 
             ItemStack insertStack = target.copy();
-            insertStack.stackSize = target.stackSize > target.getMaxStackSize() ? containerItem.getMaxStackSize() : target.stackSize;
+            insertStack.stackSize = target.stackSize > target.getMaxStackSize() ? containerItem.getMaxStackSize()
+                : target.stackSize;
 
             inventory.setInventorySlotContents(i, insertStack);
             // TODO(johnrowl) come back here and verify everything is sane later.
 
-            //ItemStack stack = inventory.insertItem(i, insertStack, true);
-            //if (stack.getCount() == insertStack.getCount()) {
+            // ItemStack stack = inventory.insertItem(i, insertStack, true);
+            // if (stack.getCount() == insertStack.getCount()) {
             // continue;
-            //}
+            // }
 
-//            inventory.insertItem(i, insertStack, false);
-//            target.shrink(insertStack.getCount());
+            // inventory.insertItem(i, insertStack, false);
+            // target.shrink(insertStack.getCount());
         }
 
         return target;
@@ -132,17 +147,20 @@ public class InventoryManipulation {
      * inventories returned.
      *
      * @return boolean based on if the method was able to supply any amount of items. If the method is called requiring
-     * 10 items and we only find 5 we still return true. We only return false if no items where supplied.
-     * This is by design.
+     *         10 items and we only find 5 we still return true. We only return false if no items where supplied.
+     *         This is by design.
      * @implNote Call {@link GadgetUtils#clearCachedRemoteInventory GadgetUtils#clearCachedRemoteInventory} when done
-     * using this method
+     *           using this method
      */
     public static boolean useItem(ItemStack target, EntityPlayer player, int amountRequired, World world) {
         if (player.capabilities.isCreativeMode) return true;
 
         int amountLeft = amountRequired;
-        for (Pair<InventoryType, IInventory> inv : collectInventories(GadgetGeneric.getGadget(player), player, world,
-                NetworkIO.Operation.EXTRACT)) {
+        for (Pair<InventoryType, IInventory> inv : collectInventories(
+            GadgetGeneric.getGadget(player),
+            player,
+            world,
+            NetworkIO.Operation.EXTRACT)) {
             amountLeft -= extractFromInventory(inv.getValue(), target, amountLeft, player);
 
             if (amountLeft <= 0) return true;
@@ -151,8 +169,8 @@ public class InventoryManipulation {
         return amountLeft < amountRequired;
     }
 
-    private static int extractFromInventory(IInventory inventory, ItemStack target, int amountRequired, EntityPlayer
-            player) {
+    private static int extractFromInventory(IInventory inventory, ItemStack target, int amountRequired,
+        EntityPlayer player) {
         int amountSaturated = 0;
         if (inventory == null) {
             return amountSaturated;
@@ -165,7 +183,8 @@ public class InventoryManipulation {
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if (containerItem.getItem() == target.getItem() && containerItem.getItemDamage() == target.getItemDamage()) {
+            if (containerItem.getItem() == target.getItem()
+                && containerItem.getItemDamage() == target.getItemDamage()) {
                 ItemStack stack = extractItem(inventory, i, amountRequired, false);
 
                 amountSaturated += stack.stackSize;
@@ -230,7 +249,8 @@ public class InventoryManipulation {
      *
      * @return a list of inventories in the order of: Linked, Player, Player inventory slotted inventories (dank null)
      */
-    private static List<Pair<InventoryType, IInventory>> collectInventories(ItemStack gadget, EntityPlayer player, World world, NetworkIO.Operation operation) {
+    private static List<Pair<InventoryType, IInventory>> collectInventories(ItemStack gadget, EntityPlayer player,
+        World world, NetworkIO.Operation operation) {
         List<Pair<InventoryType, IInventory>> inventories = new ArrayList<>();
 
         // Always provide the remote inventory first
@@ -268,6 +288,7 @@ public class InventoryManipulation {
      * -------------------------------------
      */
     public interface IRemoteInventoryProvider {
+
         int countItem(ItemStack tool, ItemStack stack);
     }
 
@@ -280,7 +301,8 @@ public class InventoryManipulation {
             IInventory remoteInventory = GadgetUtils.getRemoteInventory(tool, world, player);
             if (remoteInventory instanceof IItemAccess)
                 return ((IItemAccess) remoteInventory).getItemsForExtraction(stack, player);
-            return remoteInventory == null ? 0 : countInContainer(remoteInventory, stack.getItem(), stack.getItemDamage());
+            return remoteInventory == null ? 0
+                : countInContainer(remoteInventory, stack.getItem(), stack.getItemDamage());
         });
     }
 
@@ -385,8 +407,7 @@ public class InventoryManipulation {
             ItemStack containerStack = currentInv.getStackInSlot(entry.getKey());
             int maxAmount = ((GenericPasteContainer) containerStack.getItem()).getMaxCapacity();
             int pasteInContainer = GenericPasteContainer.getPasteAmount(containerStack);
-            int freeSpace = maxAmount - pasteInContainer;
-            ;
+            int freeSpace = maxAmount - pasteInContainer;;
             int remainingPaste = itemStack.stackSize - freeSpace;
             if (remainingPaste < 0) {
                 remainingPaste = 0;
@@ -506,7 +527,7 @@ public class InventoryManipulation {
     }
 
     public static BlockState getSpecificStates(BlockState originalState, World world, EntityPlayer player,
-                                               ChunkCoordinates pos, ItemStack tool) {
+        ChunkCoordinates pos, ItemStack tool) {
         BlockState placeState;
         Block block = originalState.getBlock();
 
@@ -530,17 +551,17 @@ public class InventoryManipulation {
         }
 
         // TODO(johnrowl) figure out what to do with the properties.
-//        for (IProperty prop : placeState.getPropertyKeys()) {
-//            if (tool.getItem() instanceof GadgetCopyPaste) {
-//                if (SAFE_PROPERTIES_COPY_PASTE.contains(prop)) {
-//                    placeState = placeState.withProperty(prop, originalState.getValue(prop));
-//                }
-//            } else {
-//                if (SAFE_PROPERTIES.contains(prop)) {
-//                    placeState = placeState.withProperty(prop, originalState.getValue(prop));
-//                }
-//            }
-//        }
+        // for (IProperty prop : placeState.getPropertyKeys()) {
+        // if (tool.getItem() instanceof GadgetCopyPaste) {
+        // if (SAFE_PROPERTIES_COPY_PASTE.contains(prop)) {
+        // placeState = placeState.withProperty(prop, originalState.getValue(prop));
+        // }
+        // } else {
+        // if (SAFE_PROPERTIES.contains(prop)) {
+        // placeState = placeState.withProperty(prop, originalState.getValue(prop));
+        // }
+        // }
+        // }
         return placeState;
 
     }

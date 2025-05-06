@@ -1,5 +1,19 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
+import static java.util.Spliterator.ORDERED;
+
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.modes.*;
@@ -8,26 +22,14 @@ import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.ImmutableList;
+
 import it.unimi.dsi.fastutil.doubles.Double2ObjectArrayMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
 import it.unimi.dsi.fastutil.doubles.DoubleSortedSet;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.world.World;
-
-import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static java.util.Spliterator.ORDERED;
-
 public enum BuildingModes {
+
     BuildToMe("build_to_me.png", new BuildToMeMode(BuildingModes::combineTester)),
     VerticalColumn("vertical_column.png", new BuildingVerticalColumnMode(BuildingModes::combineTester)),
     HorizontalColumn("horizontal_column.png", new BuildingHorizontalColumnMode(BuildingModes::combineTester)),
@@ -55,7 +57,8 @@ public enum BuildingModes {
     }
 
     public String getRegistryName() {
-        return getModeImplementation().getRegistryName().toString() + "/BuildingGadget";
+        return getModeImplementation().getRegistryName()
+            .toString() + "/BuildingGadget";
     }
 
     @Override
@@ -67,49 +70,60 @@ public enum BuildingModes {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static List<ChunkCoordinates> collectPlacementPos(World world, EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool, ChunkCoordinates initial) {
-        IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
+    public static List<ChunkCoordinates> collectPlacementPos(World world, EntityPlayer player, ChunkCoordinates hit,
+        EnumFacing sideHit, ItemStack tool, ChunkCoordinates initial) {
+        IBuildingMode mode = byName(
+            NBTTool.getOrNewTag(tool)
+                .getString("mode")).getModeImplementation();
 
         // stream, sort by closes to the player, collect, return
-        return StreamSupport.stream(
+        return StreamSupport
+            .stream(
                 Spliterators.spliteratorUnknownSize(
-                        mode.createExecutionContext(player, hit, sideHit, tool).getFilteredSequence(world, tool, player, initial),
-                        ORDERED
-                ),
-                false
-        ).sorted(Comparator.comparingDouble((e) -> WorldUtils.distanceSqToCenter(e, player.posX, player.posY + player.getEyeHeight(), player.posZ))).collect(Collectors.toList());
+                    mode.createExecutionContext(player, hit, sideHit, tool)
+                        .getFilteredSequence(world, tool, player, initial),
+                    ORDERED),
+                false)
+            .sorted(
+                Comparator.comparingDouble(
+                    (e) -> WorldUtils
+                        .distanceSqToCenter(e, player.posX, player.posY + player.getEyeHeight(), player.posZ)))
+            .collect(Collectors.toList());
     }
 
     public static BuildingModes byName(String name) {
         return Arrays.stream(values())
-                .filter(mode -> mode.getRegistryName().equals(name))
-                .findFirst()
-                .orElse(BuildToMe);
+            .filter(
+                mode -> mode.getRegistryName()
+                    .equals(name))
+            .findFirst()
+            .orElse(BuildToMe);
     }
 
     private static final ImmutableList<ResourceLocation> ICONS = Arrays.stream(values())
-            .map(BuildingModes::getIcon)
-            .collect(ImmutableList.toImmutableList());
+        .map(BuildingModes::getIcon)
+        .collect(ImmutableList.toImmutableList());
 
     public static ImmutableList<ResourceLocation> getIcons() {
         return ICONS;
     }
 
-    public static BiPredicate<ChunkCoordinates, BlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
+    public static BiPredicate<ChunkCoordinates, BlockState> combineTester(World world, ItemStack tool,
+        EntityPlayer player, ChunkCoordinates initial) {
         BlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
             BlockState current = BlockState.getBlockState(world, pos);
-            if (!target.getBlock().canPlaceBlockAt(world, pos.posX, pos.posY, pos.posZ))
-                return false;
-            if (pos.posY < 0)
-                return false;
-            if (SyncedConfig.canOverwriteBlocks)
-                return current.getBlock().isReplaceable(world, pos.posX, pos.posY, pos.posZ);
-            return current.getBlock().isAir(world, pos.posX, pos.posY, pos.posZ);
+            if (!target.getBlock()
+                .canPlaceBlockAt(world, pos.posX, pos.posY, pos.posZ)) return false;
+            if (pos.posY < 0) return false;
+            if (SyncedConfig.canOverwriteBlocks) return current.getBlock()
+                .isReplaceable(world, pos.posX, pos.posY, pos.posZ);
+            return current.getBlock()
+                .isAir(world, pos.posX, pos.posY, pos.posZ);
         };
     }
 
-    public static List<BlockMap> sortMapByDistance(List<BlockMap> unSortedMap, EntityPlayer player) {//TODO unused
+    public static List<BlockMap> sortMapByDistance(List<BlockMap> unSortedMap, EntityPlayer player) {// TODO unused
         List<ChunkCoordinates> unSortedList = new ArrayList<>();
         Map<ChunkCoordinates, BlockState> PosToStateMap = new HashMap<>();
         Map<ChunkCoordinates, Integer> PosToX = new HashMap<>();
@@ -134,12 +148,12 @@ public enum BuildingModes {
             distances.add(distance);
         }
         for (double dist : distances) {
-            //System.out.println(dist);
+            // System.out.println(dist);
             ChunkCoordinates pos = new ChunkCoordinates(rangeMap.get(dist));
             sortedMap.add(new BlockMap(pos, PosToStateMap.get(pos), PosToX.get(pos), PosToY.get(pos), PosToZ.get(pos)));
         }
-        //System.out.println(unSortedList);
-        //System.out.println(sortedList);
+        // System.out.println(unSortedList);
+        // System.out.println(sortedList);
         return sortedMap;
     }
 

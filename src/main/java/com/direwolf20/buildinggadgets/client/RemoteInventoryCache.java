@@ -4,9 +4,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -18,11 +19,12 @@ import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Multiset;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RemoteInventoryCache implements IRemoteInventoryProvider {
+
     private boolean isCopyPaste, forceUpdate;
     private Pair<Integer, ChunkCoordinates> locCached;
     private Multiset<UniqueItem> cache;
@@ -43,18 +45,15 @@ public class RemoteInventoryCache implements IRemoteInventoryProvider {
     @Override
     public int countItem(ItemStack tool, ItemStack stack) {
         Pair<Integer, ChunkCoordinates> loc = getInventoryLocation(tool);
-        if (isCacheOld(loc))
-            updateCache(loc);
+        if (isCacheOld(loc)) updateCache(loc);
 
         return cache == null ? 0 : cache.count(new UniqueItem(stack.getItem(), stack.getItemDamage()));
     }
 
     private void updateCache(Pair<Integer, ChunkCoordinates> loc) {
         locCached = loc;
-        if (loc == null)
-            cache = null;
-        else
-            PacketHandler.INSTANCE.sendToServer(new PacketSetRemoteInventoryCache(loc, isCopyPaste));
+        if (loc == null) cache = null;
+        else PacketHandler.INSTANCE.sendToServer(new PacketSetRemoteInventoryCache(loc, isCopyPaste));
     }
 
     private boolean isCacheOld(@Nullable Pair<Integer, ChunkCoordinates> loc) {
@@ -77,8 +76,7 @@ public class RemoteInventoryCache implements IRemoteInventoryProvider {
     @Nullable
     private Pair<Integer, ChunkCoordinates> getInventoryLocation(ItemStack stack) {
         NBTTagCompound nbt = stack.getTagCompound();
-        if (nbt == null)
-            return null;
+        if (nbt == null) return null;
 
         Integer dim = GadgetUtils.getDIMFromNBT(stack, "boundTE");
         ChunkCoordinates pos = GadgetUtils.getPOSFromNBT(stack, "boundTE");

@@ -1,11 +1,7 @@
 package com.direwolf20.buildinggadgets.common.entities;
 
-import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
-import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import com.direwolf20.buildinggadgets.util.NBTTool;
-import com.direwolf20.buildinggadgets.util.WorldUtils;
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.entity.Entity;
@@ -16,9 +12,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
+import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.WorldUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class BlockBuildEntity extends Entity {
+
     private static final int TOOL_MODE_INDEX = 20; // Any unused index
     private static final int SET_BLOCK_METADATA_INDEX = 21;
     private static final int SET_BLOCK_ID_INDEX = 22;
@@ -45,15 +47,8 @@ public class BlockBuildEntity extends Entity {
         world = worldIn;
     }
 
-    public BlockBuildEntity(
-            World worldIn,
-            ChunkCoordinates spawnPos,
-            EntityLivingBase player,
-            BlockState spawnBlock,
-            int toolMode,
-            BlockState actualSpawnBlock,
-            boolean constrPaste
-    ) {
+    public BlockBuildEntity(World worldIn, ChunkCoordinates spawnPos, EntityLivingBase player, BlockState spawnBlock,
+        int toolMode, BlockState actualSpawnBlock, boolean constrPaste) {
         super(worldIn);
 
         setSize(0.1F, 0.1F);
@@ -99,17 +94,21 @@ public class BlockBuildEntity extends Entity {
         actualSetBlock = actualSpawnBlock;
 
         // Don't let leaves decay
-//        if (setBlock.getBlock() instanceof BlockLeaves) {
-//            setBlock = setBlock.withProperty(BlockLeaves.DECAYABLE, false);
-//        }
+        // if (setBlock.getBlock() instanceof BlockLeaves) {
+        // setBlock = setBlock.withProperty(BlockLeaves.DECAYABLE, false);
+        // }
 
         world.setBlock(spawnPos.posX, spawnPos.posY, spawnPos.posZ, ModBlocks.effectBlock);
-//        world.setBlockState(spawnPos, ModBlocks.effectBlock.getDefaultState());
+        // world.setBlockState(spawnPos, ModBlocks.effectBlock.getDefaultState());
 
         if (setBlock.getBlock() instanceof BlockLeaves) {
             // Set the metadata to prevent leaf decay
             int metadata = world.getBlockMetadata(spawnPos.posX, spawnPos.posY, spawnPos.posZ);
-            world.setBlockMetadataWithNotify(spawnPos.posX, spawnPos.posY, spawnPos.posZ, metadata & (~8), 2); // `~8` removes the DECAYABLE bit
+            world.setBlockMetadataWithNotify(spawnPos.posX, spawnPos.posY, spawnPos.posZ, metadata & (~8), 2); // `~8`
+                                                                                                               // removes
+                                                                                                               // the
+                                                                                                               // DECAYABLE
+                                                                                                               // bit
 
         }
 
@@ -161,7 +160,7 @@ public class BlockBuildEntity extends Entity {
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 0; //After tr
+        return pass == 0; // After tr
     }
 
     public int getTicksExisted() {
@@ -197,7 +196,8 @@ public class BlockBuildEntity extends Entity {
                     TileEntity te = world.getTileEntity(setPos.posX, setPos.posY, setPos.posZ);
                     if (te instanceof ConstructionBlockTileEntity) {
                         ((ConstructionBlockTileEntity) te).setBlockState(setBlock.getBlock(), setBlock.getMetadata());
-                        ((ConstructionBlockTileEntity) te).setActualBlockState(actualSetBlock.getBlock(), actualSetBlock.getMetadata());
+                        ((ConstructionBlockTileEntity) te)
+                            .setActualBlockState(actualSetBlock.getBlock(), actualSetBlock.getMetadata());
                     }
 
                     world.spawnEntityInWorld(new ConstructionBlockEntity(world, setPos, false));
@@ -205,14 +205,22 @@ public class BlockBuildEntity extends Entity {
                     world.setBlockMetadataWithNotify(setPos.posX, setPos.posY, setPos.posZ, setBlock.getMetadata(), 2);
                     var neighborBlock = WorldUtils.getBlock(world, ChunkCoordinateUtils.up(setPos));
 
-                    BlockState
-                            .getBlockState(world, setPos).getBlock()
-                            .onNeighborBlockChange(world, setPos.posX, setPos.posY, setPos.posZ, neighborBlock);
+                    BlockState.getBlockState(world, setPos)
+                        .getBlock()
+                        .onNeighborBlockChange(world, setPos.posX, setPos.posY, setPos.posZ, neighborBlock);
                 }
             } else if (setPos != null && setBlock != null && getToolMode() == 2) {
                 world.setBlock(setPos.posX, setPos.posY, setPos.posZ, Blocks.air);
             } else if (setPos != null && setBlock != null && getToolMode() == 3) {
-                world.spawnEntityInWorld(new BlockBuildEntity(world, setPos, spawnedBy, originalSetBlock, 1, actualSetBlock, getUsingConstructionPaste()));
+                world.spawnEntityInWorld(
+                    new BlockBuildEntity(
+                        world,
+                        setPos,
+                        spawnedBy,
+                        originalSetBlock,
+                        1,
+                        actualSetBlock,
+                        getUsingConstructionPaste()));
             }
         }
     }

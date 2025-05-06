@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.util;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -8,9 +10,8 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-
 public class WorldUtils {
+
     public static double getDistance(ChunkCoordinates first, ChunkCoordinates second) {
         double dx = first.posX - second.posX;
         double dy = first.posY - second.posY;
@@ -50,7 +51,8 @@ public class WorldUtils {
         return isBlockModifiable(player, coordinates, EnumFacing.DOWN, itemStack);
     }
 
-    public static boolean isBlockModifiable(EntityPlayer player, ChunkCoordinates coordinates, EnumFacing side, ItemStack itemStack) {
+    public static boolean isBlockModifiable(EntityPlayer player, ChunkCoordinates coordinates, EnumFacing side,
+        ItemStack itemStack) {
         if (side == null) {
             side = EnumFacing.DOWN;
         }

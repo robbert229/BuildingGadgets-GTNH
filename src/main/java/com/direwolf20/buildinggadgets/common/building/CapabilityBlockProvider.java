@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
+import net.minecraft.init.Blocks;
+
 import com.direwolf20.buildinggadgets.common.building.placement.SingleTypeProvider;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import net.minecraft.init.Blocks;
 
 public final class CapabilityBlockProvider {
 
@@ -10,6 +11,5 @@ public final class CapabilityBlockProvider {
 
     static IBlockProvider DEFAULT_AIR_PROVIDER = new SingleTypeProvider(new BlockState(Blocks.air, 0));
 
-    private CapabilityBlockProvider() {
-    }
+    private CapabilityBlockProvider() {}
 }

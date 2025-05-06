@@ -8,7 +8,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class PacketHandler {
 
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE
-            .newSimpleChannel(BuildingGadgets.MODID);
+        .newSimpleChannel(BuildingGadgets.MODID);
     private static int packetId = 0;
 
     public static enum Side {

@@ -1,7 +1,8 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.google.common.collect.ImmutableSet;
+import java.util.Arrays;
+import java.util.Set;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -10,10 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import java.util.Arrays;
-import java.util.Set;
+
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.google.common.collect.ImmutableSet;
 
 public class TemplateManagerTileEntity extends TileEntity implements IInventory {
+
     public static final int SIZE = 2;
     private ItemStack[] inventory = new ItemStack[SIZE];
 
@@ -92,11 +95,10 @@ public class TemplateManagerTileEntity extends TileEntity implements IInventory 
         super.markDirty();
     }
 
-
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this &&
-                player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64D;
+        return this.worldObj.getTileEntity(this.xCoord, this.yCoord, this.zCoord) == this
+            && player.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64D;
     }
 
     @Override

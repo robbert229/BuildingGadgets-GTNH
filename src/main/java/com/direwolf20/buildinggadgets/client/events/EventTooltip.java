@@ -5,6 +5,16 @@ package com.direwolf20.buildinggadgets.client.events;
  * Thanks Vazkii!!
  */
 
+import java.util.*;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import org.lwjgl.opengl.GL11;
+
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
@@ -13,25 +23,21 @@ import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.MathTool;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.Multiset;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import org.lwjgl.opengl.GL11;
-
-import java.util.*;
 
 public class EventTooltip {
+
     private static final int STACKS_PER_LINE = 8;
     private static RemoteInventoryCache cache = new RemoteInventoryCache(true);
 
-    public static void init(){
-        FMLCommonHandler.instance().bus().register(new EventTooltip());
+    public static void init() {
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new EventTooltip());
     }
 
     public static void setCache(Multiset<UniqueItem> cache) {
@@ -46,7 +52,7 @@ public class EventTooltip {
     }
 
     public static void addTemplatePadding(ItemStack stack, List<String> tooltip) {
-        //This method extends the tooltip box size to fit the item's we will render in onDrawTooltip
+        // This method extends the tooltip box size to fit the item's we will render in onDrawTooltip
         Minecraft mc = Minecraft.getMinecraft();
         if (stack.getItem() instanceof ITemplate template) {
             String UUID = template.getUUID(stack);
@@ -64,27 +70,23 @@ public class EventTooltip {
             List<Map.Entry<ItemStack, Integer>> list = new ArrayList<>(itemStackCount.entrySet());
 
             int totalMissing = 0;
-            //Look through all the ItemStacks and draw each one in the specified X/Y position
+            // Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
                 int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
-                if (hasAmt < entry.getValue())
-                    totalMissing = totalMissing + Math.abs(entry.getValue() - hasAmt);
+                if (hasAmt < entry.getValue()) totalMissing = totalMissing + Math.abs(entry.getValue() - hasAmt);
             }
 
             int count = (totalMissing > 0) ? itemStackCount.size() + 1 : itemStackCount.size();
-            //boolean creative = ((IReagentHolder) stack.getItem()).isCreativeReagentHolder(stack);
+            // boolean creative = ((IReagentHolder) stack.getItem()).isCreativeReagentHolder(stack);
 
-            if (count > 0)
-                tooltipIfShift(tooltip, () -> {
-                    int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
-                    int width = Math.min(STACKS_PER_LINE, count) * 18;
-                    String spaces = "\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r";
-                    while (mc.fontRenderer.getStringWidth(spaces) < width)
-                        spaces += " ";
+            if (count > 0) tooltipIfShift(tooltip, () -> {
+                int lines = (((count - 1) / STACKS_PER_LINE) + 1) * 2;
+                int width = Math.min(STACKS_PER_LINE, count) * 18;
+                String spaces = "\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r";
+                while (mc.fontRenderer.getStringWidth(spaces) < width) spaces += " ";
 
-                    for (int j = 0; j < lines; j++)
-                        tooltip.add(spaces);
-                });
+                for (int j = 0; j < lines; j++) tooltip.add(spaces);
+            });
         }
     }
 
@@ -95,7 +97,7 @@ public class EventTooltip {
 
             Multiset<UniqueItem> itemCountMap = stackTemplate.getItemCountMap(stack);
 
-            //Create an ItemStack -> Integer Map
+            // Create an ItemStack -> Integer Map
             Map<ItemStack, Integer> itemStackCount = new HashMap<ItemStack, Integer>();
             for (Multiset.Entry<UniqueItem> entry : itemCountMap.entrySet()) {
                 ItemStack itemStack = new ItemStack(entry.getElement().item, 1, entry.getElement().meta);
@@ -105,26 +107,32 @@ public class EventTooltip {
             List<Map.Entry<ItemStack, Integer>> list = new ArrayList<>(itemStackCount.entrySet());
             Comparator<Map.Entry<ItemStack, Integer>> comparator = Comparator.comparing(entry -> entry.getValue());
             comparator = comparator.reversed();
-            comparator = comparator.thenComparing(Comparator.comparing(entry -> Item.getIdFromItem(entry.getKey().getItem())));
-            comparator = comparator.thenComparing(Comparator.comparing(entry -> entry.getKey().getItemDamage()));
+            comparator = comparator.thenComparing(
+                Comparator.comparing(
+                    entry -> Item.getIdFromItem(
+                        entry.getKey()
+                            .getItem())));
+            comparator = comparator.thenComparing(
+                Comparator.comparing(
+                    entry -> entry.getKey()
+                        .getItemDamage()));
             list.sort(comparator);
 
             for (String s : tooltip) {
-                if (s.trim().equals("\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r"))
-                    break;
+                if (s.trim()
+                    .equals("\u00a77\u00a7r\u00a7r\u00a7r\u00a7r\u00a7r")) break;
                 by += 10;
             }
-
 
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             // GlStateManager.enableBlend();
             // GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            //Gui.drawRect(bx, by, bx + width, by + height, 0x55000000);
+            // Gui.drawRect(bx, by, bx + width, by + height, 0x55000000);
 
             int j = 0;
-            //Look through all the ItemStacks and draw each one in the specified X/Y position
+            // Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
                 int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
                 int x = bx + (j % STACKS_PER_LINE) * 18;
@@ -153,7 +161,6 @@ public class EventTooltip {
 
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         renderItem.renderItemIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
-
 
         String s1 = req == Integer.MAX_VALUE ? "\u221E" : Integer.toString(req);
         int w1 = mc.fontRenderer.getStringWidth(s1);
@@ -186,18 +193,22 @@ public class EventTooltip {
         return missingCount;
     }
 
-    public Map<UniqueItem, Integer> makeRequiredList(String UUID) {//TODO unused
+    public Map<UniqueItem, Integer> makeRequiredList(String UUID) {// TODO unused
         Map<UniqueItem, Integer> itemCountMap = new HashMap<UniqueItem, Integer>();
-        Map<BlockState, UniqueItem> IntStackMap = GadgetCopyPaste.getBlockMapIntState(PasteToolBufferBuilder.getTagFromUUID(UUID)).getIntStackMap();
+        Map<BlockState, UniqueItem> IntStackMap = GadgetCopyPaste
+            .getBlockMapIntState(PasteToolBufferBuilder.getTagFromUUID(UUID))
+            .getIntStackMap();
         List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
 
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = IntStackMap.get(blockMap.state);
 
-            List<ItemStack> drops = blockMap.state.getBlock().getDrops(Minecraft.getMinecraft().theWorld, 0, 0, 0, blockMap.state.getMetadata(), 0);
+            List<ItemStack> drops = blockMap.state.getBlock()
+                .getDrops(Minecraft.getMinecraft().theWorld, 0, 0, 0, blockMap.state.getMetadata(), 0);
             int neededItems = 0;
             for (ItemStack drop : drops) {
-                if (drop.getItem().equals(uniqueItem.item)) {
+                if (drop.getItem()
+                    .equals(uniqueItem.item)) {
                     neededItems++;
                 }
             }
@@ -209,7 +220,8 @@ public class EventTooltip {
             if (uniqueItem.item != null) {
                 boolean found = false;
                 for (Map.Entry<UniqueItem, Integer> entry : itemCountMap.entrySet()) {
-                    if (entry.getKey().equals(uniqueItem)) {
+                    if (entry.getKey()
+                        .equals(uniqueItem)) {
                         itemCountMap.put(entry.getKey(), itemCountMap.get(entry.getKey()) + neededItems);
                         found = true;
                         break;

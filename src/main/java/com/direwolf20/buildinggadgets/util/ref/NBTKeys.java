@@ -1,10 +1,11 @@
 package com.direwolf20.buildinggadgets.util.ref;
 
-import net.minecraft.util.ResourceLocation;
-
 import static com.direwolf20.buildinggadgets.BuildingGadgets.MODID;
 
+import net.minecraft.util.ResourceLocation;
+
 public final class NBTKeys {
+
     public static final ResourceLocation AND_SERIALIZER_ID = new ResourceLocation(MODID, "sub_entries");
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_BOUNDS = "bounds";
@@ -29,6 +30,7 @@ public final class NBTKeys {
     public static final String KEY_SUB_ENTRIES = "sub_entries";
     public static final ResourceLocation OR_SERIALIZER_ID = new ResourceLocation(MODID, "alternatives");
     public static final ResourceLocation SIMPLE_SERIALIZER_ID = new ResourceLocation(MODID, "entries");
+
     private NBTKeys() {}
 
     public static final String CREATIVE_MARKER = "creative";

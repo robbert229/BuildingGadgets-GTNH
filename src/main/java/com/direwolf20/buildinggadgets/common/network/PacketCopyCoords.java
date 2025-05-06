@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
@@ -22,14 +22,14 @@ public class PacketCopyCoords implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        start = WorldUtils.fromLong(buf.readLong());
-        end = WorldUtils.fromLong(buf.readLong());
+        start = ChunkCoordinateUtils.fromLong(buf.readLong());
+        end = ChunkCoordinateUtils.fromLong(buf.readLong());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(WorldUtils.toLong(start));
-        buf.writeLong(WorldUtils.toLong(end));
+        buf.writeLong(ChunkCoordinateUtils.toLong(start));
+        buf.writeLong(ChunkCoordinateUtils.toLong(end));
     }
 
     public PacketCopyCoords() {

@@ -6,8 +6,8 @@ import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Stair;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -47,10 +47,10 @@ public class StairMode extends AtopSupportedMode {
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
         if (hit.posY > player.posY + 1) {
             EnumFacing side = VectorTools.isAxisVertical(sideHit) ? VectorTools.getHorizontalFacingFromPlayer(player) : sideHit;
-            return WorldUtils.offset(WorldUtils.down(hit), side);
+            return ChunkCoordinateUtils.offset(ChunkCoordinateUtils.down(hit), side);
         }
 
-        return WorldUtils.up(hit);
+        return ChunkCoordinateUtils.up(hit);
     }
 
     @Override

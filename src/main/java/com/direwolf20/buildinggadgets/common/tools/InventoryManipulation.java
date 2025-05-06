@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.direwolf20.buildinggadgets.common.integration.IItemAccess;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+import com.direwolf20.buildinggadgets.util.MathTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.block.Block;

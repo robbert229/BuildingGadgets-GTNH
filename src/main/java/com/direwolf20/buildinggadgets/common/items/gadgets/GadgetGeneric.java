@@ -21,7 +21,7 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
+import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 public abstract class GadgetGeneric extends ItemModBase {

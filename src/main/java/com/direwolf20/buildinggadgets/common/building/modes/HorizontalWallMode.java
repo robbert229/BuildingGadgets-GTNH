@@ -5,6 +5,9 @@ import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.Wall;
 import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.MathTool;
+import com.direwolf20.buildinggadgets.util.VectorTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -37,12 +40,12 @@ public class HorizontalWallMode extends AtopSupportedMode {
         int radius = MathTool.floorToOdd(range) / 2;
         if (VectorTools.isAxisVertical(sideHit))
             return Wall.clickedSide(transformed, sideHit, radius);
-        return Wall.extendingFrom(WorldUtils.offset(transformed, DirectionUtils.getOppositeEnumFacing(sideHit)), sideHit, EnumFacing.UP, radius, MathTool.isEven(range) ? 1 : 0);
+        return Wall.extendingFrom(ChunkCoordinateUtils.offset(transformed, DirectionUtils.getOppositeEnumFacing(sideHit)), sideHit, EnumFacing.UP, radius, MathTool.isEven(range) ? 1 : 0);
     }
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return WorldUtils.offset(hit, sideHit);
+        return ChunkCoordinateUtils.offset(hit, sideHit);
     }
 
     @Override

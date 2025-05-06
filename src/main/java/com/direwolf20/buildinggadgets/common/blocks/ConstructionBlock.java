@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.tools.MetadataUtils;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.MetadataUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
@@ -241,16 +241,16 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
             return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
         }
 
-        ChunkCoordinates offsetCoordinates = WorldUtils.offset(pos, parsedSide, 1);
+        ChunkCoordinates offsetCoordinates = ChunkCoordinateUtils.offset(pos, parsedSide, 1);
         Block sideBlockState = worldIn.getBlock(offsetCoordinates.posX, offsetCoordinates.posY, offsetCoordinates.posZ);
         if (sideBlockState.equals(ModBlocks.constructionBlock)) {
-            if (!(getActualMimicBlock(worldIn, WorldUtils.offset(pos, parsedSide, 1)) == null)) {
-                sideBlockState = getActualMimicBlock(worldIn, WorldUtils.offset(pos, parsedSide, 1));
+            if (!(getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1)) == null)) {
+                sideBlockState = getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
             }
         }
 
         fakeWorld.setState(worldIn, mimicBlock, pos);
-        fakeWorld.setState(worldIn, sideBlockState, WorldUtils.offset(pos, parsedSide, 1));
+        fakeWorld.setState(worldIn, sideBlockState, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
 
         try {
             return mimicBlock.shouldSideBeRendered(fakeWorld, pos.posX, pos.posY, pos.posZ, side);

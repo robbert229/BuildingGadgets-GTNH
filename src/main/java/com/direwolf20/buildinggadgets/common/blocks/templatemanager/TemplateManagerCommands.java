@@ -8,6 +8,8 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -25,14 +27,12 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.*;
 import static net.minecraft.client.gui.GuiScreen.setClipboardString;
 
 public class TemplateManagerCommands {
@@ -75,7 +75,7 @@ public class TemplateManagerCommands {
         NBTTagCompound templateTagCompound = templateWorldSave.getCompoundFromUUID(UUIDTemplate);
         tagCompound = (NBTTagCompound) templateTagCompound.copy();
         template.incrementCopyCounter(itemStack0);
-        tagCompound.setInteger(TEMPLATE_COPY_COUNT, template.getCopyCounter(itemStack0));
+        tagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(itemStack0));
         tagCompound.setString("UUID", template.getUUID(itemStack0));
         tagCompound.setString("owner", player.getCommandSenderName());
         if (template.equals(ModItems.gadgetCopyPaste)) {
@@ -123,7 +123,7 @@ public class TemplateManagerCommands {
         NBTTagCompound tagCompound = isTool ? worldSave.getCompoundFromUUID(UUID) : templateWorldSave.getCompoundFromUUID(UUID);
         templateTagCompound = (NBTTagCompound) tagCompound.copy();
         template.incrementCopyCounter(templateStack);
-        templateTagCompound.setInteger(TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
+        templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
         templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
 
         templateWorldSave.addToMap(UUIDTemplate, templateTagCompound);
@@ -175,10 +175,10 @@ public class TemplateManagerCommands {
         NBTTagCompound templateTagCompound;
 
         templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
-        ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, GADGET_START_POS);
-        ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, GADGET_END_POS);
+        ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_START_POS);
+        ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_END_POS);
         template.incrementCopyCounter(templateStack);
-        templateTagCompound.setInteger(TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
+        templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
         templateTagCompound.setString("UUID", template.getUUID(templateStack));
         //GadgetUtils.writePOSToNBT(templateTagCompound, startPos, GADGET_START_POS, 0);
         //GadgetUtils.writePOSToNBT(templateTagCompound, endPos, GADGET_END_POS, 0);
@@ -244,8 +244,8 @@ public class TemplateManagerCommands {
             newCompound.setIntArray("stateIntArray", tagCompound.getIntArray("stateIntArray"));
             newCompound.setIntArray("posIntArray", tagCompound.getIntArray("posIntArray"));
             newCompound.setTag("mapIntState", tagCompound.getTag("mapIntState"));
-            GadgetUtils.writePOSToNBT(newCompound, GadgetUtils.getPOSFromNBT(tagCompound, GADGET_START_POS), GADGET_START_POS, 0);
-            GadgetUtils.writePOSToNBT(newCompound, GadgetUtils.getPOSFromNBT(tagCompound, GADGET_END_POS), GADGET_END_POS, 0);
+            GadgetUtils.writePOSToNBT(newCompound, GadgetUtils.getPOSFromNBT(tagCompound, NBTKeys.GADGET_START_POS), NBTKeys.GADGET_START_POS, 0);
+            GadgetUtils.writePOSToNBT(newCompound, GadgetUtils.getPOSFromNBT(tagCompound, NBTKeys.GADGET_END_POS), NBTKeys.GADGET_END_POS, 0);
 
             try {
                 if (GadgetUtils.getPasteStream(newCompound, tagCompound.getString("name")) != null) {

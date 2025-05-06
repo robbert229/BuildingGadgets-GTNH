@@ -4,6 +4,9 @@ import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.modes.*;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.WorldUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectArrayMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
@@ -95,7 +98,7 @@ public enum BuildingModes {
     public static BiPredicate<ChunkCoordinates, BlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
         BlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
-            BlockState current = WorldUtils.getBlockState(world, pos);
+            BlockState current = BlockState.getBlockState(world, pos);
             if (!target.getBlock().canPlaceBlockAt(world, pos.posX, pos.posY, pos.posZ))
                 return false;
             if (pos.posY < 0)

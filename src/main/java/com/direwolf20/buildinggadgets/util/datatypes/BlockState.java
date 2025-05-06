@@ -1,10 +1,12 @@
-package com.direwolf20.buildinggadgets.common.tools;
+package com.direwolf20.buildinggadgets.util.datatypes;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class BlockState {
     private final int metadata;
@@ -13,6 +15,23 @@ public class BlockState {
     public BlockState(Block block, int metadata) {
         this.metadata = metadata;
         this.block = block;
+    }
+
+    @Nullable
+    public static BlockState getBlockState(World world, int x, int y, int z) {
+        var block = world.getBlock(x, y, z);
+        if (block == null) {
+            return null;
+        }
+
+        var metadata = world.getBlockMetadata(x, y, z);
+
+        return new BlockState(block, metadata);
+    }
+
+    @Nullable
+    public static BlockState getBlockState(World world, ChunkCoordinates coordinates) {
+        return getBlockState(world, coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
     public Block getBlock() {

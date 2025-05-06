@@ -10,7 +10,10 @@ import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.util.MathTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.Multiset;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,15 +22,17 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 
 public class EventTooltip {
-
     private static final int STACKS_PER_LINE = 8;
     private static RemoteInventoryCache cache = new RemoteInventoryCache(true);
+
+    public static void init(){
+        FMLCommonHandler.instance().bus().register(new EventTooltip());
+    }
 
     public static void setCache(Multiset<UniqueItem> cache) {
         EventTooltip.cache.setCache(cache);
@@ -84,7 +89,7 @@ public class EventTooltip {
     }
 
     @SubscribeEvent
-    public static void onDrawTooltip(ItemStack stack, List<String> tooltip, int bx, int by) {
+    public void onDrawTooltip(ItemStack stack, List<String> tooltip, int bx, int by) {
         if ((stack.getItem() instanceof ITemplate stackTemplate) && GuiScreen.isShiftKeyDown()) {
             long totalMissing = 0;
 
@@ -138,7 +143,7 @@ public class EventTooltip {
         }
     }
 
-    private static int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
+    private int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
         Minecraft mc = Minecraft.getMinecraft();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -181,7 +186,7 @@ public class EventTooltip {
         return missingCount;
     }
 
-    public static Map<UniqueItem, Integer> makeRequiredList(String UUID) {//TODO unused
+    public Map<UniqueItem, Integer> makeRequiredList(String UUID) {//TODO unused
         Map<UniqueItem, Integer> itemCountMap = new HashMap<UniqueItem, Integer>();
         Map<BlockState, UniqueItem> IntStackMap = GadgetCopyPaste.getBlockMapIntState(PasteToolBufferBuilder.getTagFromUUID(UUID)).getIntStackMap();
         List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));

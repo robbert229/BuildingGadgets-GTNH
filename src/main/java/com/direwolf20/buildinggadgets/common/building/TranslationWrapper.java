@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 
@@ -24,13 +24,13 @@ public final class TranslationWrapper implements IBlockProvider {
     public TranslationWrapper(IBlockProvider provider, ChunkCoordinates origin) {
         this.provider = provider;
         this.translation = origin;
-        this.accumulatedTranslation = WorldUtils.add(provider.getTranslation(), origin);
+        this.accumulatedTranslation = ChunkCoordinateUtils.add(provider.getTranslation(), origin);
     }
 
     @Override
     public IBlockProvider translate(ChunkCoordinates origin) {
         // Since provider is the same, just adding the two translation together would be sufficient
-        return new TranslationWrapper(provider, WorldUtils.add(translation, origin));
+        return new TranslationWrapper(provider, ChunkCoordinateUtils.add(translation, origin));
     }
 
     /**
@@ -60,7 +60,7 @@ public final class TranslationWrapper implements IBlockProvider {
      */
     @Override
     public BlockState at(ChunkCoordinates pos) {
-        return provider.at(WorldUtils.add(pos, translation));
+        return provider.at(ChunkCoordinateUtils.add(pos, translation));
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.Surface;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -44,7 +44,7 @@ public class BuildingSurfaceMode extends AtopSupportedMode {
 
     @Override
     public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return WorldUtils.offset(hit, sideHit);
+        return ChunkCoordinateUtils.offset(hit, sideHit);
     }
 
     @Override

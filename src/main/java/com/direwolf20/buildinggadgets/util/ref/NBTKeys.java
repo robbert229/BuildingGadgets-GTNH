@@ -1,4 +1,4 @@
-package com.direwolf20.buildinggadgets.common.util.ref;
+package com.direwolf20.buildinggadgets.util.ref;
 
 import net.minecraft.util.ResourceLocation;
 

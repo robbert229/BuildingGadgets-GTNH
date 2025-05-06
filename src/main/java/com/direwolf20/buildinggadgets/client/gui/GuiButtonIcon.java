@@ -1,18 +1,13 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.Color;
-
 import javax.annotation.Nullable;
 
 public class GuiButtonIcon extends GuiButtonColor {
@@ -21,7 +16,7 @@ public class GuiButtonIcon extends GuiButtonColor {
     private float alpha = 1F;
 
     public GuiButtonIcon(int x, int y, int width, int height, String helpTextKey, Color colorSelected, Color colorDeselected,
-            @Nullable Color colorHovered, ResourceLocation textureSelected, @Nullable Runnable action) {
+                         @Nullable Color colorHovered, ResourceLocation textureSelected, @Nullable Runnable action) {
         super(0, x, y, width, height, "", helpTextKey, colorSelected, colorDeselected, colorHovered);
         iconDeselected = new Icon(textureSelected);
         this.action = new ActionPressed(action);
@@ -37,43 +32,44 @@ public class GuiButtonIcon extends GuiButtonColor {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        if (!visible)
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        if (!visible) {
             return;
+        }
 
-        super.drawButton(mc, mouseX, mouseY, partialTicks);
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        super.drawButton(mc, mouseX, mouseY);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         if (iconSelected == null) {
             ResourceLocation texture = iconDeselected.getModifiedTexture("selected");
             iconSelected = iconDeselected.isTextureMissing(textureManager, texture) ? iconDeselected : new Icon(texture);
         }
         Icon icon = selected ? iconSelected : iconDeselected;
-        if (selected)
-            GlStateManager.color(colorSelected.getRed() / 255F, colorSelected.getGreen() / 255F, colorSelected.getBlue() / 255F, alpha);
-        else
-            GlStateManager.color(1F, 1F, 1F, alpha);
+        if (selected) {
+            GL11.glColor4f(colorSelected.getRed() / 255F, colorSelected.getGreen() / 255F, colorSelected.getBlue() / 255F, alpha);
+        } else {
+            GL11.glColor4f(1F, 1F, 1F, alpha);
+        }
 
         icon.bindTextureColored(textureManager);
-        drawTexturedModalRect(x, y, width, height);
+        drawTexturedModalRect(xPosition, yPosition, width, height);
 
-        GlStateManager.color(1F, 1F, 1F, alpha);
-        if (icon.bindTexture(textureManager))
-            drawTexturedModalRect(x, y, width, height);
+        GL11.glColor4f(1F, 1F, 1F, alpha);
+        if (icon.bindTexture(textureManager)) {
+            drawTexturedModalRect(xPosition, yPosition, width, height);
+        }
     }
 
     private void drawTexturedModalRect(int x, int y, int width, int height) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(x + 0, y + height, zLevel).tex(0, 1).endVertex();
-        buffer.pos(x + width, y + height, zLevel).tex(1, 1).endVertex();
-        buffer.pos(x + width, y + 0, zLevel).tex(1, 0).endVertex();
-        buffer.pos(x + 0, y + 0, zLevel).tex(0, 0).endVertex();
-        tessellator.draw();
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(x + 0, y + height, zLevel, 0, 1);
+        tessellator.addVertexWithUV(x + width, y + height, zLevel, 1, 1);
+        tessellator.addVertexWithUV(x + width, y + 0, zLevel, 1, 0);
+        tessellator.addVertexWithUV(x + 0, y + 0, zLevel, 0, 0);
+        tessellator.draw();  // Finish drawing
     }
 
     private static class Icon {
@@ -89,7 +85,7 @@ public class GuiButtonIcon extends GuiButtonColor {
 
         public boolean isTextureMissing(TextureManager textureManager, ResourceLocation texture) {
             textureManager.bindTexture(texture);
-            return textureManager.getTexture(texture) == TextureUtil.MISSING_TEXTURE;
+            return textureManager.getTexture(texture) == TextureUtil.missingTexture;
         }
 
         public void bindTextureColored(TextureManager textureManager) {

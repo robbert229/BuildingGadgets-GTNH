@@ -1,19 +1,15 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import com.direwolf20.buildinggadgets.common.items.ModItems;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChunkCoordinates;
-import org.lwjgl.opengl.GL11;
 
-import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.TEMPLATE_COPY_COUNT;
+import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.TEMPLATE_COPY_COUNT;
 
 public class PasteToolBufferBuilder {
 

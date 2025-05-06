@@ -9,6 +9,8 @@ import com.direwolf20.buildinggadgets.common.building.modes.ExchangingHorizontal
 import com.direwolf20.buildinggadgets.common.building.modes.ExchangingSurfaceMode;
 import com.direwolf20.buildinggadgets.common.building.modes.ExchangingVerticalColumnMode;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -78,10 +80,10 @@ public enum ExchangingModes {
     }
 
     public static BiPredicate<ChunkCoordinates, BlockState> combineTester(World world, ItemStack tool, EntityPlayer player, ChunkCoordinates initial) {
-        BlockState initialBlockState = WorldUtils.getBlockState(world, initial);
+        BlockState initialBlockState = BlockState.getBlockState(world, initial);
         BlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
-            BlockState worldBlockState = WorldUtils.getBlockState(world, pos);
+            BlockState worldBlockState = BlockState.getBlockState(world, pos);
 
             // Don't try to replace for the same block
             if (worldBlockState == target)

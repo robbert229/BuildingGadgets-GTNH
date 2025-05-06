@@ -1,16 +1,20 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
-//import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-//import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.tools.*;
 
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.WorldUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -201,34 +205,34 @@ public class GadgetDestruction extends GadgetGeneric {
         return dirs;
     }
 
-//    @Override
-//    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-//        ItemStack stack = player.getHeldItem(hand);
-//        player.setActiveHand(hand);
-//        if (!world.isRemote) {
-//            if (!player.isSneaking()) {
-//                MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-//                if (lookingAt == null && getAnchor(stack) == null) { //If we aren't looking at anything, exit
-//                    return new ActionResult<>(EnumActionResult.FAIL, stack);
-//                }
-//
-//                ChunkCoordinates startBlock = (getAnchor(stack) == null) ? VectorTools.getPosFromMovingObjectPosition(lookingAt) : getAnchor(stack);
-//                EnumFacing sideHit = (getAnchorSide(stack) == null) ? lookingAt.sideHit : getAnchorSide(stack);
-//                clearArea(world, startBlock, sideHit, player, stack);
-//                if (getAnchor(stack) != null) {
-//                    setAnchor(stack, null);
-//                    setAnchorSide(stack, null);
-//                    player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
-//                }
-//            }
-//        } else {
-//            if (player.isSneaking()) {
-//                player.openGui(BuildingGadgets.instance, GuiProxy.DestructionID, world, hand.ordinal(), 0, 0);
-//                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-//            }
-//        }
-//        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-//    }
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!world.isRemote) {
+            if (!player.isSneaking()) {
+                MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+                if (lookingAt == null && getAnchor(stack) == null) {
+                    //If we aren't looking at anything, exit
+                    return stack;
+                }
+
+                ChunkCoordinates startBlock = (getAnchor(stack) == null) ? VectorTools.getPosFromMovingObjectPosition(lookingAt) : getAnchor(stack);
+                EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit) : getAnchorSide(stack);
+                clearArea(world, startBlock, sideHit, player, stack);
+                if (getAnchor(stack) != null) {
+                    setAnchor(stack, null);
+                    setAnchorSide(stack, null);
+
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+                }
+            }
+        } else {
+            if (player.isSneaking()) {
+                player.openGui(BuildingGadgets.instance, GuiProxy.DestructionID, world, 0, 0, 0);
+                return stack;
+            }
+        }
+        return stack;
+    }
 
     public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
@@ -260,10 +264,10 @@ public class GadgetDestruction extends GadgetGeneric {
 
         // Build the region
         List<EnumFacing> directions = assignDirections(side, player);
-        String[] directionNames = new String[]{"right", "left", "up", "down", "depth"};
+        String[] directionNames = new String[]{"left", "right", "up", "down", "depth"};
         Region selectionRegion = new Region(startPos);
         for (int i = 0; i < directionNames.length; i++) {
-            var offset = WorldUtils.offset(startPos, directions.get(i), getToolValue(stack, directionNames[i]) - (i == 4 ? 1 : 0));
+            var offset = ChunkCoordinateUtils.offset(startPos, directions.get(i), getToolValue(stack, directionNames[i]) - (i == 4 ? 1 : 0));
             ;
             selectionRegion = selectionRegion.union(new Region(offset));
         }
@@ -326,7 +330,7 @@ public class GadgetDestruction extends GadgetGeneric {
         for (ChunkCoordinates voidPos : voidPosArray) {
             boolean isPaste;
 
-            BlockState blockState = WorldUtils.getBlockState(world, voidPos);
+            BlockState blockState = BlockState.getBlockState(world, voidPos);
             BlockState pasteState = new BlockState(Blocks.air, 0);
 
             if (blockState == null || blockState.isAir()) {
@@ -395,7 +399,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 return;
 
             // Check that there is no blocks where we want to put the new blocks.
-            BlockState state = WorldUtils.getBlockState(world, posState.getPos());
+            BlockState state = BlockState.getBlockState(world, posState.getPos());
             if (!state.isAir(state, world, posState.getPos()) && !state.getMaterial().isLiquid())
                 return;
 
@@ -439,7 +443,7 @@ public class GadgetDestruction extends GadgetGeneric {
 
         this.applyDamage(tool, player);
 
-        world.spawnEntityInWorld(new BlockBuildEntity(world, voidPos, player, WorldUtils.getBlockState(world, voidPos), 2, new BlockState(Blocks.air, 0), false));
+        world.spawnEntityInWorld(new BlockBuildEntity(world, voidPos, player, BlockState.getBlockState(world, voidPos), 2, new BlockState(Blocks.air, 0), false));
         return true;
     }
 

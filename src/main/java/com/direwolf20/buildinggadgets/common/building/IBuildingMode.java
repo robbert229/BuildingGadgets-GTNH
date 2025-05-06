@@ -1,16 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import net.minecraft.block.Block;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import com.direwolf20.buildinggadgets.common.building.Context;
 
 import java.util.function.BiPredicate;
 

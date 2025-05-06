@@ -1,13 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-// import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
-// import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-// import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-// import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
-// import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
-// import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
-// import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +16,9 @@ import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;

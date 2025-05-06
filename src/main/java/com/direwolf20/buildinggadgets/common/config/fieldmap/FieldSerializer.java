@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagString;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tools.ArrayUtils;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
+import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.google.common.base.Preconditions;
 
 /**

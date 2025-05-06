@@ -17,6 +17,9 @@ import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tools.*;
 //import net.minecraft.block.state.IBlockState;
 //import net.minecraft.client.util.ITooltipFlag;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -40,8 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.GADGET_END_POS;
-import static com.direwolf20.buildinggadgets.common.util.ref.NBTKeys.GADGET_START_POS;
+import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.GADGET_END_POS;
+import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.GADGET_START_POS;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -174,6 +177,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         BlockMapIntState MapIntState = new BlockMapIntState();
         MapIntState.getIntStateMapFromNBT(MapIntStateTag);
+        NBTTool.readIntList(tagCompound.getTag("posIntArray"));
         int[] posIntArray = tagCompound.getIntArray("posIntArray");
         int[] stateIntArray = tagCompound.getIntArray("stateIntArray");
         for (int i = 0; i < posIntArray.length; i++) {
@@ -402,7 +406,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             for (int y = iStartY; y <= iEndY; y++) {
                 for (int z = iStartZ; z <= iEndZ; z++) {
                     ChunkCoordinates tempPos = new ChunkCoordinates(x, y, z);
-                    BlockState tempState = WorldUtils.getBlockState(world, tempPos);
+                    BlockState tempState = BlockState.getBlockState(world, tempPos);
 
 //                    var notBlacklisted = !SyncedConfig.blockBlacklist.contains(tempState.getBlock());
                     var notBlacklisted = true;
@@ -487,6 +491,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         } else {
             player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copied").getUnformattedText()));
         }
+
         return true;
     }
 
@@ -620,7 +625,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
             boolean sameDim = (player.dimension == dimension);
 
-            var currentBlock = WorldUtils.getBlockState(world, blockMap.pos);
+            var currentBlock = BlockState.getBlockState(world, blockMap.pos);
 
             boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, blockMap.pos, currentBlock.getBlock(), player);
             if (distance < 256 && !cancelled && sameDim) { //Don't allow us to undo a block while its still being placed or too far away

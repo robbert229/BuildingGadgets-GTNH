@@ -9,15 +9,15 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.network.PacketDestructionGUI;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 
+import com.direwolf20.buildinggadgets.util.MathTool;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class DestructionGUI extends GuiScreen {
     private GuiDestructionSlider down;
     private GuiDestructionSlider depth;
 
-    private ItemStack destructionTool;
+    private final ItemStack destructionTool;
 
     public DestructionGUI(ItemStack tool) {
         super();
@@ -44,19 +44,18 @@ public class DestructionGUI extends GuiScreen {
 
         int x = width / 2;
         int y = height / 2;
-
-        this.addButton(new GuiButton(1, (x - 30) + 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.confirm")));
-        this.addButton(new GuiButton(2, (x - 30) - 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.cancel")));
+        this.buttonList.add(new GuiButton(1, (x - 30) + 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.confirm")));
+        this.buttonList.add(new GuiButton(2, (x - 30) - 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.cancel")));
 
         List<GuiDestructionSlider> sliders = new ArrayList<>();
 
-        sliders.add(depth   = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - (GuiDestructionSlider.height / 2), "Depth", GadgetDestruction.getToolValue(destructionTool, "depth")));
-        sliders.add(left    = new GuiDestructionSlider(x - (GuiDestructionSlider.width * 2) - 5, y - (GuiDestructionSlider.height / 2), "Left", GadgetDestruction.getToolValue(destructionTool, "left")));
-        sliders.add(right   = new GuiDestructionSlider(x + (GuiDestructionSlider.width + 5), y - (GuiDestructionSlider.height / 2), "Right", GadgetDestruction.getToolValue(destructionTool, "right")));
-        sliders.add(up      = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - 35, "Up", GadgetDestruction.getToolValue(destructionTool, "up")));
-        sliders.add(down    = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y + 20, "Down", GadgetDestruction.getToolValue(destructionTool, "down")));
+        sliders.add(depth = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - (GuiDestructionSlider.height / 2), "Depth", GadgetDestruction.getToolValue(destructionTool, "depth")));
+        sliders.add(left = new GuiDestructionSlider(x - (GuiDestructionSlider.width * 2) - 5, y - (GuiDestructionSlider.height / 2), "Left", GadgetDestruction.getToolValue(destructionTool, "left")));
+        sliders.add(right = new GuiDestructionSlider(x + (GuiDestructionSlider.width + 5), y - (GuiDestructionSlider.height / 2), "Right", GadgetDestruction.getToolValue(destructionTool, "right")));
+        sliders.add(up = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - 35, "Up", GadgetDestruction.getToolValue(destructionTool, "up")));
+        sliders.add(down = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y + 20, "Down", GadgetDestruction.getToolValue(destructionTool, "down")));
 
-        sliders.forEach( gui -> gui.getComponents().forEach(this::addButton));
+        sliders.forEach(gui -> this.buttonList.addAll(gui.getComponents()));
     }
 
     private boolean isWithinBounds() {
@@ -72,11 +71,10 @@ public class DestructionGUI extends GuiScreen {
             if (isWithinBounds()) {
                 PacketHandler.INSTANCE.sendToServer(new PacketDestructionGUI(left.getValueInt(), right.getValueInt(), up.getValueInt(), down.getValueInt(), depth.getValueInt()));
                 this.mc.displayGuiScreen(null);
+            } else {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(ChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedText()));
             }
-            else
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
-        }
-        else if (b.id == 2)
+        } else if (b.id == 2)
             this.mc.displayGuiScreen(null);
     }
 
@@ -97,7 +95,7 @@ public class DestructionGUI extends GuiScreen {
             super(
                     x, y, width, height, String.format("%s ", prefix), "", min, max, current, false, true, Color.DARK_GRAY, null,
                     (slider, amount) -> {
-                        slider.setValue(MathHelper.clamp(slider.getValueInt() + amount, min, max));
+                        slider.setValue(MathTool.clamp(slider.getValueInt() + amount, min, max));
                         slider.updateSlider();
                     }
             );

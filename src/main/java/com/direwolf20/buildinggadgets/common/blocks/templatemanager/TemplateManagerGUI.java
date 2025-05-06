@@ -92,12 +92,12 @@ public class TemplateManagerGUI extends GuiContainer {
             }
         } else {
             // TODO(johnrowl) verify that this is correct.
-            this.drawHoveringText(
-                    Collections.singletonList(buttonHelp.getHoverHelpText()),
-                    mouseX,
-                    mouseY,
-                    this.fontRendererObj
-            );
+//            this.drawHoveringText(
+//                    Collections.singletonList(buttonHelp.getHoverHelpText()),
+//                    mouseX,
+//                    mouseY,
+//                    this.fontRendererObj
+//            );
         }
 
         if (buttonHelp.isHovered(mouseX, mouseY)) {

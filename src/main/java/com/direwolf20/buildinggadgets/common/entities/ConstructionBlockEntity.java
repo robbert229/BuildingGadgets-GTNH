@@ -3,13 +3,11 @@ package com.direwolf20.buildinggadgets.common.entities;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockPowder;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
-import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 //import net.minecraft.block.state.IBlockState;
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.NBTTool;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 //import net.minecraft.network.datasync.DataParameter;
 //import net.minecraft.network.datasync.DataSerializers;
 //import net.minecraft.network.datasync.EntityDataManager;
@@ -17,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 //import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 public class ConstructionBlockEntity extends Entity {
     private static int MAKING = 20;

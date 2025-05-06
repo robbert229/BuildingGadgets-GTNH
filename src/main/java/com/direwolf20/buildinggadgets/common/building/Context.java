@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 
@@ -67,7 +66,7 @@ public class Context {
                 while (positions.hasNext()) {
                     ChunkCoordinates next = positions.next();
 
-                    var blockState = WorldUtils.getBlockState(world, next);
+                    var blockState = BlockState.getBlockState(world, next);
                     if (validator.test(next, blockState)) {
                         return next;
                     }

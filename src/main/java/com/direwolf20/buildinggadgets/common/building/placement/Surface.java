@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.block.Block;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
@@ -12,7 +13,6 @@ import net.minecraft.world.IBlockAccess;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 
@@ -33,7 +33,7 @@ public final class Surface implements IPlacementSequence {
         boolean fuzzy) {
         Region searchingRegion = Wall.clickedSide(searchingCenter, side, range)
             .getBoundingBox();
-        return create(world, searchingCenter, searchingRegion, pos -> WorldUtils.offset(pos, side, 1), fuzzy);
+        return create(world, searchingCenter, searchingRegion, pos -> ChunkCoordinateUtils.offset(pos, side, 1), fuzzy);
     }
 
     public static Surface create(IBlockAccess world, ChunkCoordinates center, Region searchingRegion,

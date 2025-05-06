@@ -3,11 +3,11 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 //import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 //import com.direwolf20.buildinggadgets.common.items.FakeBuilderWorld;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.tools.*;
 //import net.minecraft.block.state.IBlockState;
 //import net.minecraft.client.resources.I18n;
 //import net.minecraft.client.util.ITooltipFlag;
+import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,14 +15,11 @@ import net.minecraft.enchantment.EnchantmentHelper;
 //import net.minecraft.init.Blocks;
 //import net.minecraft.init.Enchantments;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 
 import java.util.List;
-
-import static com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste.getToolMode;
 //import net.minecraft.util.MovingObjectPosition;
 //import net.minecraft.util.text.TextComponentString;
 //import net.minecraft.util.text.TextComponentTranslation;

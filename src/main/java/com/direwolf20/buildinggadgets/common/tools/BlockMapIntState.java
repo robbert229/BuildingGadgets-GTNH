@@ -1,13 +1,12 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.block.Block;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ChunkCoordinates;
 
 import javax.annotation.Nonnull;

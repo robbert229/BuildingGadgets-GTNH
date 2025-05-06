@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.Context;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;

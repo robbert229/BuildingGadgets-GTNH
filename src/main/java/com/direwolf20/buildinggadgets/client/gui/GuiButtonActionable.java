@@ -1,14 +1,14 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.function.Predicate;
@@ -23,8 +23,8 @@ public class GuiButtonActionable extends GuiButton {
     private boolean selected;
     private boolean isSelectable;
 
-    private Color selectedColor     = Color.GREEN;
-    private Color deselectedColor   = new Color(255, 255, 255);
+    private Color selectedColor = Color.GREEN;
+    private Color deselectedColor = new Color(255, 255, 255);
     private Color activeColor;
 
     private ResourceLocation selectedTexture;
@@ -60,7 +60,7 @@ public class GuiButtonActionable extends GuiButton {
     }
 
     /**
-     * This should be used when ever changing select.
+     * This should be used when changing select.
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
@@ -71,48 +71,61 @@ public class GuiButtonActionable extends GuiButton {
         return selected;
     }
 
-    @Override
+
     public void playPressSound(SoundHandler soundHandlerIn) {
-        soundHandlerIn.playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BEEP.getSound(), selected ? .6F: 1F));
+        soundHandlerIn.playSound(PositionedSoundRecord.func_147674_a(ModSounds.BEEP.getSound(), selected ? .6F : 1F));
     }
 
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-        super.mousePressed(mc, mouseX, mouseY);
+        if (super.mousePressed(mc, mouseX, mouseY)) {
+            this.playPressSound(mc.getSoundHandler());
+            return true;
+        }
 
-        if( !(mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height) )
+        if (!(mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height))
             return false;
 
         this.action.test(true);
-        if (!this.isSelectable)
-            return false;
+        if (!this.isSelectable) return false;
 
         this.setSelected(!this.selected);
         return true;
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        if( !visible )
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        if (!visible)
             return;
 
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        // Enable blending and set blend function using GL11
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        GlStateManager.disableTexture2D();
-        GlStateManager.color(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
-//        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
-        drawTexturedModalRect(this.x, this.y, 0, 0, this.width, this.height);
-        GlStateManager.enableTexture2D();
+        // Disable texture rendering and set color for the rectangle
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, 0.15f);
 
-        GlStateManager.color(1, 1, 1, alpha);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
-//        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
-        drawModalRectWithCustomSizedTexture(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
+        // Draw the rectangle (similar to blit in newer versions)
+        drawTexturedModalRect(this.xPosition, this.yPosition, 0, 0, this.width, this.height);
 
-        ScaledResolution scaledresolution = new ScaledResolution(mc);
-        if( mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height )
-            drawString(Minecraft.getMinecraft().fontRenderer, this.displayString, mouseX > (scaledresolution.getScaledWidth() / 2) ?  mouseX + 2 : mouseX - Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayString), mouseY - 10, activeColor.getRGB());
+        // Re-enable texture rendering
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+        // Set color back to white with alpha for texture rendering
+        GL11.glColor4f(1, 1, 1, alpha);
+
+        // Bind the texture (either selected or deselected) and draw it
+        mc.getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
+        drawTexturedModalRect(this.xPosition, this.yPosition, 0, 0, this.width, this.height);
+
+        // Get the screen resolution
+        ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+
+        // Check if the mouse is hovering over the button and render the display string
+        if (mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height) {
+            int textX = (mouseX > (scaledResolution.getScaledWidth() / 2)) ? mouseX + 2 : mouseX - mc.fontRenderer.getStringWidth(this.displayString);
+            mc.fontRenderer.drawString(this.displayString, textX, mouseY - 10, activeColor.getRGB());
+        }
     }
 }

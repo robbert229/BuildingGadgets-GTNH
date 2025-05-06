@@ -8,7 +8,7 @@ import java.awt.Color;
 import java.util.function.Predicate;
 
 import com.direwolf20.buildinggadgets.client.gui.ModeRadialMenu.ScreenPosition;
-import com.direwolf20.buildinggadgets.common.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 
 public class GuiButtonActionCallback extends GuiButtonIcon {
     private Predicate<Boolean> action;

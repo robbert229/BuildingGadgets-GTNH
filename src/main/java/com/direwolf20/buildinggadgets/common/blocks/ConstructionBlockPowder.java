@@ -2,14 +2,13 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 // import com.direwolf20.buildinggadgets.common.entities.ConstructionBlockEntity;
 
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -45,7 +44,7 @@ public class ConstructionBlockPowder extends BlockFalling {
 
         for (EnumFacing enumfacing : EnumFacing.values()) {
             if (enumfacing != EnumFacing.DOWN) {
-                ChunkCoordinates blockpos = WorldUtils.offset(pos, enumfacing, 1);
+                ChunkCoordinates blockpos = ChunkCoordinateUtils.offset(pos, enumfacing, 1);
 
                 if (worldIn.getBlock(blockpos.posX, blockpos.posY, blockpos.posZ)
                     .getMaterial() == Material.water) {

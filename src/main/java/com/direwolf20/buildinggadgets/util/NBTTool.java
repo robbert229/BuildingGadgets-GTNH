@@ -1,10 +1,11 @@
-package com.direwolf20.buildinggadgets.common.tools;
+package com.direwolf20.buildinggadgets.util;
 
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -25,19 +26,22 @@ import it.unimi.dsi.fastutil.ints.IntList;
  * NBT-Objects by Minecraft.
  */
 public class NBTTool {
+    public static final String NBT_CHUNK_COORDINATE_X = "x";
+    public static final String NBT_CHUNK_COORDINATE_Y = "y";
+    public static final String NBT_CHUNK_COORDINATE_Z = "z";
 
     public static NBTTagCompound createPosTag(ChunkCoordinates pos) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("x", pos.posX);
-        compound.setInteger("y", pos.posY);
-        compound.setInteger("z", pos.posZ);
+        compound.setInteger(NBT_CHUNK_COORDINATE_X, pos.posX);
+        compound.setInteger(NBT_CHUNK_COORDINATE_Y, pos.posY);
+        compound.setInteger(NBT_CHUNK_COORDINATE_Z, pos.posZ);
         return compound;
     }
 
     public static ChunkCoordinates getPosFromTag(NBTTagCompound compound) {
-        int x = compound.getInteger("x");
-        int y = compound.getInteger("y");
-        int z = compound.getInteger("z");
+        int x = compound.getInteger(NBT_CHUNK_COORDINATE_X);
+        int y = compound.getInteger(NBT_CHUNK_COORDINATE_Y);
+        int z = compound.getInteger(NBT_CHUNK_COORDINATE_Z);
 
         return new ChunkCoordinates(x, y, z);
     }
@@ -308,6 +312,18 @@ public class NBTTool {
             res[i] = bytes[i] == 0;
         }
         return res;
+    }
+
+    public static int[] readIntList(NBTBase list) {
+//        byte[] bytes = list.func_150292_c();
+//        Boolean[] res = new Boolean[bytes.length];
+//        for (int i = 0; i < bytes.length; ++i) {
+//            res[i] = bytes[i] == 0;
+//        }
+//
+//        return null;
+
+        return null;
     }
 
     public static Boolean[] readBBooleanList(NBTTagByteArray booleans) {

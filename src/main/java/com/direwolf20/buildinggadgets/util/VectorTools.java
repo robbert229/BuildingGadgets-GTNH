@@ -1,4 +1,4 @@
-package com.direwolf20.buildinggadgets.common.tools;
+package com.direwolf20.buildinggadgets.util;
 
 import static com.direwolf20.buildinggadgets.common.config.SyncedConfig.rayTraceRange;
 

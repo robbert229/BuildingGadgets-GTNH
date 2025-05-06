@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.block.Block;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 

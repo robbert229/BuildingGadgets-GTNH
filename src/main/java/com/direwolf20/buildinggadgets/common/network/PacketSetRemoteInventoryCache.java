@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.server.MinecraftServer;
@@ -49,7 +49,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public void fromBytes(ByteBuf buf) {
         isCopyPaste = buf.readBoolean();
         if (buf.readBoolean()) {
-            loc = new ImmutablePair<>(buf.readInt(), WorldUtils.fromLong(buf.readLong()));
+            loc = new ImmutablePair<>(buf.readInt(), ChunkCoordinateUtils.fromLong(buf.readLong()));
             return;
         }
         int len = buf.readInt();
@@ -67,7 +67,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
         buf.writeBoolean(isRequest);
         if (isRequest) {
             buf.writeInt(loc.getLeft());
-            buf.writeLong(WorldUtils.toLong(loc.getRight()));
+            buf.writeLong(ChunkCoordinateUtils.toLong(loc.getRight()));
             return;
         }
         Set<Entry<UniqueItem>> items = cache.entrySet();

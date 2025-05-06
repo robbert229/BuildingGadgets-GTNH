@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
 import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
 import com.direwolf20.buildinggadgets.client.util.RenderUtil;
-import com.direwolf20.buildinggadgets.common.tools.MathTool;
+import com.direwolf20.buildinggadgets.util.MathTool;
 import net.minecraft.client.Minecraft;
 //import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import cpw.mods.fml.client.GuiScrollingList;
 import org.lwjgl.opengl.GL11;
 

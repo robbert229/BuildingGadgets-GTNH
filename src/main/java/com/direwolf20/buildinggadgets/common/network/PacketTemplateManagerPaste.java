@@ -82,6 +82,8 @@ public class PacketTemplateManagerPaste implements IMessage {
                 NBTTagCompound newTag = CompressedStreamTools.readCompressed(bais);
                 if (newTag.equals(new NBTTagCompound())) return;
 
+                System.out.println(newTag.toString());
+
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                 World world = player.worldObj;
                 ChunkCoordinates pos = message.pos;

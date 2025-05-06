@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
 import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.NBTTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
 

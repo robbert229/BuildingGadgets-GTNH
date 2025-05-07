@@ -399,7 +399,9 @@ public class GadgetDestruction extends GadgetGeneric {
             var posStatePos = posState.getPos();
             BlockSnapshot blockSnapshot = BlockSnapshot
                 .getBlockSnapshot(world, posStatePos.posX, posStatePos.posY, posStatePos.posZ);
-            if (!GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, EnumFacing.UP)) {
+
+            var placed = !GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, EnumFacing.UP);
+            if (placed) {
                 continue;
             }
 

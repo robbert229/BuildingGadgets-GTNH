@@ -70,6 +70,7 @@ public class BlockBuildEntity extends Entity {
 
         originalSetBlock = spawnBlock;
         setSetBlock(setBlock);
+
         if (toolMode == 3) {
             if (currentBlock != null) {
                 if (te instanceof ConstructionBlockTileEntity cbte) {
@@ -87,6 +88,7 @@ public class BlockBuildEntity extends Entity {
                 setSetBlock(setBlock);
             }
         }
+
         world = worldIn;
         mode = toolMode;
         setToolMode(toolMode);
@@ -202,6 +204,7 @@ public class BlockBuildEntity extends Entity {
 
                     world.spawnEntityInWorld(new ConstructionBlockEntity(world, setPos, false));
                 } else {
+                    world.setBlock(setPos.posX, setPos.posY, setPos.posZ, setBlock.getBlock());
                     world.setBlockMetadataWithNotify(setPos.posX, setPos.posY, setPos.posZ, setBlock.getMetadata(), 2);
                     var neighborBlock = WorldUtils.getBlock(world, ChunkCoordinateUtils.up(setPos));
 

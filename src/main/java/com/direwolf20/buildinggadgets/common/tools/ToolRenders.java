@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -304,6 +305,24 @@ public class ToolRenders {
         tess.draw();
     }
 
+    /**
+     * shouldSideBeRendered isn't really an accurate name for this function.
+     * It's purpose is to check to see if a block is "exposed" to air. This is
+     * used as a heuristic to see if we can skip some rendering logic.
+     */
+    private static boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+        int dx = x, dy = y, dz = z;
+        switch (side) {
+            case 0: dy--; break;
+            case 1: dy++; break;
+            case 2: dz--; break;
+            case 3: dz++; break;
+            case 4: dx--; break;
+            case 5: dx++; break;
+        }
+        return !world.getBlock(dx, dy, dz).isOpaqueCube();
+    }
+
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         if (lookingAt == null && GadgetDestruction.getAnchor(heldItem) == null) {
@@ -339,8 +358,15 @@ public class ToolRenders {
             GL11.glCallList(
                 cacheDestructionOverlay
                     .get(new ImmutableTriple<>(new UniqueItemStack(heldItem), startBlockPos, facing.ordinal()), () -> {
+                        //
+                        Minecraft.getMinecraft()
+                                .getTextureManager()
+                                .bindTexture(TextureMap.locationBlocksTexture);
+
                         int displayList = GLAllocation.generateDisplayLists(1);
                         GL11.glNewList(displayList, GL11.GL_COMPILE);
+
+                        GL11.glPushMatrix();
 
                         GL11.glDisable(GL11.GL_TEXTURE_2D);
                         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -351,18 +377,45 @@ public class ToolRenders {
 
                         Tessellator tess = Tessellator.instance;
 
-                        for (var pos : coordinates)
+                        for (var coordinate : coordinates)
                         {
+                            // invisible doesn't actually mean that the block is invisible or not. It just means that at
+                            // least one of the faces of the block is exposed to air. This is just used as a heuristic
+                            // to help cut down rendering on invisible blocks.
+                            boolean invisible = true;
+                            for (EnumFacing side : EnumFacing.values()) {
+                                if (shouldSideBeRendered(world, coordinate.posX, coordinate.posY, coordinate.posZ, side.ordinal())) {
+                                    invisible = false;
+                                    break;
+                                }
+                            }
+
+                            if (invisible) continue;
+
+                            GL11.glPushMatrix();
+                            GL11.glEnable(GL11.GL_BLEND);
+                            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                            //
+                            GL11.glPushMatrix();
                             var box = AxisAlignedBB
-                                    .getBoundingBox(pos.posX, pos.posY, pos.posZ, pos.posX + 1, pos.posY + 1, pos.posZ + 1);
-                            GL11.glDisable(GL11.GL_LIGHTING);
-                            GL11.glDisable(GL11.GL_TEXTURE_2D);
+                                    .getBoundingBox(coordinate.posX, coordinate.posY, coordinate.posZ, coordinate.posX + 1, coordinate.posY + 1, coordinate.posZ + 1);
+
                             drawOutlinedBoundingBox(tess, box);
+                            GL11.glPopMatrix();
+                            //
+
+                            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                            GL11.glDisable(GL11.GL_BLEND);
+                            GL11.glPopMatrix();
                         }
 
                         GL11.glEnable(GL11.GL_LIGHTING);
                         GL11.glEnable(GL11.GL_DEPTH_TEST);
                         GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+                        GL11.glPopMatrix();
 
                         GL11.glEndList();
                         return displayList;
@@ -389,7 +442,6 @@ public class ToolRenders {
 
         List<ChunkCoordinates> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); // Sort the coords by
                                                                                                   // distance to player.
-
         Tessellator t = Tessellator.instance;
 
         for (ChunkCoordinates coordinate : sortedCoordinates) {

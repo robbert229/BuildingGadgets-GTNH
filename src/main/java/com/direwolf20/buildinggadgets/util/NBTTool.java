@@ -5,16 +5,10 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import net.minecraft.util.ChunkCoordinates;
 
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
@@ -317,14 +311,16 @@ public class NBTTool {
     }
 
     public static int[] readIntList(NBTBase list) {
-        // byte[] bytes = list.func_150292_c();
-        // Boolean[] res = new Boolean[bytes.length];
-        // for (int i = 0; i < bytes.length; ++i) {
-        // res[i] = bytes[i] == 0;
-        // }
-        //
-        // return null;
-
+        // extract the list of integers that are stored in the list.
+        if (list instanceof NBTTagList intList) {
+            int[] res = new int[intList.tagCount()];
+            for (int i = 0; i < intList.tagCount(); i++) {
+                String value = intList.getStringTagAt(i);
+                var trimmedValue = value.replaceFirst("I;", "");
+                res[i] = Integer.parseInt(trimmedValue);
+            }
+            return res;
+        }
         return null;
     }
 
@@ -378,7 +374,7 @@ public class NBTTool {
         return tag;
     }
 
-    private static final String NBT_BLOCK_ID = "block_id";
+    private static final String NBT_BLOCK_NAME = "Name";
     private static final String NBT_BLOCK_META = "block_meta";
 
     public static NBTTagCompound blockToCompound(BlockState block) {
@@ -388,13 +384,15 @@ public class NBTTool {
     }
 
     public static void writeBlockToCompound(NBTTagCompound compound, BlockState block) {
-        compound.setInteger(NBT_BLOCK_ID, Block.getIdFromBlock(block.getBlock()));
+        compound.setInteger(NBT_BLOCK_NAME, Block.getIdFromBlock(block.getBlock()));
         compound.setInteger(NBT_BLOCK_META, block.getMetadata());
     }
 
     public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
-        Block block = Block.getBlockById(compound.getInteger(NBT_BLOCK_ID));
+        var name = compound.getString(NBT_BLOCK_NAME);
+        Block block = GameData.getBlockRegistry().getObject(name);
+        // TODO (johnrowl) this needs to be fixed. This property doesn't exist.
         int meta = compound.getInteger(NBT_BLOCK_META);
 
         return new BlockState(block, meta);

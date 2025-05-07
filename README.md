@@ -41,3 +41,8 @@ An especially big thanks to all of our [contributors](https://github.com/Direwol
 
 ### Undo Feature
 in version 1.12.x of building gadgets there was a limit of 1 for the undo history. This has been preserved.
+
+## Schematics
+This supports 1.12.x schematics at the moment.
+
+https://airtable.com/appSIzYTsvPm6ZgfA/shrahfRhFpKhukLKo/tblAWiuX4jWq85tYZ

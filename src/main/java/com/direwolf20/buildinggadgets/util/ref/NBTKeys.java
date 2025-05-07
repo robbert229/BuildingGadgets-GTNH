@@ -35,6 +35,11 @@ public final class NBTKeys {
 
     public static final String CREATIVE_MARKER = "creative";
 
+    public static final String GADGET_START_POS = "startPos";
+    public static final String GADGET_END_POS = "endPos";
+    public static final String GADGET_POS_INT_ARRAY = "posIntArray";
+    public static final String GADGET_STATE_INT_ARRAY = "stateIntArray";
+
     public static final String GADGET_MODE = "mode";
     public static final String GADGET_TICKS = "ticks";
     public static final String GADGET_REPLACEMENT_BLOCK = "replacement_block";
@@ -52,8 +57,7 @@ public final class NBTKeys {
     public static final String GADGET_UNDO_START_POS = "undo_start_pos";
     public static final String GADGET_REL_POS = "rel_pos";
     public static final String GADGET_UUID = "uuid";
-    public static final String GADGET_START_POS = "start_pos";
-    public static final String GADGET_END_POS = "end_pos";
+
     public static final String GADGET_DIM = "dim";
     public static final String GADGET_VALUE_UP = "up";
     public static final String GADGET_VALUE_DOWN = "down";

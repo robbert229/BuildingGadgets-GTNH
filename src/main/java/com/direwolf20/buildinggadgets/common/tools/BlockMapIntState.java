@@ -81,7 +81,8 @@ public class BlockMapIntState {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
 
             var mapSlot = compound.getShort("mapSlot");
-            var decoded = NBTTool.blockFromCompound(compound.getCompoundTag("mapState"));
+            var mapState = compound.getCompoundTag("mapState");
+            var decoded = NBTTool.blockFromCompound(mapState);
 
             if (decoded.isAir()) {
                 continue;

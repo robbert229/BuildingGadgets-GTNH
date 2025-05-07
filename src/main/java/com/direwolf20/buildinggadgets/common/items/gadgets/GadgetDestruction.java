@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
-import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -19,8 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.building.Region;
@@ -72,10 +70,7 @@ public class GadgetDestruction extends GadgetGeneric {
         super.addInformation(stack, player, list, advanced);
 
         list.add(EnumChatFormatting.RED + StatCollector.translateToLocal("tooltip.gadget.destroywarning"));
-        list.add(
-            EnumChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.destroyshowoverlay")
-                + ": "
-                + getOverlay(stack));
+
         list.add(
             EnumChatFormatting.YELLOW + StatCollector.translateToLocal("tooltip.gadget.connected_area")
                 + ": "
@@ -138,8 +133,12 @@ public class GadgetDestruction extends GadgetGeneric {
         if (tagCompound == null) {
             return null;
         }
+
         String facing = tagCompound.getString("anchorSide");
-        if (facing.isEmpty()) return null;
+        if (facing.isEmpty()) {
+            return null;
+        }
+
         return DirectionUtils.enumFacingByName(facing);
     }
 
@@ -162,43 +161,12 @@ public class GadgetDestruction extends GadgetGeneric {
         return tagCompound.getInteger(valueName);
     }
 
-    public static boolean getOverlay(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            tagCompound.setBoolean("overlay", true);
-            tagCompound.setBoolean("fuzzy", true);
-            stack.setTagCompound(tagCompound);
-            return true;
-        }
-        if (tagCompound.hasKey("overlay")) {
-            return tagCompound.getBoolean("overlay");
-        }
-        tagCompound.setBoolean("overlay", true);
-        stack.setTagCompound(tagCompound);
-        return true;
-    }
-
-    private static void setOverlay(ItemStack stack, boolean showOverlay) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-        }
-        tagCompound.setBoolean("overlay", showOverlay);
-        stack.setTagCompound(tagCompound);
-    }
-
-    public void switchOverlay(EntityPlayer player, ItemStack stack) {
-        boolean overlay = !getOverlay(stack);
-        setOverlay(stack, overlay);
-        player.addChatMessage(
-            new ChatComponentText(
-                ChatFormatting.AQUA
-                    + new ChatComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedText()
-                    + ": "
-                    + overlay));
-    }
-
+    /**
+     *
+     * @param side
+     * @param player
+     * @return
+     */
     private static List<EnumFacing> assignDirections(EnumFacing side, EntityPlayer player) {
         List<EnumFacing> dirs = new ArrayList<>();
         EnumFacing depth = DirectionUtils.getOppositeEnumFacing(side);
@@ -234,9 +202,12 @@ public class GadgetDestruction extends GadgetGeneric {
                 ChunkCoordinates startBlock = (getAnchor(stack) == null)
                     ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
                     : getAnchor(stack);
+
                 EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
                     : getAnchorSide(stack);
+
                 clearArea(world, startBlock, sideHit, player, stack);
+
                 if (getAnchor(stack) != null) {
                     setAnchor(stack, null);
                     setAnchorSide(stack, null);

@@ -63,11 +63,11 @@ public class VectorTools {
             case 0:
                 return EnumFacing.SOUTH;
             case 1:
-                return EnumFacing.WEST;
+                return EnumFacing.EAST;
             case 2:
                 return EnumFacing.NORTH;
             case 3:
-                return EnumFacing.EAST;
+                return EnumFacing.WEST;
             default:
                 return EnumFacing.NORTH; // Fallback
         }

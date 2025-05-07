@@ -40,7 +40,6 @@ public final class NBTKeys {
     public static final String GADGET_REPLACEMENT_BLOCK = "replacement_block";
     public static final String GADGET_SOURCE_BLOCK = "source_block";
     public static final String GADGET_USE_PASTE = "use_paste";
-    public static final String GADGET_OVERLAY = "overlay";
     public static final String GADGET_FUZZY = "fuzzy";
     public static final String GADGET_RAYTRACE_FLUID = "raytrace_fluid";
     public static final String GADGET_PLACE_INSIDE = "start_inside";

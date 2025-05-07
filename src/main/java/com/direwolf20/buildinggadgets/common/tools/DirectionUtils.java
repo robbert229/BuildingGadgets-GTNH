@@ -35,6 +35,7 @@ public class DirectionUtils {
         if (enumFacing == null) {
             return null;
         }
+
         return ForgeDirection.getOrientation(enumFacing.ordinal());
     }
 

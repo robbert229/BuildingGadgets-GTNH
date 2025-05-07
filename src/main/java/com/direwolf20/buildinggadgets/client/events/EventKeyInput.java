@@ -1,13 +1,15 @@
 package com.direwolf20.buildinggadgets.client.events;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
-import com.direwolf20.buildinggadgets.client.gui.GeneralMenuGUI;
+import com.cleanroommc.modularui.factory.GuiFactories;
+import com.cleanroommc.modularui.factory.GuiManager;
+import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.input.Keyboard;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.gui.materiallist.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
@@ -34,14 +36,15 @@ public class EventKeyInput {
     }
 
     private void handleEventInput() {
-        if (KeyBindings.menuSettings.isPressed() && checkNoModifier(KeyBindings.menuSettings)) {
+        if (KeyBindings.temporarilyEnableMenu.isPressed() && checkNoModifier(KeyBindings.temporarilyEnableMenu)) {
             Minecraft mc = Minecraft.getMinecraft();
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (tool != null) {
-                //mc.displayGuiScreen(new ModeRadialMenu(tool));
-                ClientGUI.open(new GeneralMenuGUI(tool));
+                ClientGUI.open(new DestructionGUI(tool, true));
             }
-        } else if (KeyBindings.range.isPressed()) {
+        }
+
+        if (KeyBindings.range.isPressed()) {
             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());
         } else if (KeyBindings.rotateMirror.isPressed()) {
             PacketHandler.INSTANCE.sendToServer(new PacketRotateMirror());
@@ -55,10 +58,10 @@ public class EventKeyInput {
             PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
         } else if (KeyBindings.materialList.isPressed()) {
             ItemStack held = InventoryManipulation
-                    .getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
+                .getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
             if (held != null) {
                 Minecraft.getMinecraft()
-                        .displayGuiScreen(new MaterialListGUI(held));
+                    .displayGuiScreen(new MaterialListGUI(held));
             }
         }
     }

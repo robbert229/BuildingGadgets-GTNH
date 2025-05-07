@@ -1,6 +1,9 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
+import com.cleanroommc.modularui.drawable.UITexture;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiUtils {
 
@@ -10,5 +13,15 @@ public class GuiUtils {
         return mouseX >= button.xPosition && mouseX <= button.xPosition + button.width
             && mouseY >= button.yPosition
             && mouseY <= button.yPosition + button.height;
+    }
+
+    public static UITexture getUITextureFromResource(String texture) {
+        var assetLocation = "textures/gui/setting/%s.png";
+        var resourceLocation = new ResourceLocation(BuildingGadgets.MODID, String.format(assetLocation, texture));
+        return UITexture.fullImage(resourceLocation);
+    }
+
+    public static String getPanelName(String name) {
+        return String.format("%s:%s", BuildingGadgets.MODID, name);
     }
 }

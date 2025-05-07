@@ -61,8 +61,6 @@ key.material_list=Material List
 #tooltip: 
 tooltip.constructionblockpowder.helptext=Place next to water
 tooltip.gadget.block=Block
-tooltip.gadget.destroy.overlay=Overlay
-tooltip.gadget.destroyshowoverlay=Showing Overlay
 tooltip.gadget.destroywarning=WARNING: This tool voids blocks.
 tooltip.gadget.energy=Energy
 tooltip.gadget.mode=Mode

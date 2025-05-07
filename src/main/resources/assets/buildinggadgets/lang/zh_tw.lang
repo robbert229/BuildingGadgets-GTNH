@@ -47,7 +47,6 @@ message.gadget.copyguierror=複製區域失敗
 message.gadget.copysuccess=成功複製到剪貼板
 message.gadget.pastesuccess=從剪貼板粘貼成功
 message.gadget.destroysizeerror=最大破壞大小是 16x16x16，負數為非法數據
-tooltip.gadget.destroyshowoverlay=顯示覆蓋
 tooltip.gadget.destroywarning=警告：這個工具會直接銷毀方塊。
 help.gui.buildinggadgets.button.help.enter=顯示懸浮幫助文本
 help.gui.buildinggadgets.button.help.exit=退出幫助模式

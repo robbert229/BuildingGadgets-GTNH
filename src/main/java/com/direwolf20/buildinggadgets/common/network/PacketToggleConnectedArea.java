@@ -1,5 +1,8 @@
 package com.direwolf20.buildinggadgets.common.network;
 
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -22,13 +25,7 @@ public class PacketToggleConnectedArea extends PacketEmpty {
 
             EntityPlayer player = ctx.getServerHandler().playerEntity;
             ItemStack stack = GadgetGeneric.getGadget(player);
-            GadgetGeneric item = (GadgetGeneric) stack.getItem();
-
-            // TODO(johnrowl) re-enable.
-            // if (item instanceof GadgetExchanger || item instanceof GadgetBuilding || item instanceof
-            // GadgetDestruction){
-            // item.toggleConnectedArea(player, stack);
-            // }
+            GadgetGeneric.toggleConnectedArea(player, stack);
 
             return null;
         }

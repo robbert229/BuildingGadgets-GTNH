@@ -255,14 +255,27 @@ public class ToolRenders {
     private static boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
         int dx = x, dy = y, dz = z;
         switch (side) {
-            case 0: dy--; break;
-            case 1: dy++; break;
-            case 2: dz--; break;
-            case 3: dz++; break;
-            case 4: dx--; break;
-            case 5: dx++; break;
+            case 0:
+                dy--;
+                break;
+            case 1:
+                dy++;
+                break;
+            case 2:
+                dz--;
+                break;
+            case 3:
+                dz++;
+                break;
+            case 4:
+                dx--;
+                break;
+            case 5:
+                dx++;
+                break;
         }
-        return !world.getBlock(dx, dy, dz).isOpaqueCube();
+        return !world.getBlock(dx, dy, dz)
+            .isOpaqueCube();
     }
 
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
@@ -283,11 +296,7 @@ public class ToolRenders {
         if (startBlock.getBlock() == ModBlocks.effectBlock) {
             return;
         }
-
-        if (!GadgetDestruction.getOverlay(heldItem)) {
-            return;
-        }
-
+        
         Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlockPos, facing, player, heldItem);
 
         GL11.glPushMatrix();
@@ -318,8 +327,8 @@ public class ToolRenders {
 
     private static void renderDestructionOverlay(Set<ChunkCoordinates> coordinates, World world) {
         Minecraft.getMinecraft()
-                .getTextureManager()
-                .bindTexture(TextureMap.locationBlocksTexture);
+            .getTextureManager()
+            .bindTexture(TextureMap.locationBlocksTexture);
 
         GL11.glPushMatrix();
 
@@ -331,8 +340,7 @@ public class ToolRenders {
 
         Tessellator tess = Tessellator.instance;
 
-        for (var coordinate : coordinates)
-        {
+        for (var coordinate : coordinates) {
             maybeRenderDestructionOverlayBlock(world, coordinate, tess);
         }
 

@@ -61,9 +61,6 @@ public class PacketChangeRange implements IMessage {
             } else if (heldItem.getItem() instanceof GadgetExchanger) {
                 GadgetExchanger gadgetExchanger = (GadgetExchanger) (heldItem.getItem());
                 gadgetExchanger.rangeChange(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetDestruction) {
-                GadgetDestruction gadgetDestruction = (GadgetDestruction) (heldItem.getItem());
-                gadgetDestruction.switchOverlay(playerEntity, heldItem);
             }
         }
     }

@@ -368,9 +368,8 @@ public class ToolRenders {
 
                         GL11.glPushMatrix();
 
-                        GL11.glDisable(GL11.GL_TEXTURE_2D);
-                        GL11.glDisable(GL11.GL_DEPTH_TEST);
-                        GL11.glDisable(GL11.GL_LIGHTING);
+                        GL11.glEnable(GL11.GL_BLEND);
+                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
                         GL11.glLineWidth(2.0F);
                         GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
@@ -393,27 +392,24 @@ public class ToolRenders {
                             if (invisible) continue;
 
                             GL11.glPushMatrix();
-                            GL11.glEnable(GL11.GL_BLEND);
-                            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                            GL11.glTranslated(coordinate.posX, coordinate.posY, coordinate.posZ);
+                            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); // Rotate it because it's needed
+                            GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
+                            GL11.glScalef(1.01f, 1.01f, 1.01f); // Slightly larger block to avoid z-fighting
 
-                            //
-                            GL11.glPushMatrix();
-                            var box = AxisAlignedBB
-                                    .getBoundingBox(coordinate.posX, coordinate.posY, coordinate.posZ, coordinate.posX + 1, coordinate.posY + 1, coordinate.posZ + 1);
+                            GL11.glDisable(GL11.GL_LIGHTING);
+                            GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-                            drawOutlinedBoundingBox(tess, box);
-                            GL11.glPopMatrix();
-                            //
+                            renderBoxSolid(tess, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
 
-                            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                            GL11.glEnable(GL11.GL_TEXTURE_2D);
+                            GL11.glEnable(GL11.GL_LIGHTING);
 
-                            GL11.glDisable(GL11.GL_BLEND);
                             GL11.glPopMatrix();
                         }
 
-                        GL11.glEnable(GL11.GL_LIGHTING);
-                        GL11.glEnable(GL11.GL_DEPTH_TEST);
-                        GL11.glEnable(GL11.GL_TEXTURE_2D);
+                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                        GL11.glDisable(GL11.GL_BLEND);
 
                         GL11.glPopMatrix();
 

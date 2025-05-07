@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.client.events;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.direwolf20.buildinggadgets.client.gui.RadialMenuGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
@@ -37,7 +39,8 @@ public class EventKeyInput {
             Minecraft mc = Minecraft.getMinecraft();
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (tool != null) {
-                mc.displayGuiScreen(new ModeRadialMenu(tool));
+                //mc.displayGuiScreen(new ModeRadialMenu(tool));
+                ClientGUI.open(new RadialMenuGUI(tool));
             }
         } else if (KeyBindings.range.isPressed()) {
             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());
@@ -53,10 +56,10 @@ public class EventKeyInput {
             PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
         } else if (KeyBindings.materialList.isPressed()) {
             ItemStack held = InventoryManipulation
-                .getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
+                    .getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
             if (held != null) {
                 Minecraft.getMinecraft()
-                    .displayGuiScreen(new MaterialListGUI(held));
+                        .displayGuiScreen(new MaterialListGUI(held));
             }
         }
     }

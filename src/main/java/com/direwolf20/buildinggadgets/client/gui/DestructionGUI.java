@@ -6,147 +6,159 @@
 
 package com.direwolf20.buildinggadgets.client.gui;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.api.widget.IGuiAction;
+import com.cleanroommc.modularui.screen.CustomModularScreen;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.utils.Alignment;
+import com.cleanroommc.modularui.value.DoubleValue;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.SliderWidget;
+import com.cleanroommc.modularui.widgets.layout.Column;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+import com.direwolf20.buildinggadgets.common.network.PacketDestructionGUI;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.network.PacketDestructionGUI;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.util.MathTool;
-import com.mojang.realmsclient.gui.ChatFormatting;
-
-public class DestructionGUI extends GuiScreen {
-
-    private GuiDestructionSlider left;
-    private GuiDestructionSlider right;
-    private GuiDestructionSlider up;
-    private GuiDestructionSlider down;
-    private GuiDestructionSlider depth;
-
-    private final ItemStack destructionTool;
+public class DestructionGUI extends CustomModularScreen {
+    private int left;
+    private int right;
+    private int depth;
+    private int up;
+    private int down;
 
     public DestructionGUI(ItemStack tool) {
-        super();
-        this.destructionTool = tool;
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-
-        int x = width / 2;
-        int y = height / 2;
-        this.buttonList
-            .add(new GuiButton(1, (x - 30) + 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.confirm")));
-        this.buttonList
-            .add(new GuiButton(2, (x - 30) - 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.cancel")));
-
-        List<GuiDestructionSlider> sliders = new ArrayList<>();
-
-        sliders.add(
-            depth = new GuiDestructionSlider(
-                x - (GuiDestructionSlider.width / 2),
-                y - (GuiDestructionSlider.height / 2),
-                "Depth",
-                GadgetDestruction.getToolValue(destructionTool, "depth")));
-        sliders.add(
-            left = new GuiDestructionSlider(
-                x - (GuiDestructionSlider.width * 2) - 5,
-                y - (GuiDestructionSlider.height / 2),
-                "Left",
-                GadgetDestruction.getToolValue(destructionTool, "left")));
-        sliders.add(
-            right = new GuiDestructionSlider(
-                x + (GuiDestructionSlider.width + 5),
-                y - (GuiDestructionSlider.height / 2),
-                "Right",
-                GadgetDestruction.getToolValue(destructionTool, "right")));
-        sliders.add(
-            up = new GuiDestructionSlider(
-                x - (GuiDestructionSlider.width / 2),
-                y - 35,
-                "Up",
-                GadgetDestruction.getToolValue(destructionTool, "up")));
-        sliders.add(
-            down = new GuiDestructionSlider(
-                x - (GuiDestructionSlider.width / 2),
-                y + 20,
-                "Down",
-                GadgetDestruction.getToolValue(destructionTool, "down")));
-
-        sliders.forEach(gui -> this.buttonList.addAll(gui.getComponents()));
+        this.left = GadgetDestruction.getToolValue(tool, "left");
+        this.right = GadgetDestruction.getToolValue(tool, "right");
+        this.up = GadgetDestruction.getToolValue(tool, "up");
+        this.down = GadgetDestruction.getToolValue(tool, "down");
+        this.depth = GadgetDestruction.getToolValue(tool, "depth");
     }
 
     private boolean isWithinBounds() {
-        int x = left.getValueInt() + right.getValueInt();
-        int y = up.getValueInt() + down.getValueInt();
+        int x = left + right;
+        int y = up + down;
 
         return x <= 16 && y <= 16;
     }
 
     @Override
-    protected void actionPerformed(GuiButton b) {
-        if (b.id == 1) {
-            if (isWithinBounds()) {
-                PacketHandler.INSTANCE.sendToServer(
-                    new PacketDestructionGUI(
-                        left.getValueInt(),
-                        right.getValueInt(),
-                        up.getValueInt(),
-                        down.getValueInt(),
-                        depth.getValueInt()));
-                this.mc.displayGuiScreen(null);
-            } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(
-                    new ChatComponentText(
-                        ChatFormatting.RED
-                            + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedText()));
-            }
-        } else if (b.id == 2) this.mc.displayGuiScreen(null);
-    }
+    public ModularPanel buildUI(ModularGuiContext context) {
+        ModularPanel panel = ModularPanel.defaultPanel("tutorial_panel")
+                .widthRel(0.5f)
+                .height(18*4+14);
 
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
+        panel.child(ButtonWidget.panelCloseButton());
 
-    // This is only done to reduce code dupe in this class.
-    private static class GuiDestructionSlider extends GuiSliderInt {
+        panel.child(new Column()
+                .child(new SliderWidget()
+                        .sliderHeight(12)
+                        .sliderWidth(7)
+                        .bounds(0,16)
+                        .stopper(1)
+                        .widthRel(0.33f)
+                        .align(Alignment.Center)
+                        .overlay(IKey.str("Up"))
+                        .value(new DoubleValue.Dynamic(() -> this.up * 1.0, val -> this.up = (int)Math.round(val)))
+                )
+                .left(7)
+                .right(7)
+                .marginTop(7)
+                .coverChildrenHeight()
+        );
 
-        public static final int width = 70;
-        public static final int height = 14;
+        panel.child(new Column()
+                .child(new SliderWidget()
+                        .sliderHeight(12)
+                        .sliderWidth(7)
+                        .bounds(0,16)
+                        .stopper(1)
+                        .widthRel(0.33f)
+                        .align(Alignment.CenterLeft)
+                        .overlay(IKey.str("Left"))
+                        .value(new DoubleValue.Dynamic(() -> this.left * 1.0, val -> this.left = (int)Math.round(val)))
+                )
+                .child(new SliderWidget()
+                        .sliderHeight(12)
+                        .sliderWidth(7)
+                        .bounds(0,16)
+                        .stopper(1)
+                        .widthRel(0.33f)
+                        .align(Alignment.Center)
+                        .overlay(IKey.str("Depth"))
+                        .value(new DoubleValue.Dynamic(() -> this.depth * 1.0, val -> this.depth = (int)Math.round(val)))
+                )
+                .child(new SliderWidget()
+                        .sliderHeight(12)
+                        .sliderWidth(7)
+                        .bounds(0,16)
+                        .stopper(1)
+                        .widthRel(0.33f)
+                        .align(Alignment.CenterRight)
+                        .overlay(IKey.str("Right"))
+                        .value(new DoubleValue.Dynamic(() -> this.right * 1.0, val -> this.right = (int)Math.round(val)))
+                )
+                .left(7)
+                .right(7)
+                .top(18 /* height of bar */ + 7)
+                .coverChildrenHeight()
+        );
 
-        private static final int min = 0;
-        private static final int max = 16;
+        panel.child(new Column()
+                .child(new SliderWidget()
+                        .sliderHeight(12)
+                        .sliderWidth(7)
+                        .bounds(0,16)
+                        .stopper(1)
+                        .widthRel(0.33f)
+                        .align(Alignment.Center)
+                        .overlay(IKey.str("Down"))
+                        .value(new DoubleValue.Dynamic(() -> this.down * 1.0, val -> this.down = (int)Math.round(val)))
+                )
+                .left(7)
+                .right(7)
+                .top(18*2 + 7)
+                .coverChildrenHeight()
+        );
 
-        GuiDestructionSlider(int x, int y, String prefix, int current) {
-            super(
-                x,
-                y,
-                width,
-                height,
-                String.format("%s ", prefix),
-                "",
-                min,
-                max,
-                current,
-                false,
-                true,
-                Color.DARK_GRAY,
-                null,
-                (slider, amount) -> {
-                    slider.setValue(MathTool.clamp(slider.getValueInt() + amount, min, max));
-                    slider.updateSlider();
-                });
-        }
+        panel.child(new Column()
+                .child(
+                        new ButtonWidget<>()
+                                .center()
+                                .size(18*4, 18)
+                                .overlay(IKey.str("Ok"))
+                                .onMousePressed((IGuiAction.MousePressed) mouseButton -> {
+                                    if (!this.isWithinBounds()) {
+                                        Minecraft.getMinecraft().thePlayer.addChatMessage(
+                                                new ChatComponentText(
+                                                        ChatFormatting.RED
+                                                                + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedText()));
+                                        return false;
+                                    }
+
+                                    PacketHandler.INSTANCE.sendToServer(
+                                            new PacketDestructionGUI(
+                                                    left,
+                                                    right,
+                                                    up,
+                                                    down,
+                                                    depth));
+                                    this.close(true);
+                                    return true;
+                                })
+                )
+                .coverChildrenHeight()
+                .bottom(7)
+                .leftRel(0.3f)
+                .rightRel(0.3f)
+        );
+
+        return panel;
     }
 }

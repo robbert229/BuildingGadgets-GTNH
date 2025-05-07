@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.client.events;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
-import com.direwolf20.buildinggadgets.client.gui.RadialMenuGUI;
+import com.direwolf20.buildinggadgets.client.gui.GeneralMenuGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 
 import com.direwolf20.buildinggadgets.client.KeyBindings;
-import com.direwolf20.buildinggadgets.client.gui.ModeRadialMenu;
 import com.direwolf20.buildinggadgets.client.gui.materiallist.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
@@ -40,7 +39,7 @@ public class EventKeyInput {
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (tool != null) {
                 //mc.displayGuiScreen(new ModeRadialMenu(tool));
-                ClientGUI.open(new RadialMenuGUI(tool));
+                ClientGUI.open(new GeneralMenuGUI(tool));
             }
         } else if (KeyBindings.range.isPressed()) {
             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());

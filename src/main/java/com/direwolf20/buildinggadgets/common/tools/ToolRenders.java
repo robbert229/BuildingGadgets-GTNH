@@ -9,9 +9,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -248,28 +246,88 @@ public class ToolRenders {
     // GlStateManager.popMatrix();
     // }
 
-    public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
-        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-        if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) {
+    public static List<ChunkCoordinates> getSurroundingBlocksUnderPlayer(EntityPlayer player) {
+        List<ChunkCoordinates> positions = new ArrayList<>();
+
+        int px = MathHelper.floor_double(player.posX);
+        int py = MathHelper.floor_double(player.posY - 1); // Block directly beneath
+        int pz = MathHelper.floor_double(player.posZ);
+
+        // 3x3 grid centered on player (on the block *below* their feet)
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                positions.add(new ChunkCoordinates(px + dx, py, pz + dz));
+            }
+        }
+
+        return positions;
+    }
+
+    public static void drawOutlinedBoundingBox(Tessellator tess, AxisAlignedBB bb) {
+        tess.startDrawing(GL11.GL_LINE_STRIP);
+
+        // Bottom face
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+
+        tess.draw();
+
+        tess.startDrawing(GL11.GL_LINE_STRIP);
+
+        // Top face
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+
+        tess.draw();
+
+        tess.startDrawing(GL11.GL_LINES);
+
+        // Vertical edges
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+
+        tess.draw();
+    }
+
+    public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
+        if (lookingAt == null && GadgetDestruction.getAnchor(heldItem) == null) {
             return;
         }
 
         World world = player.worldObj;
 
-        ChunkCoordinates startBlockPos = (GadgetDestruction.getAnchor(stack) == null)
+        ChunkCoordinates startBlockPos = (GadgetDestruction.getAnchor(heldItem) == null)
             ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
-            : GadgetDestruction.getAnchor(stack);
+            : GadgetDestruction.getAnchor(heldItem);
         var startBlock = BlockState.getBlockState(world, startBlockPos);
 
-        EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
-            : GadgetDestruction.getAnchorSide(stack);
+        EnumFacing facing = (GadgetDestruction.getAnchorSide(heldItem) == null) ? EnumFacing.getFront(lookingAt.sideHit)
+            : GadgetDestruction.getAnchorSide(heldItem);
         if (startBlock.getBlock() == ModBlocks.effectBlock) {
             return;
         }
 
-        if (!GadgetDestruction.getOverlay(stack)) {
+        if (!GadgetDestruction.getOverlay(heldItem)) {
             return;
         }
+
+        Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlockPos, facing, player, heldItem);
 
         GL11.glPushMatrix();
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
@@ -280,10 +338,24 @@ public class ToolRenders {
         try {
             GL11.glCallList(
                 cacheDestructionOverlay
-                    .get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlockPos, facing.ordinal()), () -> {
+                    .get(new ImmutableTriple<>(new UniqueItemStack(heldItem), startBlockPos, facing.ordinal()), () -> {
                         int displayList = GLAllocation.generateDisplayLists(1);
                         GL11.glNewList(displayList, GL11.GL_COMPILE);
-                        renderDestructionOverlay(player, world, startBlockPos, facing, stack);
+                        //renderDestructionOverlay(player, world, startBlockPos, facing, heldItem);
+
+                        GL11.glLineWidth(2.0F);
+                        GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
+
+                        Tessellator tess = Tessellator.instance;
+
+                        for (var pos : coordinates)
+                        {
+                            var box = AxisAlignedBB
+                                    .getBoundingBox(pos.posX, pos.posY, pos.posZ, pos.posX + 1, pos.posY + 1, pos.posZ + 1);
+                            // renderGlobal.drawOutlinedBoundingBox(box, 1.0F, 0.0F, 0.0F, 1.0F);
+                            drawOutlinedBoundingBox(tess, box);
+                        }
+
                         GL11.glEndList();
                         return displayList;
                     }));

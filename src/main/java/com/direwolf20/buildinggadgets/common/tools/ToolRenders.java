@@ -247,64 +247,6 @@ public class ToolRenders {
     // GlStateManager.popMatrix();
     // }
 
-    public static List<ChunkCoordinates> getSurroundingBlocksUnderPlayer(EntityPlayer player) {
-        List<ChunkCoordinates> positions = new ArrayList<>();
-
-        int px = MathHelper.floor_double(player.posX);
-        int py = MathHelper.floor_double(player.posY - 1); // Block directly beneath
-        int pz = MathHelper.floor_double(player.posZ);
-
-        // 3x3 grid centered on player (on the block *below* their feet)
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                positions.add(new ChunkCoordinates(px + dx, py, pz + dz));
-            }
-        }
-
-        return positions;
-    }
-
-    public static void drawOutlinedBoundingBox(Tessellator tess, AxisAlignedBB bb) {
-        tess.startDrawing(GL11.GL_LINE_STRIP);
-
-        // Bottom face
-        tess.addVertex(bb.minX, bb.minY, bb.minZ);
-        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
-        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
-        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
-        tess.addVertex(bb.minX, bb.minY, bb.minZ);
-
-        tess.draw();
-
-        tess.startDrawing(GL11.GL_LINE_STRIP);
-
-        // Top face
-        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
-        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
-        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
-        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
-
-        tess.draw();
-
-        tess.startDrawing(GL11.GL_LINES);
-
-        // Vertical edges
-        tess.addVertex(bb.minX, bb.minY, bb.minZ);
-        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
-
-        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
-        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
-
-        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
-        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
-
-        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
-        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
-
-        tess.draw();
-    }
-
     /**
      * shouldSideBeRendered isn't really an accurate name for this function.
      * It's purpose is to check to see if a block is "exposed" to air. This is
@@ -358,60 +300,10 @@ public class ToolRenders {
             GL11.glCallList(
                 cacheDestructionOverlay
                     .get(new ImmutableTriple<>(new UniqueItemStack(heldItem), startBlockPos, facing.ordinal()), () -> {
-                        //
-                        Minecraft.getMinecraft()
-                                .getTextureManager()
-                                .bindTexture(TextureMap.locationBlocksTexture);
-
                         int displayList = GLAllocation.generateDisplayLists(1);
                         GL11.glNewList(displayList, GL11.GL_COMPILE);
 
-                        GL11.glPushMatrix();
-
-                        GL11.glEnable(GL11.GL_BLEND);
-                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-                        GL11.glLineWidth(2.0F);
-                        GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
-
-                        Tessellator tess = Tessellator.instance;
-
-                        for (var coordinate : coordinates)
-                        {
-                            // invisible doesn't actually mean that the block is invisible or not. It just means that at
-                            // least one of the faces of the block is exposed to air. This is just used as a heuristic
-                            // to help cut down rendering on invisible blocks.
-                            boolean invisible = true;
-                            for (EnumFacing side : EnumFacing.values()) {
-                                if (shouldSideBeRendered(world, coordinate.posX, coordinate.posY, coordinate.posZ, side.ordinal())) {
-                                    invisible = false;
-                                    break;
-                                }
-                            }
-
-                            if (invisible) continue;
-
-                            GL11.glPushMatrix();
-                            GL11.glTranslated(coordinate.posX, coordinate.posY, coordinate.posZ);
-                            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); // Rotate it because it's needed
-                            GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
-                            GL11.glScalef(1.01f, 1.01f, 1.01f); // Slightly larger block to avoid z-fighting
-
-                            GL11.glDisable(GL11.GL_LIGHTING);
-                            GL11.glDisable(GL11.GL_TEXTURE_2D);
-
-                            renderBoxSolid(tess, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
-
-                            GL11.glEnable(GL11.GL_TEXTURE_2D);
-                            GL11.glEnable(GL11.GL_LIGHTING);
-
-                            GL11.glPopMatrix();
-                        }
-
-                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                        GL11.glDisable(GL11.GL_BLEND);
-
-                        GL11.glPopMatrix();
+                        renderDestructionOverlay(coordinates, world);
 
                         GL11.glEndList();
                         return displayList;
@@ -424,54 +316,64 @@ public class ToolRenders {
         GL11.glPopMatrix();
     }
 
-    private static void renderDestructionOverlay(EntityPlayer player, World world, ChunkCoordinates startBlockPos,
-        EnumFacing facing, ItemStack heldItem) {
+    private static void renderDestructionOverlay(Set<ChunkCoordinates> coordinates, World world) {
         Minecraft.getMinecraft()
-            .getTextureManager()
-            .bindTexture(TextureMap.locationBlocksTexture);
-
-        Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlockPos, facing, player, heldItem);
+                .getTextureManager()
+                .bindTexture(TextureMap.locationBlocksTexture);
 
         GL11.glPushMatrix();
+
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        List<ChunkCoordinates> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); // Sort the coords by
-                                                                                                  // distance to player.
-        Tessellator t = Tessellator.instance;
+        GL11.glLineWidth(2.0F);
+        GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
 
-        for (ChunkCoordinates coordinate : sortedCoordinates) {
-            boolean invisible = true;
-            BlockState state = BlockState.getBlockState(world, coordinate);
-            for (EnumFacing side : EnumFacing.values()) {
-                if (state.getBlock()
-                    .shouldSideBeRendered(world, coordinate.posX, coordinate.posY, coordinate.posZ, side.ordinal())) {
-                    invisible = false;
-                    break;
-                }
-            }
+        Tessellator tess = Tessellator.instance;
 
-            if (invisible) continue;
-
-            GL11.glPushMatrix();
-            GL11.glTranslated(coordinate.posX, coordinate.posY, coordinate.posZ);
-            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); // Rotate it because it's needed
-            GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
-            GL11.glScalef(1.01f, 1.01f, 1.01f); // Slightly larger block to avoid z-fighting
-
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-
-            renderBoxSolid(t, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
-
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glPopMatrix();
+        for (var coordinate : coordinates)
+        {
+            maybeRenderDestructionOverlayBlock(world, coordinate, tess);
         }
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         GL11.glDisable(GL11.GL_BLEND);
+
+        GL11.glPopMatrix();
+    }
+
+    /**
+     * maybeRenderDestructionOverlayBlock will potentially render the overlay block. If the block isn't exposed to air
+     * then it instead ignored.
+     */
+    private static void maybeRenderDestructionOverlayBlock(World world, ChunkCoordinates coordinate, Tessellator tess) {
+        // invisible doesn't actually mean that the block is invisible or not. It just means that at
+        // least one of the faces of the block is exposed to air. This is just used as a heuristic
+        // to help cut down rendering on invisible blocks.
+        boolean invisible = true;
+        for (EnumFacing side : EnumFacing.values()) {
+            if (shouldSideBeRendered(world, coordinate.posX, coordinate.posY, coordinate.posZ, side.ordinal())) {
+                invisible = false;
+                break;
+            }
+        }
+
+        if (invisible) return;
+
+        GL11.glPushMatrix();
+        GL11.glTranslated(coordinate.posX, coordinate.posY, coordinate.posZ);
+        GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); // Rotate it because it's needed
+        GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
+        GL11.glScalef(1.01f, 1.01f, 1.01f); // Slightly larger block to avoid z-fighting
+
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+        renderBoxSolid(tess, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_LIGHTING);
+
         GL11.glPopMatrix();
     }
 

@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -247,7 +249,7 @@ public class GadgetDestruction extends GadgetGeneric {
             }
         } else {
             if (player.isSneaking()) {
-                player.openGui(BuildingGadgets.instance, GuiProxy.DestructionID, world, 0, 0, 0);
+                ClientGUI.open(new DestructionGUI(stack));
                 return stack;
             }
         }

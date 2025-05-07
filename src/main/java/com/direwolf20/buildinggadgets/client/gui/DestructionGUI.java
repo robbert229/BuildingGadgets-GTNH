@@ -9,6 +9,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IGuiAction;
+import com.cleanroommc.modularui.drawable.text.DynamicKey;
 import com.cleanroommc.modularui.screen.CustomModularScreen;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
@@ -41,6 +42,7 @@ public class DestructionGUI extends CustomModularScreen {
         this.depth = GadgetDestruction.getToolValue(tool, "depth");
     }
 
+    // @TODO this should be moved to the server side.
     private boolean isWithinBounds() {
         int x = left + right;
         int y = up + down;
@@ -64,7 +66,7 @@ public class DestructionGUI extends CustomModularScreen {
                         .stopper(1)
                         .widthRel(0.33f)
                         .align(Alignment.Center)
-                        .overlay(IKey.str("Up"))
+                        .overlay(new DynamicKey(() -> String.format("Up %d", this.up)))
                         .value(new DoubleValue.Dynamic(() -> this.up * 1.0, val -> this.up = (int)Math.round(val)))
                 )
                 .left(7)
@@ -81,7 +83,7 @@ public class DestructionGUI extends CustomModularScreen {
                         .stopper(1)
                         .widthRel(0.33f)
                         .align(Alignment.CenterLeft)
-                        .overlay(IKey.str("Left"))
+                        .overlay(new DynamicKey(() -> String.format("Left %d", this.left)))
                         .value(new DoubleValue.Dynamic(() -> this.left * 1.0, val -> this.left = (int)Math.round(val)))
                 )
                 .child(new SliderWidget()
@@ -91,7 +93,7 @@ public class DestructionGUI extends CustomModularScreen {
                         .stopper(1)
                         .widthRel(0.33f)
                         .align(Alignment.Center)
-                        .overlay(IKey.str("Depth"))
+                        .overlay(new DynamicKey(() -> String.format("Depth %d", this.depth)))
                         .value(new DoubleValue.Dynamic(() -> this.depth * 1.0, val -> this.depth = (int)Math.round(val)))
                 )
                 .child(new SliderWidget()
@@ -101,7 +103,7 @@ public class DestructionGUI extends CustomModularScreen {
                         .stopper(1)
                         .widthRel(0.33f)
                         .align(Alignment.CenterRight)
-                        .overlay(IKey.str("Right"))
+                        .overlay(new DynamicKey(() -> String.format("Right %d", this.right)))
                         .value(new DoubleValue.Dynamic(() -> this.right * 1.0, val -> this.right = (int)Math.round(val)))
                 )
                 .left(7)
@@ -118,7 +120,7 @@ public class DestructionGUI extends CustomModularScreen {
                         .stopper(1)
                         .widthRel(0.33f)
                         .align(Alignment.Center)
-                        .overlay(IKey.str("Down"))
+                        .overlay(new DynamicKey(() -> String.format("Down %d", this.down)))
                         .value(new DoubleValue.Dynamic(() -> this.down * 1.0, val -> this.down = (int)Math.round(val)))
                 )
                 .left(7)

@@ -49,7 +49,6 @@ public class PacketDestructionGUI implements IMessage {
 
         @Override
         public IMessage onMessage(PacketDestructionGUI message, MessageContext ctx) {
-            // FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             if (ctx.side == Side.CLIENT) {
                 return null;
             }

@@ -246,35 +246,6 @@ public class ToolRenders {
     // GlStateManager.popMatrix();
     // }
 
-    public static void renderOutlines(RenderWorldLastEvent evt, EntityPlayer player, Iterable<ChunkCoordinates> blocksToHighlight) {
-        double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
-        double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.partialTicks;
-        double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.partialTicks;
-
-        GL11.glPushMatrix();
-        GL11.glTranslated(-dx, -dy, -dz);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glLineWidth(2.0F);
-        GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
-
-        Tessellator tess = Tessellator.instance;
-
-        for (var pos : blocksToHighlight)
-        {
-            var box = AxisAlignedBB
-                .getBoundingBox(pos.posX, pos.posY, pos.posZ, pos.posX + 1, pos.posY + 1, pos.posZ + 1);
-            // renderGlobal.drawOutlinedBoundingBox(box, 1.0F, 0.0F, 0.0F, 1.0F);
-            drawOutlinedBoundingBox(tess, box);
-        }
-
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glPopMatrix();
-    }
-
     public static List<ChunkCoordinates> getSurroundingBlocksUnderPlayer(EntityPlayer player) {
         List<ChunkCoordinates> positions = new ArrayList<>();
 
@@ -357,31 +328,51 @@ public class ToolRenders {
         }
 
         Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlockPos, facing, player, heldItem);
-        renderOutlines(evt, player, coordinates);
 
+        GL11.glPushMatrix();
+        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
+        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.partialTicks;
+        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.partialTicks;
+        GL11.glTranslated(-doubleX, -doubleY, -doubleZ);
 
-//        GL11.glPushMatrix();
-//        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
-//        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.partialTicks;
-//        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.partialTicks;
-//        GL11.glTranslated(-doubleX, -doubleY, -doubleZ);
-//
-//        try {
-//            GL11.glCallList(
-//                cacheDestructionOverlay
-//                    .get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlockPos, facing.ordinal()), () -> {
-//                        int displayList = GLAllocation.generateDisplayLists(1);
-//                        GL11.glNewList(displayList, GL11.GL_COMPILE);
-//                        renderDestructionOverlay(player, world, startBlockPos, facing, stack);
-//                        GL11.glEndList();
-//                        return displayList;
-//                    }));
-//        } catch (ExecutionException e) {
-//            BuildingGadgets.LOG.error("Error encountered while rendering destruction gadget overlay", e);
-//        }
-//
-//        GL11.glEnable(GL11.GL_LIGHTING);
-//        GL11.glPopMatrix();
+        try {
+            GL11.glCallList(
+                cacheDestructionOverlay
+                    .get(new ImmutableTriple<>(new UniqueItemStack(heldItem), startBlockPos, facing.ordinal()), () -> {
+                        int displayList = GLAllocation.generateDisplayLists(1);
+                        GL11.glNewList(displayList, GL11.GL_COMPILE);
+
+                        GL11.glDisable(GL11.GL_TEXTURE_2D);
+                        GL11.glDisable(GL11.GL_DEPTH_TEST);
+                        GL11.glDisable(GL11.GL_LIGHTING);
+
+                        GL11.glLineWidth(2.0F);
+                        GL11.glColor3f(1.0F, 0.0F, 0.0F); // Red
+
+                        Tessellator tess = Tessellator.instance;
+
+                        for (var pos : coordinates)
+                        {
+                            var box = AxisAlignedBB
+                                    .getBoundingBox(pos.posX, pos.posY, pos.posZ, pos.posX + 1, pos.posY + 1, pos.posZ + 1);
+                            GL11.glDisable(GL11.GL_LIGHTING);
+                            GL11.glDisable(GL11.GL_TEXTURE_2D);
+                            drawOutlinedBoundingBox(tess, box);
+                        }
+
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                        GL11.glEnable(GL11.GL_DEPTH_TEST);
+                        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+                        GL11.glEndList();
+                        return displayList;
+                    }));
+        } catch (ExecutionException e) {
+            BuildingGadgets.LOG.error("Error encountered while rendering destruction gadget overlay", e);
+        }
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glPopMatrix();
     }
 
     private static void renderDestructionOverlay(EntityPlayer player, World world, ChunkCoordinates startBlockPos,

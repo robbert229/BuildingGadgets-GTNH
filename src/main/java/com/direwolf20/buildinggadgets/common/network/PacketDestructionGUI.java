@@ -33,7 +33,7 @@ public class PacketDestructionGUI implements IMessage {
         buf.writeInt(depth);
     }
 
-    public PacketDestructionGUI(){}
+    public PacketDestructionGUI() {}
 
     public PacketDestructionGUI(int l, int r, int u, int d, int dep) {
         left = l;

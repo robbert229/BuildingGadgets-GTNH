@@ -30,7 +30,6 @@ import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class GadgetDestruction extends GadgetGeneric {
 

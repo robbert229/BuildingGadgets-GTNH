@@ -296,7 +296,7 @@ public class ToolRenders {
         if (startBlock.getBlock() == ModBlocks.effectBlock) {
             return;
         }
-        
+
         Set<ChunkCoordinates> coordinates = GadgetDestruction.getArea(world, startBlockPos, facing, player, heldItem);
 
         GL11.glPushMatrix();

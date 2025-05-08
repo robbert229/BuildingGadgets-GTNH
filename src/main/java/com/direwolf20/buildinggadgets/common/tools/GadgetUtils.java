@@ -410,6 +410,7 @@ public class GadgetUtils {
                             .getUnformattedText()));
             return true;
         }
+
         return false;
     }
 

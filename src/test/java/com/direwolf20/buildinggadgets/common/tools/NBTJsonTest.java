@@ -26,26 +26,25 @@ public class NBTJsonTest {
 
     @Test
     void toNbtShouldParseSimpleExample() throws NBTException {
-        final String snippet = "{\n" +
-                "    stateIntArray:[I;1,2],\n" +
-                "    dim:0,\n" +
-                "    posIntArray:[I;16711680,0],\n" +
-                "    startPos:{X:283,Y:3,Z:59},\n" +
-                "    mapIntState:[\n" +
-                "        {\n" +
-                "            mapSlot:1s,\n" +
-                "            mapState:{\n" +
-                "            Properties:{snowy:\"false\"},\n" +
-                "            Name:\"minecraft:grass\"\n" +
-                "            }\n" +
-                "        },\n" +
-                "        {\n" +
-                "            mapSlot:2s,\n" +
-                "            mapState:{Name:\"minecraft:lapis_block\"}\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    endPos:{X:282,Y:3,Z:59}\n" +
-                "}";
+        final String snippet = "{\n" + "    stateIntArray:[I;1,2],\n"
+            + "    dim:0,\n"
+            + "    posIntArray:[I;16711680,0],\n"
+            + "    startPos:{X:283,Y:3,Z:59},\n"
+            + "    mapIntState:[\n"
+            + "        {\n"
+            + "            mapSlot:1s,\n"
+            + "            mapState:{\n"
+            + "            Properties:{snowy:\"false\"},\n"
+            + "            Name:\"minecraft:grass\"\n"
+            + "            }\n"
+            + "        },\n"
+            + "        {\n"
+            + "            mapSlot:2s,\n"
+            + "            mapState:{Name:\"minecraft:lapis_block\"}\n"
+            + "        }\n"
+            + "    ],\n"
+            + "    endPos:{X:282,Y:3,Z:59}\n"
+            + "}";
 
         JsonElement parsed = new JsonParser().parse(snippet);
         NBTTagCompound tag = (NBTTagCompound) NBTJson.toNbt(parsed);

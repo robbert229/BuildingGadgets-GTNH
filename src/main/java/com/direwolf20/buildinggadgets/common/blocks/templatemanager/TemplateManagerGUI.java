@@ -11,15 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.direwolf20.buildinggadgets.util.NBTJson;
-import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.inventory.Slot;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
@@ -41,6 +38,8 @@ import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerLoad;
 import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerSave;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.util.NBTJson;
+import com.google.gson.JsonParser;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class TemplateManagerGUI extends GuiContainer {

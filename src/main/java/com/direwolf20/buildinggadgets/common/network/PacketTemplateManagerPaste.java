@@ -4,6 +4,10 @@ package com.direwolf20.buildinggadgets.common.network;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,8 +18,6 @@ import net.minecraft.world.World;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
-import com.direwolf20.buildinggadgets.util.NBTJson;
-import com.google.gson.JsonParser;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -24,12 +26,8 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 public class PacketTemplateManagerPaste implements IMessage {
+
     private ChunkCoordinates pos;
     private byte[] data;
     private String templateName;

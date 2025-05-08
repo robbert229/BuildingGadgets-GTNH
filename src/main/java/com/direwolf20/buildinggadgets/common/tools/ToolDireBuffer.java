@@ -535,10 +535,10 @@ public class ToolDireBuffer {
     // return this.vertexFormat;
     // }
     //
-    // @Override
-    // public int getVertexCount() {
-    // return this.vertexCount;
-    // }
+//     @Override
+     public int getVertexCount() {
+        return this.vertexCount;
+     }
     //
     // @Override
     // public int getDrawMode() {

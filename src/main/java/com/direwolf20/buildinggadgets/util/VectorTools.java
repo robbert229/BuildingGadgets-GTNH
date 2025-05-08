@@ -133,4 +133,28 @@ public class VectorTools {
         }
         throw new IllegalArgumentException("Unknown facing " + intersector);
     }
+
+    public static ChunkCoordinates Up(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX, base.posY + distance, base.posZ );
+    }
+
+    public static ChunkCoordinates Down(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX, base.posY - distance, base.posZ );
+    }
+
+    public static ChunkCoordinates East(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX + distance, base.posY, base.posZ);
+    }
+    public static ChunkCoordinates West(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX - distance, base.posY, base.posZ);
+    }
+
+    public static ChunkCoordinates North(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX, base.posY, base.posZ - distance);
+    }
+
+    public static ChunkCoordinates South(ChunkCoordinates base, int distance) {
+        return new ChunkCoordinates(base.posX, base.posY, base.posZ + distance);
+    }
+
 }

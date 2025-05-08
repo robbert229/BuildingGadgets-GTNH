@@ -132,7 +132,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
     public static String getOwner(ItemStack stack) {// TODO unused
         return GadgetUtils.getStackTag(stack)
-                .getString("owner");
+            .getString("owner");
     }
 
     public static void setOwner(ItemStack stack, String owner) {// TODO unused
@@ -157,11 +157,23 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, NBTKeys.GADGET_START_POS));
     }
 
+    private static int[] getTagIntArrayFromTagCompound(NBTTagCompound tagCompound, String key) {
+        var tag = tagCompound.getTag(key);
+        if (tag == null) {
+            return new int[]{};
+        }
+
+        // we intentionally don't do a null check here because we want to through an exception when a non array is in an
+        // array's location.
+        return ((NBTTagIntArray) tag).func_150302_c();
+    }
+
     private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
         List<BlockMap> blockMap = new ArrayList<BlockMap>();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
+
         NBTTagList MapIntStateTag = (NBTTagList) tagCompound.getTag("mapIntState");
         if (MapIntStateTag == null) {
             MapIntStateTag = new NBTTagList();
@@ -170,19 +182,19 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         BlockMapIntState MapIntState = new BlockMapIntState();
         MapIntState.getIntStateMapFromNBT(MapIntStateTag);
 
-        var posIntArray = ((NBTTagIntArray) tagCompound.getTag(NBTKeys.GADGET_POS_INT_ARRAY)).func_150302_c();
-        var stateIntArray = ((NBTTagIntArray) tagCompound.getTag(NBTKeys.GADGET_STATE_INT_ARRAY)).func_150302_c();
+        var posIntArray = getTagIntArrayFromTagCompound(tagCompound, NBTKeys.GADGET_POS_INT_ARRAY);
+        var stateIntArray = getTagIntArrayFromTagCompound(tagCompound, NBTKeys.GADGET_STATE_INT_ARRAY);
         for (int i = 0; i < posIntArray.length; i++) {
             int p = posIntArray[i];
             ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
             short IntState = (short) stateIntArray[i];
             blockMap.add(
-                    new BlockMap(
-                            pos,
-                            MapIntState.getStateFromSlot(IntState),
-                            (byte) ((p & 0xff0000) >> 16),
-                            (byte) ((p & 0x00ff00) >> 8),
-                            (byte) (p & 0x0000ff)));
+                new BlockMap(
+                    pos,
+                    MapIntState.getStateFromSlot(IntState),
+                    (byte) ((p & 0xff0000) >> 16),
+                    (byte) ((p & 0x00ff00) >> 8),
+                    (byte) (p & 0x0000ff)));
         }
         return blockMap;
     }
@@ -234,9 +246,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         super.addInformation(stack, player, list, b);
 
         list.add(
-                EnumChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.mode")
-                        + ": "
-                        + getToolMode(stack));
+            EnumChatFormatting.AQUA + StatCollector.translateToLocal("tooltip.gadget.mode")
+                + ": "
+                + getToolMode(stack));
         addInformationRayTraceFluid(list, stack);
         addEnergyInformation(list, stack);
         EventTooltip.addTemplatePadding(stack, list);
@@ -252,7 +264,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         ChunkCoordinates pos = VectorTools.getPosLookingAt(player, stack);
         if (!world.isRemote) {
-            if (pos != null && player.isSneaking() && GadgetUtils.setRemoteInventory(player, stack, pos, player.dimension, world)) {
+            if (pos != null && player.isSneaking()
+                && GadgetUtils.setRemoteInventory(player, stack, pos, player.dimension, world)) {
                 return stack;
             }
 
@@ -261,13 +274,15 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     setStartPos(stack, null);
                     setEndPos(stack, null);
                     player.addChatMessage(
-                            new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
+                        new ChatComponentText(
+                            ChatFormatting.AQUA
+                                + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
                     return stack;
                 }
                 if (player.isSneaking()) {
                     if (getStartPos(stack) != null) {
                         copyBlocks(stack, player, world, getStartPos(stack), pos);
-                    }  else {
+                    } else {
                         setEndPos(stack, pos);
                     }
                 } else {
@@ -278,31 +293,31 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     }
                 }
             } else if (getToolMode(stack) == ToolMode.Paste) {
-                if (!player.isSneaking()) {
-                    if (getAnchor(stack) == null) {
-                        if (pos == null) {
-                            return stack;
-                        }
-
-                        buildBlockMap(world, pos, stack, player);
-                    } else {
-                        ChunkCoordinates startPos = getAnchor(stack);
-                        buildBlockMap(world, startPos, stack, player);
-                    }
-                }
+//                if (!player.isSneaking()) {
+//                    if (getAnchor(stack) == null) {
+//                        if (pos == null) {
+//                            return stack;
+//                        }
+//
+//                        buildBlockMap(world, pos, stack, player);
+//                    } else {
+//                        ChunkCoordinates startPos = getAnchor(stack);
+//                        buildBlockMap(world, startPos, stack, player);
+//                    }
+//                }
             }
         } else {
             if (pos != null && player.isSneaking()) {
-                if (GadgetUtils.getRemoteInventory(pos, world, player, NetworkIO.Operation.EXTRACT) != null)  {
+                if (GadgetUtils.getRemoteInventory(pos, world, player, NetworkIO.Operation.EXTRACT) != null) {
                     return stack;
                 }
             }
             if (getToolMode(stack) == ToolMode.Copy) {
                 if (pos == null && player.isSneaking()) {
-                    //player.openGui(BuildingGadgets.instance, GuiProxy.CopyPasteID, world, hand.ordinal(), 0, 0);
+                    // player.openGui(BuildingGadgets.instance, GuiProxy.CopyPasteID, world, hand.ordinal(), 0, 0);
                 }
             } else if (player.isSneaking()) {
-                //player.openGui(BuildingGadgets.instance, GuiProxy.PasteID, world, hand.ordinal(), 0, 0);
+                // player.openGui(BuildingGadgets.instance, GuiProxy.PasteID, world, hand.ordinal(), 0, 0);
             } else {
                 ToolRenders.updateInventoryCache();
             }
@@ -371,7 +386,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     // }
     //
     public static void copyBlocks(ItemStack stack, EntityPlayer player, World world, ChunkCoordinates startPos,
-                                  ChunkCoordinates endPos) {
+        ChunkCoordinates endPos) {
         if (startPos != null && endPos != null) {
             GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
             if (findBlocks(world, startPos, endPos, stack, player, tool)) {
@@ -382,7 +397,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     private static boolean findBlocks(World world, ChunkCoordinates start, ChunkCoordinates end, ItemStack stack,
-                                      EntityPlayer player, GadgetCopyPaste tool) {
+        EntityPlayer player, GadgetCopyPaste tool) {
         setLastBuild(stack, null, 0);
         int foundTE = 0;
         int startX = start.posX;
@@ -395,9 +410,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         if (Math.abs(startX - endX) >= 125 || Math.abs(startY - endY) >= 125 || Math.abs(startZ - endZ) >= 125) {
             player.addChatMessage(
-                    new ChatComponentText(
-                            ChatFormatting.RED
-                                    + new ChatComponentTranslation("message.gadget.toobigarea").getUnformattedText()));
+                new ChatComponentText(
+                    ChatFormatting.RED
+                        + new ChatComponentTranslation("message.gadget.toobigarea").getUnformattedText()));
 
             return false;
         }
@@ -427,18 +442,18 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     var notBlacklisted = true;
 
                     if (!(tempState.getBlock() instanceof EffectBlock) && !tempState.isAir()
-                            && (world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) == null
+                        && (world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) == null
                             || world.getTileEntity(
-                            tempPos.posX,
-                            tempPos.posY,
-                            tempPos.posZ) instanceof ConstructionBlockTileEntity)
-                            && !tempState.getMaterial()
+                                tempPos.posX,
+                                tempPos.posY,
+                                tempPos.posZ) instanceof ConstructionBlockTileEntity)
+                        && !tempState.getMaterial()
                             .isLiquid()
-                            && notBlacklisted) {
+                        && notBlacklisted) {
 
                         TileEntity te = world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ);
                         BlockState assignState = InventoryManipulation
-                                .getSpecificStates(tempState, world, player, tempPos, stack);
+                            .getSpecificStates(tempState, world, player, tempPos, stack);
                         // BlockState actualState = assignState.getActualState(world, tempPos);
                         var actualState = assignState;
 
@@ -450,7 +465,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
                         if (actualState != null) {
                             UniqueItem uniqueItem = BlockMapIntState
-                                    .blockStateToUniqueItem(actualState, player, tempPos);
+                                .blockStateToUniqueItem(actualState, player, tempPos);
                             if (uniqueItem.item != null) {
                                 posIntArrayList.add(GadgetUtils.relPosToInt(start, tempPos));
                                 blockMapIntState.addToMap(actualState);
@@ -460,23 +475,23 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                                 blockCount++;
                                 if (blockCount > 32768) {
                                     player.addChatMessage(
-                                            new ChatComponentText(
-                                                    ChatFormatting.RED
-                                                            + new ChatComponentTranslation("message.gadget.toomanyblocks")
-                                                            .getUnformattedText()));
+                                        new ChatComponentText(
+                                            ChatFormatting.RED
+                                                + new ChatComponentTranslation("message.gadget.toomanyblocks")
+                                                    .getUnformattedText()));
                                     return false;
                                 }
 
                                 List<ItemStack> drops = new ArrayList<>();
                                 if (actualState != null) {
                                     drops = actualState.getBlock()
-                                            .getDrops(world, 0, 0, 0, actualState.getMetadata(), 0);
+                                        .getDrops(world, 0, 0, 0, actualState.getMetadata(), 0);
                                 }
 
                                 int neededItems = 0;
                                 for (ItemStack drop : drops) {
                                     if (drop.getItem()
-                                            .equals(uniqueItem.item)) {
+                                        .equals(uniqueItem.item)) {
                                         neededItems++;
                                     }
                                 }
@@ -487,12 +502,12 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                             }
                         }
                     } else if ((world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) != null)
-                            && !(world.getTileEntity(
+                        && !(world.getTileEntity(
                             tempPos.posX,
                             tempPos.posY,
                             tempPos.posZ) instanceof ConstructionBlockTileEntity)) {
-                        foundTE++;
-                    }
+                                foundTE++;
+                            }
                 }
             }
         }
@@ -500,11 +515,11 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         tagCompound.setTag("mapIntState", blockMapIntState.putIntStateMapIntoNBT());
         tagCompound.setTag("mapIntStack", blockMapIntState.putIntStackMapIntoNBT());
         int[] posIntArray = posIntArrayList.stream()
-                .mapToInt(i -> i)
-                .toArray();
+            .mapToInt(i -> i)
+            .toArray();
         int[] stateIntArray = stateIntArrayList.stream()
-                .mapToInt(i -> i)
-                .toArray();
+            .mapToInt(i -> i)
+            .toArray();
         tagCompound.setIntArray(NBTKeys.GADGET_POS_INT_ARRAY, posIntArray);
         tagCompound.setIntArray(NBTKeys.GADGET_STATE_INT_ARRAY, stateIntArray);
 
@@ -522,15 +537,15 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         if (foundTE > 0) {
             player.addChatMessage(
-                    new ChatComponentText(
-                            ChatFormatting.YELLOW + new ChatComponentTranslation("message.gadget.TEinCopy").getUnformattedText()
-                                    + ": "
-                                    + foundTE));
+                new ChatComponentText(
+                    ChatFormatting.YELLOW + new ChatComponentTranslation("message.gadget.TEinCopy").getUnformattedText()
+                        + ": "
+                        + foundTE));
 
         } else {
             player.addChatMessage(
-                    new ChatComponentText(
-                            ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copied").getUnformattedText()));
+                new ChatComponentText(
+                    ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copied").getUnformattedText()));
         }
 
         return true;

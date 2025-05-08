@@ -19,6 +19,7 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.events.EventClientTick;
 import com.direwolf20.buildinggadgets.client.events.EventKeyInput;
 import com.direwolf20.buildinggadgets.common.entities.ModEntities;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.proxy.CommonProxy;
@@ -61,6 +62,8 @@ public class ClientProxy extends CommonProxy {
 
         if (heldItem.getItem() instanceof GadgetDestruction) {
             ToolRenders.renderDestructionOverlay(evt, player, heldItem);
+        } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
+            ToolRenders.renderPasteOverlay(evt, player, heldItem);
         }
 
         // if (heldItem.getItem() instanceof GadgetBuilding) {

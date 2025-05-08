@@ -1,9 +1,13 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
+import com.cleanroommc.modularui.api.drawable.IDrawable;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+
 import com.cleanroommc.modularui.drawable.UITexture;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ResourceLocation;
 
 public class GuiUtils {
 
@@ -23,5 +27,11 @@ public class GuiUtils {
 
     public static String getPanelName(String name) {
         return String.format("%s:%s", BuildingGadgets.MODID, name);
+    }
+
+    public static IDrawable getI18n(String name) {
+        return IKey.str(
+                I18n.format(name)
+        );
     }
 }

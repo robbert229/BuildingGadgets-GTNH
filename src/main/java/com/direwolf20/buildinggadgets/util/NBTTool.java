@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -13,6 +12,7 @@ import net.minecraft.util.ChunkCoordinates;
 
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
+import cpw.mods.fml.common.registry.GameData;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -391,7 +391,8 @@ public class NBTTool {
     public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
         var name = compound.getString(NBT_BLOCK_NAME);
-        Block block = GameData.getBlockRegistry().getObject(name);
+        Block block = GameData.getBlockRegistry()
+            .getObject(name);
         // TODO (johnrowl) this needs to be fixed. This property doesn't exist.
         int meta = compound.getInteger(NBT_BLOCK_META);
 

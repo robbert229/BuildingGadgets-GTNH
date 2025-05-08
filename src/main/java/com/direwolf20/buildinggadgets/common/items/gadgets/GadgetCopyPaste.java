@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
+import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,8 +35,6 @@ import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
-
-import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.*;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -171,7 +171,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         BlockMapIntState MapIntState = new BlockMapIntState();
         MapIntState.getIntStateMapFromNBT(MapIntStateTag);
         var posIntArray = NBTTool.readIntList(tagCompound.getTag(GADGET_POS_INT_ARRAY));
-        //int[] posIntArray = tagCompound.getIntArray("posIntArray");
+        // int[] posIntArray = tagCompound.getIntArray("posIntArray");
         int[] stateIntArray = NBTTool.readIntList(tagCompound.getTag(GADGET_STATE_INT_ARRAY));
         for (int i = 0; i < posIntArray.length; i++) {
             int p = posIntArray[i];

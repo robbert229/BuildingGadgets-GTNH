@@ -1,8 +1,5 @@
 package com.direwolf20.buildinggadgets.client.events;
 
-import com.cleanroommc.modularui.factory.GuiFactories;
-import com.cleanroommc.modularui.factory.GuiManager;
-import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
@@ -11,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.client.KeyBindings;
+import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.client.gui.materiallist.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;

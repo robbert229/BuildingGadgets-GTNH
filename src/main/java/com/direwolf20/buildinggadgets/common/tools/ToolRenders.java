@@ -487,15 +487,15 @@ public class ToolRenders {
             int x = Math.min(startPos.posX, endPos.posX);
             int y = Math.min(startPos.posY, endPos.posY);
             int z = Math.min(startPos.posZ, endPos.posZ);
-            int dx = (startPos.posX > endPos.posX) ? startPos.posX + 1 : endPos.posX + 1;
-            int dy = (startPos.posY > endPos.posY) ? startPos.posY + 1 : endPos.posY + 1;
-            int dz = (startPos.posZ > endPos.posZ) ? startPos.posZ + 1 : endPos.posZ + 1;
+            int dx = Math.max(startPos.posX, endPos.posX)+1;
+            int dy = Math.max(startPos.posY, endPos.posY)+1;
+            int dz = Math.max(startPos.posZ, endPos.posZ)+1;
 
             Tessellator tessellator = Tessellator.instance;
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);// The render starts at the player, so we
-            // subtract the player coords and move the render to 0,0,0
+            GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
+            // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
 
             GlStateManager.disableLighting();
             GlStateManager.disableTexture2D();
@@ -506,8 +506,8 @@ public class ToolRenders {
                 GlStateManager.SourceFactor.ONE,
                 GlStateManager.DestFactor.ZERO);
 
-            renderBox(tessellator, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks
-            // we've copied.
+            renderBox(tessellator, AxisAlignedBB.getBoundingBox(x,y,z,dx,dy,dz), 255, 223, 127);
+            // Draw the box around the blocks we've copied.
 
             GL11.glLineWidth(1.0F);
             GlStateManager.enableLighting();
@@ -537,45 +537,87 @@ public class ToolRenders {
     // GlStateManager.popMatrix();
     // }
 
-    private static void renderBox(Tessellator tessellator, double startX, double startY, double startZ, double endX,
-        double endY, double endZ, int R, int G, int B) {
+    /**
+     * renderBox renders a box that completely covers the selected axis aligned bounding box.
+     */
+    private static void renderBox(Tessellator tess, AxisAlignedBB bb, int R, int G, int B) {
         // Set the line width
         GL11.glLineWidth(2.0F);
 
-        // Start drawing lines (mode 3 corresponds to GL_LINE_LOOP)
-        tessellator.startDrawing(GL11.GL_LINE_LOOP);
+        tess.startDrawing(GL11.GL_LINE_STRIP);
 
-        // Set color for the first vertex (you can set transparency using alpha in this method, but here it's always
-        // 255)
-        tessellator.setColorRGBA(G, G, G, 0);
+        // Bottom face
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
 
-        // Define vertices for the box (down)
-        tessellator.addVertex(startX, startY, startZ);
-        tessellator.setColorRGBA(G, G, G, R);
-        tessellator.addVertex(endX, startY, startZ);
-        tessellator.addVertex(endX, startY, endZ);
-        tessellator.addVertex(startX, startY, endZ);
-        tessellator.addVertex(startX, startY, startZ);
+        tess.draw();
 
-        // Define vertices for the box (up)
-        tessellator.addVertex(startX, endY, startZ);
-        tessellator.addVertex(endX, endY, startZ);
-        tessellator.addVertex(endX, endY, endZ);
-        tessellator.addVertex(startX, endY, endZ);
-        tessellator.addVertex(startX, endY, startZ);
+        tess.startDrawing(GL11.GL_LINE_STRIP);
 
-        // Define the vertical edges of the box
-        tessellator.addVertex(startX, startY, startZ);
-        tessellator.addVertex(startX, endY, startZ);
-        tessellator.addVertex(endX, startY, startZ);
-        tessellator.addVertex(endX, endY, startZ);
-        tessellator.addVertex(endX, startY, endZ);
-        tessellator.addVertex(endX, endY, endZ);
-        tessellator.addVertex(startX, startY, endZ);
-        tessellator.addVertex(startX, endY, endZ);
+        // Top face
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
 
-        // Finish drawing
-        tessellator.draw();
+        tess.draw();
+
+        tess.startDrawing(GL11.GL_LINES);
+
+        // Vertical edges
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+
+        tess.setColorRGBA(0, 255, 0, 255);
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+
+        tess.draw();
+
+//        // Start drawing lines (mode 3 corresponds to GL_LINE_LOOP)
+//        tessellator.startDrawing(GL11.GL_LINE_LOOP);
+//
+//        // Set color for the first vertex (you can set transparency using alpha in this method, but here it's always
+//        // 255)
+//        tessellator.setColorRGBA(G, G, G, 0);
+//
+//        // Define vertices for the box (down)
+//        tessellator.addVertex(startX, startY, startZ);
+//        tessellator.setColorRGBA(G, G, G, R);
+//        tessellator.addVertex(endX, startY, startZ);
+//        tessellator.addVertex(endX, startY, endZ);
+//        tessellator.addVertex(startX, startY, endZ);
+//        tessellator.addVertex(startX, startY, startZ);
+//
+//        // Define vertices for the box (up)
+//        tessellator.addVertex(startX, endY, startZ);
+//        tessellator.addVertex(endX, endY, startZ);
+//        tessellator.addVertex(endX, endY, endZ);
+//        tessellator.addVertex(startX, endY, endZ);
+//        tessellator.addVertex(startX, endY, startZ);
+//
+//        // Define the vertical edges of the box
+////        tessellator.addVertex(startX, startY, startZ);
+////        tessellator.addVertex(startX, endY, startZ);
+////        tessellator.addVertex(endX, startY, startZ);
+////        tessellator.addVertex(endX, endY, startZ);
+////        tessellator.addVertex(endX, startY, endZ);
+////        tessellator.addVertex(endX, endY, endZ);
+////        tessellator.addVertex(startX, startY, endZ);
+////        tessellator.addVertex(startX, endY, endZ);
+//
+//        // Finish drawing
+//        tessellator.draw();
 
         // Reset the line width back to default
         GL11.glLineWidth(1.0F);

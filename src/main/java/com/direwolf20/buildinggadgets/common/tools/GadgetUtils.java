@@ -418,6 +418,15 @@ public class GadgetUtils {
         remoteInventorySupplier = null;
     }
 
+    public static boolean isRemoteInventory(
+            EntityPlayer player,
+            ChunkCoordinates pos,
+            int dim,
+            World world
+    ) {
+        return getRemoteInventory(pos, dim, world, player) != null;
+    }
+
     @Nullable
     public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
         return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);

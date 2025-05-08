@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.direwolf20.buildinggadgets.client.gui.CopyAreaGUI;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -260,9 +262,101 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         setToolMode(heldItem, mode);
     }
 
+    private void resetArea(ItemStack stack, World world, EntityPlayer player){
+        setStartPos(stack, null);
+        setEndPos(stack, null);
+        player.addChatMessage(
+                new ChatComponentText(
+                        ChatFormatting.AQUA
+                                + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
+    }
+
+    /**
+     * tryCopyBlocks tries to copy the blocks but only if the start and end positions have been set.
+     */
+    private static void tryCopyBlocks(
+            ItemStack stack,
+            EntityPlayer player,
+            World world,
+            ChunkCoordinates startPos,
+            ChunkCoordinates endPos
+    ) {
+        if (startPos == null || endPos == null) {
+            return;
+        }
+
+        copyBlocks(stack, player, world, startPos, endPos);
+    }
+
+    private ItemStack onItemRightClickInCopyMode(ItemStack stack, World world, EntityPlayer player, ChunkCoordinates lookingAt) {
+        // if the user sneak right clicks while looking at nothing then open up the copy area gui.
+        if (isSneakClickOnAir(player, lookingAt)) {
+            if (world.isRemote) {
+                ClientGUI.open(CopyAreaGUI.createGUI());
+            }
+
+            return stack;
+        }
+
+        // if the user is sneak clicking on an inventory then attempt to set that as the remote inventory.
+        if (isSneakClickOnInventory(world, player, lookingAt)) {
+            if (!world.isRemote) {
+                GadgetUtils.setRemoteInventory(player, stack, lookingAt, player.dimension, world);
+                return stack;
+            }
+
+            return stack;
+        }
+
+        // if the user sneak right clicks while looking at a block then we attempt to set that block as the remote
+        // inventory, or if it isn't an inventory then we know we need to set it as the end location.
+        if (isSneakClickOnBlock(player, lookingAt)) {
+            if (!world.isRemote) {
+                // otherwise set the end position.
+                setEndPos(stack, lookingAt);
+                tryCopyBlocks(stack, player, world, getStartPos(stack), getEndPos(stack));
+            }
+
+            return stack;
+        }
+
+        // if the user right clicks while looking at a block then try to set the start location.
+        if (isNormalClickOnBlock(player, lookingAt)) {
+            if (!world.isRemote) {
+                setStartPos(stack, lookingAt);
+                tryCopyBlocks(stack, player, world, lookingAt, getEndPos(stack));
+            }
+
+            return stack;
+        }
+
+        return stack;
+    }
+
+    private static boolean isSneakClickOnInventory(World world, EntityPlayer player, ChunkCoordinates lookingAt) {
+        return isSneakClickOnBlock(player, lookingAt) && GadgetUtils.isRemoteInventory(player, lookingAt, player.dimension, world);
+    }
+
+    private boolean isNormalClickOnBlock(EntityPlayer player, ChunkCoordinates lookingAt) {
+        return lookingAt != null && !player.isSneaking();
+    }
+
+    private static boolean isSneakClickOnBlock(EntityPlayer player, ChunkCoordinates lookingAt) {
+        return lookingAt != null && player.isSneaking();
+    }
+
+    private static boolean isSneakClickOnAir(EntityPlayer player, ChunkCoordinates lookingAt) {
+        return lookingAt == null && player.isSneaking();
+    }
+
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         ChunkCoordinates pos = VectorTools.getPosLookingAt(player, stack);
+
+        if (getToolMode(stack) == ToolMode.Copy) {
+            return this.onItemRightClickInCopyMode(stack, world, player, pos);
+        }
+
         if (!world.isRemote) {
             if (pos != null && player.isSneaking()
                 && GadgetUtils.setRemoteInventory(player, stack, pos, player.dimension, world)) {
@@ -293,27 +387,25 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     }
                 }
             } else if (getToolMode(stack) == ToolMode.Paste) {
-//                if (!player.isSneaking()) {
-//                    if (getAnchor(stack) == null) {
-//                        if (pos == null) {
-//                            return stack;
-//                        }
-//
-//                        buildBlockMap(world, pos, stack, player);
-//                    } else {
-//                        ChunkCoordinates startPos = getAnchor(stack);
-//                        buildBlockMap(world, startPos, stack, player);
-//                    }
-//                }
-            }
-        } else {
-            if (pos != null && player.isSneaking()) {
-                if (GadgetUtils.getRemoteInventory(pos, world, player, NetworkIO.Operation.EXTRACT) != null) {
-                    return stack;
+                if (!player.isSneaking()) {
+                    if (getAnchor(stack) == null) {
+                        if (pos == null) {
+                            return stack;
+                        }
+
+                        buildBlockMap(world, pos, stack, player);
+                    } else {
+                        ChunkCoordinates startPos = getAnchor(stack);
+                        buildBlockMap(world, startPos, stack, player);
+                    }
                 }
             }
+        } else {
+            if (isSneakClickOnInventory(world, player, pos)) {
+                return stack;
+            }
             if (getToolMode(stack) == ToolMode.Copy) {
-                if (pos == null && player.isSneaking()) {
+                if (isSneakClickOnAir(player, pos)) {
                     // player.openGui(BuildingGadgets.instance, GuiProxy.CopyPasteID, world, hand.ordinal(), 0, 0);
                 }
             } else if (player.isSneaking()) {

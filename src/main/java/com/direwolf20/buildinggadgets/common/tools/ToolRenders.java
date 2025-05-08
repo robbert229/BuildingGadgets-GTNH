@@ -584,41 +584,6 @@ public class ToolRenders {
 
         tess.draw();
 
-//        // Start drawing lines (mode 3 corresponds to GL_LINE_LOOP)
-//        tessellator.startDrawing(GL11.GL_LINE_LOOP);
-//
-//        // Set color for the first vertex (you can set transparency using alpha in this method, but here it's always
-//        // 255)
-//        tessellator.setColorRGBA(G, G, G, 0);
-//
-//        // Define vertices for the box (down)
-//        tessellator.addVertex(startX, startY, startZ);
-//        tessellator.setColorRGBA(G, G, G, R);
-//        tessellator.addVertex(endX, startY, startZ);
-//        tessellator.addVertex(endX, startY, endZ);
-//        tessellator.addVertex(startX, startY, endZ);
-//        tessellator.addVertex(startX, startY, startZ);
-//
-//        // Define vertices for the box (up)
-//        tessellator.addVertex(startX, endY, startZ);
-//        tessellator.addVertex(endX, endY, startZ);
-//        tessellator.addVertex(endX, endY, endZ);
-//        tessellator.addVertex(startX, endY, endZ);
-//        tessellator.addVertex(startX, endY, startZ);
-//
-//        // Define the vertical edges of the box
-////        tessellator.addVertex(startX, startY, startZ);
-////        tessellator.addVertex(startX, endY, startZ);
-////        tessellator.addVertex(endX, startY, startZ);
-////        tessellator.addVertex(endX, endY, startZ);
-////        tessellator.addVertex(endX, startY, endZ);
-////        tessellator.addVertex(endX, endY, endZ);
-////        tessellator.addVertex(startX, startY, endZ);
-////        tessellator.addVertex(startX, endY, endZ);
-//
-//        // Finish drawing
-//        tessellator.draw();
-
         // Reset the line width back to default
         GL11.glLineWidth(1.0F);
     }

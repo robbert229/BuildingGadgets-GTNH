@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.cleanroommc.modularui.screen.ModularScreen;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 
@@ -56,6 +58,16 @@ public class GadgetDestruction extends GadgetGeneric {
     @Override
     public int getDamageCost(ItemStack tool) {
         return SyncedConfig.damageCostDestruction * getCostMultiplier(tool);
+    }
+
+    @Override
+    public void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
+        ToolRenders.renderDestructionOverlay(evt, player, heldItem);
+    }
+
+    @Override
+    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
+        return new DestructionGUI(itemStack, temporarilyEnabled);
     }
 
     private int getCostMultiplier(ItemStack tool) {
@@ -190,39 +202,42 @@ public class GadgetDestruction extends GadgetGeneric {
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        if (!world.isRemote) {
-            if (!player.isSneaking()) {
-                MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-                if (lookingAt == null && getAnchor(stack) == null) {
-                    // If we aren't looking at anything, exit
-                    return stack;
-                }
-
-                ChunkCoordinates startBlock = (getAnchor(stack) == null)
-                    ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
-                    : getAnchor(stack);
-
-                EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
-                    : getAnchorSide(stack);
-
-                clearArea(world, startBlock, sideHit, player, stack);
-
-                if (getAnchor(stack) != null) {
-                    setAnchor(stack, null);
-                    setAnchorSide(stack, null);
-
-                    player.addChatMessage(
-                        new ChatComponentText(
-                            EnumChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
-                }
-            }
-        } else {
+        if (world.isRemote) {
             if (player.isSneaking()) {
                 ClientGUI.open(new DestructionGUI(stack));
                 return stack;
             }
+
+            return stack;
         }
+
+        if (!player.isSneaking()) {
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+            if (lookingAt == null && getAnchor(stack) == null) {
+                // If we aren't looking at anything, exit
+                return stack;
+            }
+
+            ChunkCoordinates startBlock = (getAnchor(stack) == null)
+                ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
+                : getAnchor(stack);
+
+            EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
+                : getAnchorSide(stack);
+
+            clearArea(world, startBlock, sideHit, player, stack);
+
+            if (getAnchor(stack) != null) {
+                setAnchor(stack, null);
+                setAnchorSide(stack, null);
+
+                player.addChatMessage(
+                    new ChatComponentText(
+                        EnumChatFormatting.AQUA
+                            + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+            }
+        }
+
         return stack;
     }
 

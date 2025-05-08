@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +14,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -218,4 +221,11 @@ public abstract class GadgetGeneric extends ItemModBase {
             return !event.isCanceled();
         }
     }
+
+    /// renderOverlay will render the gadget specific overlay. This will be things like highlighting the blocks to be
+    /// deleted for the destruction gadget, or the outline of blocks to be copied for the copy/paste gadget.
+    public abstract void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem);
+
+    /// getShortcutMenuGUI returns the ModularUI gui to use for the gadget when the user presses the menu shortcut.
+    public abstract ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled);
 }

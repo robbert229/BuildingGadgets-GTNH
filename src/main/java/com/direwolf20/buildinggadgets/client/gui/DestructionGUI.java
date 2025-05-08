@@ -31,12 +31,10 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.network.*;
 
-public class DestructionGUI extends CustomModularScreen {
+public class DestructionGUI extends GadgetGUI {
 
     private static final int ButtonSize = 20;
     private static final int Spacing = 7;
-
-    private boolean temporarilyEnabled = false;
 
     private int left;
     private int right;
@@ -53,31 +51,17 @@ public class DestructionGUI extends CustomModularScreen {
     }
 
     public DestructionGUI(ItemStack tool, boolean temporarilyEnabled) {
+        super(tool, temporarilyEnabled);
+
         this.left = GadgetDestruction.getToolValue(tool, "left");
         this.right = GadgetDestruction.getToolValue(tool, "right");
         this.up = GadgetDestruction.getToolValue(tool, "up");
         this.down = GadgetDestruction.getToolValue(tool, "down");
         this.depth = GadgetDestruction.getToolValue(tool, "depth");
 
-        this.temporarilyEnabled = temporarilyEnabled;
         this.enableRayTraceFluid = GadgetGeneric.shouldRayTraceFluid(tool);
         this.enableConnectedArea = GadgetGeneric.getConnectedArea(tool);
         this.enableAnchored = GadgetDestruction.getAnchor(tool) != null;
-    }
-
-    @Override
-    public void onFrameUpdate() {
-        super.onFrameUpdate();
-
-        if (!this.temporarilyEnabled) {
-            return;
-        }
-
-        // we are doing this because I was running into some issues where the KeyBinding wasn't getting its actual state
-        // updated correctly, and was saying that the key was not down, when it was.
-        if (!Keyboard.isKeyDown(KeyBindings.temporarilyEnableMenu.getKeyCode())) {
-            this.close();
-        }
     }
 
     private Flow buildSliders() {

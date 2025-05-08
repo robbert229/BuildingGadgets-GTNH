@@ -19,10 +19,6 @@ import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiProxy implements IGuiHandler {
-
-    public static final int CopyPasteID = 0;
-    public static final int DestructionID = 1;
-    public static final int PasteID = 2;
     public static final int MaterialListID = 3;
 
     @Override
@@ -45,23 +41,7 @@ public class GuiProxy implements IGuiHandler {
                 new TemplateManagerContainer(player.inventory, containerTileEntity));
         }
 
-        if (ID == CopyPasteID) {
-            if (player.getHeldItem() != null && player.getHeldItem()
-                .getItem() instanceof GadgetCopyPaste) {
-                return new CopyPasteGUI(player.getHeldItem());
-            } else {
-                return null;
-            }
-        } else if (ID == DestructionID) {
-            if (player.getHeldItem() != null && player.getHeldItem()
-                .getItem() instanceof GadgetDestruction) {
-                return new DestructionGUI(player.getHeldItem());
-            } else return null;
-        } else if (ID == PasteID) {
-            if (player.getHeldItem() != null && player.getHeldItem()
-                .getItem() instanceof GadgetCopyPaste) return new PasteGUI(player.getHeldItem());
-            else return null;
-        } else if (ID == MaterialListID) {
+        if (ID == MaterialListID) {
             // TODO(johnrowl) off hand does not exist in 1.7.10, this can get cleaned up.
             ItemStack template = InventoryManipulation.getStackInEitherHand(player, ITemplate.class);
             if (template != null) return new MaterialListGUI(template);

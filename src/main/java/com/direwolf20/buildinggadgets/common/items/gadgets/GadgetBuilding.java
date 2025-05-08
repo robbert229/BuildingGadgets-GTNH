@@ -5,11 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -49,6 +54,19 @@ public class GadgetBuilding extends GadgetGeneric {
     @Override
     public int getDamageCost(ItemStack tool) {
         return SyncedConfig.damageCostBuilder;
+    }
+
+    @Override
+    public void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
+        // TODO(johnrowl) add renderer.
+    }
+
+    @Override
+    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
+        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
+        panel.child(IKey.str("STUBBED").asWidget()
+                .top(7).left(7));
+        return new ModularScreen(panel);
     }
 
     private static void setToolMode(ItemStack tool, BuildingModes mode) {

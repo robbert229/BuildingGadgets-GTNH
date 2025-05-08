@@ -36,9 +36,10 @@ public class EventKeyInput {
     private void handleEventInput() {
         if (KeyBindings.temporarilyEnableMenu.isPressed() && checkNoModifier(KeyBindings.temporarilyEnableMenu)) {
             Minecraft mc = Minecraft.getMinecraft();
+
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
-            if (tool != null) {
-                ClientGUI.open(new DestructionGUI(tool, true));
+            if (tool != null && tool.getItem() instanceof GadgetGeneric gadget) {
+                ClientGUI.open(gadget.getShortcutMenuGUI(tool, true));
             }
         }
 

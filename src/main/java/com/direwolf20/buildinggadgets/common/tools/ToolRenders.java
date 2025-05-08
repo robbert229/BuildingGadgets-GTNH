@@ -394,8 +394,9 @@ public class ToolRenders {
         // Calculate the players current position, which is needed later
         Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
 
-        // TODO(johnrowl) fix linked inventory.
-        // renderLinkedInventoryOutline(stack, playerPos, player);
+        Tessellator tessellator = Tessellator.instance;
+        renderLinkedInventoryOutline(evt, stack, player, tessellator);
+
         if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null) {
             return;
         }
@@ -432,7 +433,7 @@ public class ToolRenders {
             // Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty,
             // exit.
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            if (toolDireBuffer.getVertexCount() == 0 || blockMapList.size() == 0) {
+            if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
                 return;
             }
 
@@ -480,7 +481,7 @@ public class ToolRenders {
             }
 
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-//            if (blockMapList.isEmpty()) return;
+            //if (blockMapList.isEmpty()) return;
             // TODO(johnrowl) we probably want to add this back for performance reasons.
 
             // We want to draw from the starting position to the (ending position)+1
@@ -490,8 +491,6 @@ public class ToolRenders {
             int dx = Math.max(startPos.posX, endPos.posX)+1;
             int dy = Math.max(startPos.posY, endPos.posY)+1;
             int dz = Math.max(startPos.posZ, endPos.posZ)+1;
-
-            Tessellator tessellator = Tessellator.instance;
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
@@ -519,23 +518,61 @@ public class ToolRenders {
         }
     }
 
-    // private static void renderLinkedInventoryOutline(ItemStack item, Vec3 playerPos, EntityPlayer player) {
-    // Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
-    // ChunkCoordinates pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
-    //
-    // if (dim == null || pos == null) return;
-    //
-    // if (player.dimension != dim) return;
-    //
-    // GlStateManager.pushMatrix();
-    // ToolRenders.Utils.stateManagerPrepare(playerPos, pos, 0.0005f);
-    // ToolRenders.Utils.stateManagerPrepareBlend();
-    // GL14.glBlendColor(1F, 1F, 1F, 0.35f);
-    //
-    // // Render the overlay
-    // mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassYellow, 1f);
-    // GlStateManager.popMatrix();
-    // }
+     private static void renderLinkedInventoryOutline(
+             RenderWorldLastEvent evt,
+             ItemStack item,
+             EntityPlayer player,
+             Tessellator tess
+     ) {
+         Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
+         ChunkCoordinates coordinate = GadgetUtils.getPOSFromNBT(item, "boundTE");
+         Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
+
+         if (dim == null) {
+             return;
+         }
+
+         if (player.dimension != dim) {
+             return;
+         }
+
+         if (coordinate == null) {
+             return;
+         }
+
+
+         GlStateManager.pushMatrix();
+         GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
+         // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
+
+         GlStateManager.disableLighting();
+         GlStateManager.disableTexture2D();
+         GlStateManager.enableBlend();
+         GlStateManager.tryBlendFuncSeparate(
+                 GlStateManager.SourceFactor.SRC_ALPHA,
+                 GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                 GlStateManager.SourceFactor.ONE,
+                 GlStateManager.DestFactor.ZERO);
+
+
+         renderBoxSolid(tess, AxisAlignedBB.getBoundingBox(
+                 coordinate.posX - 0.001,
+                 coordinate.posY - 0.001,
+                 coordinate.posZ - 0.001,
+                 coordinate.posX + 1.001,
+                 coordinate.posY + 1.001,
+                 coordinate.posZ + 1.001
+         ), 1f, 0.9f, .5f, 0.2f);
+         // Draw the box around the blocks we've copied.
+
+         GL11.glLineWidth(1.0F);
+         GlStateManager.enableLighting();
+         GlStateManager.enableTexture2D();
+         GlStateManager.enableDepth();
+         GlStateManager.depthMask(true);
+
+         GlStateManager.popMatrix();
+     }
 
     /**
      * renderBox renders a box that completely covers the selected axis aligned bounding box.
@@ -633,8 +670,30 @@ public class ToolRenders {
         tessellator.addVertex(minX, maxY, minZ);
     }
 
-    private static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
-        double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
+    private static void renderBoxSolid(
+            Tessellator tessellator,
+            AxisAlignedBB box,
+            float red,
+            float green,
+            float blue,
+            float alpha
+    ) {
+        renderBoxSolid(tessellator, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, red, green, blue, alpha);
+    }
+
+    private static void renderBoxSolid(
+            Tessellator tessellator,
+            double startX,
+            double startY,
+            double startZ,
+            double endX,
+            double endY,
+            double endZ,
+            float red,
+            float green,
+            float blue,
+            float alpha
+    ) {
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
         // Set color once for all vertices

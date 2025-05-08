@@ -1,18 +1,16 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.ImmutableList;
+import java.util.Iterator;
+import java.util.function.BiPredicate;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.util.Iterator;
-import java.util.function.BiPredicate;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Execution context that uses {@link IPlacementSequence} to filter the unusable positions.
@@ -58,16 +56,19 @@ public class Context {
      *
      * @return {@link AbstractIterator} that wraps {@code getPositionSequence().iterator()}
      */
-    public Iterator<ChunkCoordinates> getFilteredSequence(World world, ItemStack stack, EntityPlayer player, ChunkCoordinates initial) {
+    public Iterator<ChunkCoordinates> getFilteredSequence(World world, ItemStack stack, EntityPlayer player,
+        ChunkCoordinates initial) {
         Iterator<ChunkCoordinates> positions = getPositionSequence().iterator();
-        BiPredicate<ChunkCoordinates, BlockState> validator = validatorFactory.createValidatorFor(world, stack, player, initial);
+        BiPredicate<ChunkCoordinates, BlockState> validator = validatorFactory
+            .createValidatorFor(world, stack, player, initial);
         return new AbstractIterator<ChunkCoordinates>() {
+
             @Override
             protected ChunkCoordinates computeNext() {
                 while (positions.hasNext()) {
                     ChunkCoordinates next = positions.next();
 
-                    var blockState = WorldUtils.getBlockState(world, next);
+                    var blockState = BlockState.getBlockState(world, next);
                     if (validator.test(next, blockState)) {
                         return next;
                     }
@@ -81,7 +82,8 @@ public class Context {
     /**
      * @see IPlacementSequence#collect()
      */
-    public ImmutableList<ChunkCoordinates> collectFilteredSequence(World world, ItemStack stack, EntityPlayer player, ChunkCoordinates initial) {
+    public ImmutableList<ChunkCoordinates> collectFilteredSequence(World world, ItemStack stack, EntityPlayer player,
+        ChunkCoordinates initial) {
         return ImmutableList.copyOf(getFilteredSequence(world, stack, player, initial));
     }
 

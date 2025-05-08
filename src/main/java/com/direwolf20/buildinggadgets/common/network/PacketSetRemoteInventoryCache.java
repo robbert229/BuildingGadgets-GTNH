@@ -3,28 +3,29 @@ package com.direwolf20.buildinggadgets.common.network;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChunkCoordinates;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
-//import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multiset.Entry;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChunkCoordinates;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 
 public class PacketSetRemoteInventoryCache implements IMessage {
 
@@ -32,8 +33,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     private Multiset<UniqueItem> cache;
     private Pair<Integer, ChunkCoordinates> loc;
 
-    public PacketSetRemoteInventoryCache() {
-    }
+    public PacketSetRemoteInventoryCache() {}
 
     public PacketSetRemoteInventoryCache(Multiset<UniqueItem> cache, boolean isCopyPaste) {
         this.cache = cache;
@@ -49,7 +49,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public void fromBytes(ByteBuf buf) {
         isCopyPaste = buf.readBoolean();
         if (buf.readBoolean()) {
-            loc = new ImmutablePair<>(buf.readInt(), WorldUtils.fromLong(buf.readLong()));
+            loc = new ImmutablePair<>(buf.readInt(), ChunkCoordinateUtils.fromLong(buf.readLong()));
             return;
         }
         int len = buf.readInt();
@@ -67,7 +67,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
         buf.writeBoolean(isRequest);
         if (isRequest) {
             buf.writeInt(loc.getLeft());
-            buf.writeLong(WorldUtils.toLong(loc.getRight()));
+            buf.writeLong(ChunkCoordinateUtils.toLong(loc.getRight()));
             return;
         }
         Set<Entry<UniqueItem>> items = cache.entrySet();
@@ -87,11 +87,11 @@ public class PacketSetRemoteInventoryCache implements IMessage {
             var player = ctx.getServerHandler().playerEntity;
             MinecraftServer server = player.mcServer;
 
-
             if (ctx.side == Side.SERVER) {
                 Set<UniqueItem> itemTypes = new HashSet<>();
                 ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
-                IInventory remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);
+                IInventory remoteInventory = GadgetUtils
+                    .getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);
 
                 if (remoteInventory != null) {
                     for (int i = 0; i < remoteInventory.getSizeInventory(); i++) {
@@ -102,13 +102,16 @@ public class PacketSetRemoteInventoryCache implements IMessage {
                             UniqueItem uniqueItem = new UniqueItem(item, meta);
                             if (!itemTypes.contains(uniqueItem)) {
                                 itemTypes.add(uniqueItem);
-                                builder.addCopies(uniqueItem, InventoryManipulation.countInContainer(remoteInventory, item, meta));
+                                builder.addCopies(
+                                    uniqueItem,
+                                    InventoryManipulation.countInContainer(remoteInventory, item, meta));
                             }
                         }
                     }
                 }
 
-                PacketHandler.INSTANCE.sendTo(new PacketSetRemoteInventoryCache(builder.build(), message.isCopyPaste), player);
+                PacketHandler.INSTANCE
+                    .sendTo(new PacketSetRemoteInventoryCache(builder.build(), message.isCopyPaste), player);
                 return null;
             }
 
@@ -116,7 +119,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
                 EventTooltip.setCache(message.cache);
             } else {
                 // TODO(johnrowl) re-enable ToolRenders.
-                //ToolRenders.setInventoryCache(message.cache);
+                // ToolRenders.setInventoryCache(message.cache);
             }
 
             return null;

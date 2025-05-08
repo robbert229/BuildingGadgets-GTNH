@@ -47,8 +47,6 @@ key.connectedarea=Zusammenhängender Bereich
 #tooltip: 
 tooltip.constructionblockpowder.helptext=Neben Wasser zu platzieren
 tooltip.gadget.block=Block
-tooltip.gadget.destroy.overlay=Overlay
-tooltip.gadget.destroyshowoverlay=Overlay angezeigt
 tooltip.gadget.destroywarning=WARNUNG: Dieses Gadget zerstört Blöcke.
 tooltip.gadget.energy=Energie
 tooltip.gadget.mode=Modus

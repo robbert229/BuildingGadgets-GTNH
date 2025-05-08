@@ -1,5 +1,11 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -8,12 +14,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.Surface;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ChunkCoordinates;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 
 /**
  * Surface mode for Building Gadget.
@@ -34,17 +35,20 @@ public class BuildingSurfaceMode extends AtopSupportedMode {
     }
 
     @Override
-    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed, ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeWithTransformed(EntityPlayer player, ChunkCoordinates transformed,
+        ChunkCoordinates original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool) / 2;
         boolean fuzzy = GadgetGeneric.getFuzzy(tool);
-        if (GadgetGeneric.getConnectedArea(tool))
-            return ConnectedSurface.create(player.worldObj, transformed, DirectionUtils.getOppositeEnumFacing(sideHit), range, fuzzy);
-        return Surface.create(player.worldObj, transformed, DirectionUtils.getOppositeEnumFacing(sideHit), range, fuzzy);
+        if (GadgetGeneric.getConnectedArea(tool)) return ConnectedSurface
+            .create(player.worldObj, transformed, DirectionUtils.getOppositeEnumFacing(sideHit), range, fuzzy);
+        return Surface
+            .create(player.worldObj, transformed, DirectionUtils.getOppositeEnumFacing(sideHit), range, fuzzy);
     }
 
     @Override
-    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return WorldUtils.offset(hit, sideHit);
+    public ChunkCoordinates transformAtop(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit,
+        ItemStack tool) {
+        return ChunkCoordinateUtils.offset(hit, sideHit);
     }
 
     @Override

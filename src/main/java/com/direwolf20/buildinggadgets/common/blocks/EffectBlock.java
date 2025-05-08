@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import net.minecraft.item.Item;
-
 import java.util.Random;
+
+import net.minecraft.item.Item;
 
 public class EffectBlock extends BlockModBase {
 
@@ -23,7 +23,7 @@ public class EffectBlock extends BlockModBase {
 
     @Override
     public boolean renderAsNormalBlock() {
-        return false;  // Not a full cube
+        return false; // Not a full cube
     }
 
     @Override
@@ -33,11 +33,11 @@ public class EffectBlock extends BlockModBase {
 
     @Override
     public int quantityDropped(Random rand) {
-        return 0;  // No item dropped
+        return 0; // No item dropped
     }
 
     @Override
     public int getMobilityFlag() {
-        return 2;  // Prevents the block from being pushed by pistons
+        return 2; // Prevents the block from being pushed by pistons
     }
 }

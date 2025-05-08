@@ -4,13 +4,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class DirectionUtils {
+
     public static boolean isEnumFacingPositive(EnumFacing facing) {
         return facing.getFrontOffsetX() > 0 || facing.getFrontOffsetY() > 0 || facing.getFrontOffsetZ() > 0;
     }
 
     public static EnumFacing enumFacingByName(String name) {
         for (EnumFacing facing : EnumFacing.values()) {
-            if (facing.name().equalsIgnoreCase(name)) {
+            if (facing.name()
+                .equalsIgnoreCase(name)) {
                 return facing;
             }
         }
@@ -33,6 +35,7 @@ public class DirectionUtils {
         if (enumFacing == null) {
             return null;
         }
+
         return ForgeDirection.getOrientation(enumFacing.ordinal());
     }
 

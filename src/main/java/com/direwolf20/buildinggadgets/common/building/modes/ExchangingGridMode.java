@@ -1,12 +1,13 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
-import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
-import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumFacing;
+
+import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
+import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 
 /**
  * Grid mode designed for Exchanging Gadget where it attempt to build on the same level as target position rather than
@@ -24,7 +25,8 @@ public class ExchangingGridMode extends GridMode {
      * @implNote Exchanger replace at the same level, Building gadget build on top of the level
      */
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit, ItemStack tool) {
-        return super.computeCoordinates(player, WorldUtils.offset(hit, EnumFacing.DOWN), sideHit, tool);
+    public IPlacementSequence computeCoordinates(EntityPlayer player, ChunkCoordinates hit, EnumFacing sideHit,
+        ItemStack tool) {
+        return super.computeCoordinates(player, ChunkCoordinateUtils.offset(hit, EnumFacing.DOWN), sideHit, tool);
     }
 }

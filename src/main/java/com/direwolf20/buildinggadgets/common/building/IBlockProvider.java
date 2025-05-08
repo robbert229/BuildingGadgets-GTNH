@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChunkCoordinates;
+
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 /**
  * Abstract representation mapping from position to block state.

@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 /**
  * Indicates the position and type of block to use for placing something in a {@link World}.

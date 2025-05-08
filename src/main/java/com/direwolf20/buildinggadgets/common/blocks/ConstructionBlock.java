@@ -1,11 +1,9 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.tools.MetadataUtils;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
+import java.util.Random;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,14 +13,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-
-import com.cricketcraft.chisel.api.IFacade;
-
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-import java.util.Random;
+import com.cricketcraft.chisel.api.IFacade;
+import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.MetadataUtils;
+
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 // @Optional.Interface(iface = "team.chisel.ctm.api.IFacade", modid = "ctm-api")
 @Optional.Interface(iface = "com.cricketcraft.chisel.api.IFacade", modid = "ChiselAPI")
@@ -74,8 +75,8 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player,
-                                    int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         ConstructionBlockTileEntity te = getTE(world, x, y, z);
         ItemStack heldItem = player.getHeldItem();
         if (heldItem == null || heldItem.getItem() == null) {
@@ -86,14 +87,13 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         te.blockMetadata = block.getDamageValue(world, x, y, z);
 
         world.setTileEntity(x, y, z, te);
-        //te.setBlockState(newState);
-        //te.setActualBlockState(newState);
+        // te.setBlockState(newState);
+        // te.setActualBlockState(newState);
         return true;
-        //System.out.println("Failed: " + newState + ":" + te.getBlockState() + ":" + world.isRemote + ":" +
-        //        te.getActualBlockState());
+        // System.out.println("Failed: " + newState + ":" + te.getBlockState() + ":" + world.isRemote + ":" +
+        // te.getActualBlockState());
 
     }
-
 
     // @Override
     // public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
@@ -146,14 +146,12 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     // return true; // delegated to FacadeBakedModel#getQuads
     // }
 
-
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
-//        Block mimicBlock = getActualMimicBlock(blockAccess, x,y,z);
-//        return mimicBlock == null ? true : mimicBlock.shouldSideBeRendered(blockAccess, x,y,z , side);
-//    }
-
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
+    // Block mimicBlock = getActualMimicBlock(blockAccess, x,y,z);
+    // return mimicBlock == null ? true : mimicBlock.shouldSideBeRendered(blockAccess, x,y,z , side);
+    // }
 
     @Override
     public boolean isOpaqueCube() {
@@ -163,8 +161,8 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     //
     @Override
     public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
-        return MetadataUtils.getConstructionBlockEntityMetadataFromDamage(
-                world.getBlockMetadata(x, y, z)).getBright() ? 0 : 255;
+        return MetadataUtils.getConstructionBlockEntityMetadataFromDamage(world.getBlockMetadata(x, y, z))
+            .getBright() ? 0 : 255;
     }
 
     //
@@ -241,16 +239,16 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
             return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
         }
 
-        ChunkCoordinates offsetCoordinates = WorldUtils.offset(pos, parsedSide, 1);
+        ChunkCoordinates offsetCoordinates = ChunkCoordinateUtils.offset(pos, parsedSide, 1);
         Block sideBlockState = worldIn.getBlock(offsetCoordinates.posX, offsetCoordinates.posY, offsetCoordinates.posZ);
         if (sideBlockState.equals(ModBlocks.constructionBlock)) {
-            if (!(getActualMimicBlock(worldIn, WorldUtils.offset(pos, parsedSide, 1)) == null)) {
-                sideBlockState = getActualMimicBlock(worldIn, WorldUtils.offset(pos, parsedSide, 1));
+            if (!(getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1)) == null)) {
+                sideBlockState = getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
             }
         }
 
         fakeWorld.setState(worldIn, mimicBlock, pos);
-        fakeWorld.setState(worldIn, sideBlockState, WorldUtils.offset(pos, parsedSide, 1));
+        fakeWorld.setState(worldIn, sideBlockState, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
 
         try {
             return mimicBlock.shouldSideBeRendered(fakeWorld, pos.posX, pos.posY, pos.posZ, side);
@@ -290,18 +288,18 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     // }
     //
 
-//    @Override
-//    public boolean isNormalCube(IBlockAccess world, int x, int y, int z) {
-//        Block mimicBlock = getActualMimicBlock(world, x, y, z);
-//        if (mimicBlock == null) {
-//            return super.isNormalCube(world, x, y, z);
-//        }
-//        try {
-//            return mimicBlock.isNormalCube(world, x, y, z);
-//        } catch (Exception var8) {
-//            return super.isNormalCube(world, x, y, z);
-//        }
-//    }
+    // @Override
+    // public boolean isNormalCube(IBlockAccess world, int x, int y, int z) {
+    // Block mimicBlock = getActualMimicBlock(world, x, y, z);
+    // if (mimicBlock == null) {
+    // return super.isNormalCube(world, x, y, z);
+    // }
+    // try {
+    // return mimicBlock.isNormalCube(world, x, y, z);
+    // } catch (Exception var8) {
+    // return super.isNormalCube(world, x, y, z);
+    // }
+    // }
 
     //
     // @Override
@@ -323,7 +321,6 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         // return state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);
         return false;
     }
-
 
     /**
      * The below implements support for CTM's Connected Textures to work properly

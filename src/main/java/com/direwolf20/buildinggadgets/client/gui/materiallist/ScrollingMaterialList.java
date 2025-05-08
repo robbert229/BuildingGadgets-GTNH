@@ -1,27 +1,29 @@
 package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
-import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
-import com.direwolf20.buildinggadgets.client.util.RenderUtil;
-import com.direwolf20.buildinggadgets.common.tools.MathTool;
-import net.minecraft.client.Minecraft;
-//import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import cpw.mods.fml.client.GuiScrollingList;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-
 import static com.direwolf20.buildinggadgets.client.util.AlignmentUtil.SLOT_SIZE;
 import static com.direwolf20.buildinggadgets.client.util.RenderUtil.getFontRenderer;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
+import java.awt.*;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+
+import org.lwjgl.opengl.GL11;
+
+import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
+import com.direwolf20.buildinggadgets.client.util.RenderUtil;
+import com.direwolf20.buildinggadgets.util.MathTool;
+
+import cpw.mods.fml.client.GuiScrollingList;
+
 class ScrollingMaterialList extends GuiScrollingList {
+
     static final int MARGIN = 2;
     static final int ENTRY_HEIGHT = Math.max(SLOT_SIZE + MARGIN * 2, getFontRenderer().FONT_HEIGHT * 2 + MARGIN * 3);
     static final int TOP = 24;
@@ -31,19 +33,21 @@ class ScrollingMaterialList extends GuiScrollingList {
     private final MaterialListGUI parent;
 
     public ScrollingMaterialList(MaterialListGUI parent, int width, int height) {
-        super(Minecraft.getMinecraft(),
-                parent.getWindowWidth(),
-                height,
-                parent.getWindowTopY() + TOP,
-                parent.getWindowBottomY() - BOTTOM,
-                parent.getWindowLeftX(),
-                ENTRY_HEIGHT);
+        super(
+            Minecraft.getMinecraft(),
+            parent.getWindowWidth(),
+            height,
+            parent.getWindowTopY() + TOP,
+            parent.getWindowBottomY() - BOTTOM,
+            parent.getWindowLeftX(),
+            ENTRY_HEIGHT);
         this.parent = parent;
     }
 
     @Override
     protected int getSize() {
-        return parent.getMaterials().size();
+        return parent.getMaterials()
+            .size();
     }
 
     @Override
@@ -58,12 +62,12 @@ class ScrollingMaterialList extends GuiScrollingList {
     }
 
     @Override
-    protected void drawBackground() {
-    }
+    protected void drawBackground() {}
 
     @Override
     protected void drawSlot(int index, int rightIn, int top, int entryHeight, Tessellator tess) {
-        ItemStack item = parent.getMaterials().get(index);
+        ItemStack item = parent.getMaterials()
+            .get(index);
         // We don't want our content to be exactly aligned with the border
         int right = rightIn - 2;
         int bottom = top + entryHeight;
@@ -82,18 +86,27 @@ class ScrollingMaterialList extends GuiScrollingList {
         RenderUtil.renderTextVerticalCenter(itemName, itemNameX, top, bottom - 1, Color.WHITE.getRGB());
 
         int required = item.stackSize;
-        int available = MathTool.clamp(parent.getAvailable().getInt(index), 0, required);
+        int available = MathTool.clamp(
+            parent.getAvailable()
+                .getInt(index),
+            0,
+            required);
         boolean fulfilled = available == required;
         int color = fulfilled ? Color.GREEN.getRGB() : Color.RED.getRGB();
         String amount = I18n.format("gui.buildinggadgets.materialList.text.statusTemplate", available, required);
-        RenderUtil.renderTextHorizontalRight(amount, right, AlignmentUtil.getYForAlignedCenter(getFontRenderer().FONT_HEIGHT, top, bottom), color);
+        RenderUtil.renderTextHorizontalRight(
+            amount,
+            right,
+            AlignmentUtil.getYForAlignedCenter(getFontRenderer().FONT_HEIGHT, top, bottom),
+            color);
 
         int widthItemName = Minecraft.getMinecraft().fontRenderer.getStringWidth(itemName);
         int widthAmount = Minecraft.getMinecraft().fontRenderer.getStringWidth(amount);
         drawGuidingLine(index, right, top, bottom, itemNameX, widthItemName, widthAmount);
     }
 
-    private void drawGuidingLine(int index, int right, int top, int bottom, int itemNameX, int widthItemName, int widthAmount) {
+    private void drawGuidingLine(int index, int right, int top, int bottom, int itemNameX, int widthItemName,
+        int widthAmount) {
         if (!isSelected(index)) {
             int lineXStart = itemNameX + widthItemName + LINE_SIDE_MARGIN;
             int lineXEnd = right - widthAmount - LINE_SIDE_MARGIN;
@@ -108,9 +121,9 @@ class ScrollingMaterialList extends GuiScrollingList {
 
     private void drawHoveringText(ItemStack item, int slotX, int slotY) {
         // TODO(johnrowl) implement this
-//        if (mouseX > slotX && mouseY > slotY && mouseX <= slotX + 18 && mouseY <= slotY + 18) {
-//            parent.setTaskHoveringText(mouseX, mouseY, parent.getItemToolTip(item));
-//        }
+        // if (mouseX > slotX && mouseY > slotY && mouseX <= slotX + 18 && mouseY <= slotY + 18) {
+        // parent.setTaskHoveringText(mouseX, mouseY, parent.getItemToolTip(item));
+        // }
     }
 
     private void drawIcon(ItemStack item, int slotX, int slotY) {

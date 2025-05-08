@@ -61,8 +61,6 @@ key.material_list=素材リスト
 #tooltip: 
 tooltip.constructionblockpowder.helptext=水に触れさせる
 tooltip.gadget.block=ブロック
-tooltip.gadget.destroy.overlay=オーバーレイ
-tooltip.gadget.destroyshowoverlay=オーバーレイを表示
 tooltip.gadget.destroywarning=警告：このツールはブロックを消滅させます。
 tooltip.gadget.energy=エネルギー
 tooltip.gadget.mode=モード

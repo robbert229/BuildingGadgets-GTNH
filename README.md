@@ -36,3 +36,13 @@ We have a [Discord](https://discord.gg/qqUUtu3) if you need some help or if you'
 An especially big thanks to all of our [contributors](https://github.com/Direwolf20-MC/BuildingGadgets/graphs/contributors) for the continued support, bug reports and PR's. All of the [Forge Guys](https://github.com/orgs/MinecraftForge/people) and the creators off Minecraft (Duh)
 
 [License MIT](License.md)
+
+## Notes
+
+### Undo Feature
+in version 1.12.x of building gadgets there was a limit of 1 for the undo history. This has been preserved.
+
+## Schematics
+This supports 1.12.x schematics at the moment.
+
+https://airtable.com/appSIzYTsvPm6ZgfA/shrahfRhFpKhukLKo/tblAWiuX4jWq85tYZ

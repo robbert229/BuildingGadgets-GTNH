@@ -4,15 +4,9 @@ package com.direwolf20.buildinggadgets.common.network;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 
-import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
-import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
-import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,8 +14,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
+
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 
 public class PacketTemplateManagerPaste implements IMessage {
 
@@ -54,8 +56,7 @@ public class PacketTemplateManagerPaste implements IMessage {
         // System.out.println("Buf size: " + buf.readableBytes());
     }
 
-    public PacketTemplateManagerPaste() {
-    }
+    public PacketTemplateManagerPaste() {}
 
     public PacketTemplateManagerPaste(ByteArrayOutputStream pasteStream, ChunkCoordinates TMpos, String name) {
         pos = TMpos;
@@ -81,6 +82,8 @@ public class PacketTemplateManagerPaste implements IMessage {
             try {
                 NBTTagCompound newTag = CompressedStreamTools.readCompressed(bais);
                 if (newTag.equals(new NBTTagCompound())) return;
+
+                System.out.println(newTag.toString());
 
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                 World world = player.worldObj;

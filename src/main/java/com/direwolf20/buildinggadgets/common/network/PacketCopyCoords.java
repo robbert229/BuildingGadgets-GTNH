@@ -1,19 +1,21 @@
 package com.direwolf20.buildinggadgets.common.network;
 
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
-import com.mojang.realmsclient.gui.ChatFormatting;
-import cpw.mods.fml.relauncher.Side;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
+
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
 
 public class PacketCopyCoords implements IMessage {
 
@@ -22,14 +24,14 @@ public class PacketCopyCoords implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        start = WorldUtils.fromLong(buf.readLong());
-        end = WorldUtils.fromLong(buf.readLong());
+        start = ChunkCoordinateUtils.fromLong(buf.readLong());
+        end = ChunkCoordinateUtils.fromLong(buf.readLong());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeLong(WorldUtils.toLong(start));
-        buf.writeLong(WorldUtils.toLong(end));
+        buf.writeLong(ChunkCoordinateUtils.toLong(start));
+        buf.writeLong(ChunkCoordinateUtils.toLong(end));
     }
 
     public PacketCopyCoords() {
@@ -42,6 +44,7 @@ public class PacketCopyCoords implements IMessage {
     }
 
     public static class Handler implements IMessageHandler<PacketCopyCoords, IMessage> {
+
         @Override
         public IMessage onMessage(PacketCopyCoords message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
@@ -67,11 +70,19 @@ public class PacketCopyCoords implements IMessage {
             if (startPos.equals(new ChunkCoordinates(0, 0, 0)) && endPos.equals(new ChunkCoordinates(0, 0, 0))) {
                 tool.setStartPos(heldItem, null);
                 tool.setEndPos(heldItem, null);
-                playerEntity.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
+                playerEntity.addChatMessage(
+                    new ChatComponentText(
+                        ChatFormatting.AQUA
+                            + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
             } else {
                 tool.setStartPos(heldItem, startPos);
                 tool.setEndPos(heldItem, endPos);
-                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.worldObj, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
+                GadgetCopyPaste.copyBlocks(
+                    heldItem,
+                    playerEntity,
+                    playerEntity.worldObj,
+                    tool.getStartPos(heldItem),
+                    tool.getEndPos(heldItem));
             }
         }
     }

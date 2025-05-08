@@ -9,7 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,12 +26,12 @@ public class ConstructionBlockPowder extends BlockFalling {
         BlockModBase.initModel(this);
     }
 
-//     @Override
-//     @SideOnly(Side.CLIENT)
-//     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
-//     super.addInformation(stack, player, list, b);
-//     list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
-//     }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+    // super.addInformation(stack, player, list, b);
+    // list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
+    // }
 
     // @Override
     // public void onEndFalling(World worldIn, ChunkCoordinates pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {
@@ -45,7 +45,7 @@ public class ConstructionBlockPowder extends BlockFalling {
 
         for (EnumFacing enumfacing : EnumFacing.values()) {
             if (enumfacing != EnumFacing.DOWN) {
-                ChunkCoordinates blockpos = WorldUtils.offset(pos, enumfacing, 1);
+                ChunkCoordinates blockpos = ChunkCoordinateUtils.offset(pos, enumfacing, 1);
 
                 if (worldIn.getBlock(blockpos.posX, blockpos.posY, blockpos.posZ)
                     .getMaterial() == Material.water) {

@@ -1,7 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.block.Block;
 import net.minecraft.util.ChunkCoordinates;
+
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class BlockMap {
 

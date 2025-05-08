@@ -32,10 +32,10 @@ public class ModItems {
     public static ConstructionPasteContainer constructionPasteContainer;
 
     @GameRegistry.ObjectHolder("constructionpastecontainert2")
-    public static ConstructionPasteContainer constructionPasteContainert2;
+    public static ConstructionPasteContainer constructionPasteContainerT2;
 
     @GameRegistry.ObjectHolder("constructionpastecontainert3")
-    public static ConstructionPasteContainer constructionPasteContainert3;
+    public static ConstructionPasteContainer constructionPasteContainerT3;
 
     @GameRegistry.ObjectHolder("constructionpastecontainercreative")
     public static ConstructionPasteContainerCreative constructionPasteContainerCreative;
@@ -72,23 +72,23 @@ public class ModItems {
         GameRegistry.registerItem(constructionChunkDense, constructionChunkDense.getUnlocalizedName());
 
         constructionPasteContainer = new ConstructionPasteContainer(
-                RegularPasteContainerTypes.T1.itemSuffix,
-                RegularPasteContainerTypes.T1.capacitySupplier);
+            RegularPasteContainerTypes.T1.itemSuffix,
+            RegularPasteContainerTypes.T1.capacitySupplier);
         GameRegistry.registerItem(constructionPasteContainer, constructionPasteContainer.getUnlocalizedName());
 
-        constructionPasteContainert2 = new ConstructionPasteContainer(
-                RegularPasteContainerTypes.T2.itemSuffix,
-                RegularPasteContainerTypes.T2.capacitySupplier);
-        GameRegistry.registerItem(constructionPasteContainert2, constructionPasteContainert2.getUnlocalizedName());
+        constructionPasteContainerT2 = new ConstructionPasteContainer(
+            RegularPasteContainerTypes.T2.itemSuffix,
+            RegularPasteContainerTypes.T2.capacitySupplier);
+        GameRegistry.registerItem(constructionPasteContainerT2, constructionPasteContainerT2.getUnlocalizedName());
 
-        constructionPasteContainert3 = new ConstructionPasteContainer(
-                RegularPasteContainerTypes.T3.itemSuffix,
-                RegularPasteContainerTypes.T3.capacitySupplier);
-        GameRegistry.registerItem(constructionChunkDense, constructionChunkDense.getUnlocalizedName());
+        constructionPasteContainerT3 = new ConstructionPasteContainer(
+            RegularPasteContainerTypes.T3.itemSuffix,
+            RegularPasteContainerTypes.T3.capacitySupplier);
+        GameRegistry.registerItem(constructionPasteContainerT3, constructionPasteContainerT3.getUnlocalizedName());
 
         constructionPasteContainerCreative = new ConstructionPasteContainerCreative();
         GameRegistry
-                .registerItem(constructionPasteContainerCreative, constructionPasteContainerCreative.getUnlocalizedName());
+            .registerItem(constructionPasteContainerCreative, constructionPasteContainerCreative.getUnlocalizedName());
     }
 
 }

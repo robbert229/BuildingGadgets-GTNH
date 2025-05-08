@@ -1,8 +1,9 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
+
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 
 public interface IHoverHelpText {
 

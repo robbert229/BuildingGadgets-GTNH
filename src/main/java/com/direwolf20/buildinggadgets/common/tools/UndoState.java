@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.util.ChunkCoordinates;
-
 import java.util.List;
+
+import net.minecraft.util.ChunkCoordinates;
 
 public class UndoState {
 

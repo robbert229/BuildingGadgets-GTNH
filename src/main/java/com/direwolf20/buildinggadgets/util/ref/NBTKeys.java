@@ -1,10 +1,11 @@
-package com.direwolf20.buildinggadgets.common.util.ref;
-
-import net.minecraft.util.ResourceLocation;
+package com.direwolf20.buildinggadgets.util.ref;
 
 import static com.direwolf20.buildinggadgets.BuildingGadgets.MODID;
 
+import net.minecraft.util.ResourceLocation;
+
 public final class NBTKeys {
+
     public static final ResourceLocation AND_SERIALIZER_ID = new ResourceLocation(MODID, "sub_entries");
     public static final String KEY_AUTHOR = "author";
     public static final String KEY_BOUNDS = "bounds";
@@ -29,16 +30,21 @@ public final class NBTKeys {
     public static final String KEY_SUB_ENTRIES = "sub_entries";
     public static final ResourceLocation OR_SERIALIZER_ID = new ResourceLocation(MODID, "alternatives");
     public static final ResourceLocation SIMPLE_SERIALIZER_ID = new ResourceLocation(MODID, "entries");
+
     private NBTKeys() {}
 
     public static final String CREATIVE_MARKER = "creative";
+
+    public static final String GADGET_START_POS = "startPos";
+    public static final String GADGET_END_POS = "endPos";
+    public static final String GADGET_POS_INT_ARRAY = "posIntArray";
+    public static final String GADGET_STATE_INT_ARRAY = "stateIntArray";
 
     public static final String GADGET_MODE = "mode";
     public static final String GADGET_TICKS = "ticks";
     public static final String GADGET_REPLACEMENT_BLOCK = "replacement_block";
     public static final String GADGET_SOURCE_BLOCK = "source_block";
     public static final String GADGET_USE_PASTE = "use_paste";
-    public static final String GADGET_OVERLAY = "overlay";
     public static final String GADGET_FUZZY = "fuzzy";
     public static final String GADGET_RAYTRACE_FLUID = "raytrace_fluid";
     public static final String GADGET_PLACE_INSIDE = "start_inside";
@@ -51,8 +57,7 @@ public final class NBTKeys {
     public static final String GADGET_UNDO_START_POS = "undo_start_pos";
     public static final String GADGET_REL_POS = "rel_pos";
     public static final String GADGET_UUID = "uuid";
-    public static final String GADGET_START_POS = "start_pos";
-    public static final String GADGET_END_POS = "end_pos";
+
     public static final String GADGET_DIM = "dim";
     public static final String GADGET_VALUE_UP = "up";
     public static final String GADGET_VALUE_DOWN = "down";

@@ -9,8 +9,8 @@ import net.minecraft.util.EnumFacing;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
-import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.google.common.collect.AbstractIterator;
 
 /**
@@ -83,7 +83,7 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
             protected ChunkCoordinates computeNext() {
                 if (progression >= maxProgression) return endOfData();
 
-                return WorldUtils.offset(source, offsetDirection, progression++);
+                return ChunkCoordinateUtils.offset(source, offsetDirection, progression++);
             }
         };
     }

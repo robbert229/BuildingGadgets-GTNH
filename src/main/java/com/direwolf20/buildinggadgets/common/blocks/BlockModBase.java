@@ -2,13 +2,13 @@ package com.direwolf20.buildinggadgets.common.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+
 public class BlockModBase extends Block {
+
     private final String name;
     private final String texturePrefix;
 
@@ -37,7 +37,13 @@ public class BlockModBase extends Block {
     }
 
     public static enum BlockSide {
-        Bottom(0), Top(1), North(2), South(3), West(4), East(5);
+
+        Bottom(0),
+        Top(1),
+        North(2),
+        South(3),
+        West(4),
+        East(5);
 
         private final int value;
 
@@ -93,7 +99,7 @@ public class BlockModBase extends Block {
         };
     }
 
-    //    @SideOnly(Side.CLIENT)
+    // @SideOnly(Side.CLIENT)
     public void initModel() {
         initModel(this);
     }

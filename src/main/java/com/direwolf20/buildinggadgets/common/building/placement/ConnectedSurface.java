@@ -18,8 +18,8 @@ import net.minecraft.world.IBlockAccess;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
-import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 
@@ -45,7 +45,13 @@ public final class ConnectedSurface implements IPlacementSequence {
         // TODO(johnrowl) offset's refactor here is suspicious.
         // After revisiting, maybe not?
         // return create(world, searchingRegion, pos -> pos.offset(side), searchingCenter, side, fuzzy);
-        return create(world, searchingRegion, pos -> WorldUtils.offset(pos, side), searchingCenter, side, fuzzy);
+        return create(
+            world,
+            searchingRegion,
+            pos -> ChunkCoordinateUtils.offset(pos, side),
+            searchingCenter,
+            side,
+            fuzzy);
     }
 
     public static ConnectedSurface create(IBlockAccess world, Region searchingRegion,

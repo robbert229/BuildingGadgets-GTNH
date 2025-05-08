@@ -5,14 +5,14 @@ import java.util.Spliterator;
 
 import javax.annotation.Nonnull;
 
-import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
 
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
-import com.direwolf20.buildinggadgets.common.tools.MathTool;
-import com.direwolf20.buildinggadgets.common.tools.WorldUtils;
+import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
+import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
+import com.direwolf20.buildinggadgets.util.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
@@ -33,7 +33,7 @@ public final class Column implements IPlacementSequence {
      * @implSpec this sequence includes the source position
      */
     public static Column extendFrom(ChunkCoordinates hit, EnumFacing side, int range) {
-        return new Column(hit, WorldUtils.offset(hit, side, range - 1));
+        return new Column(hit, ChunkCoordinateUtils.offset(hit, side, range - 1));
     }
 
     /**
@@ -45,9 +45,9 @@ public final class Column implements IPlacementSequence {
      */
     public static Column centerAt(ChunkCoordinates center, EnumFacing axis, int length) {
         EnumFacing negative = DirectionUtils.getOppositeEnumFacing(axis);
-        ChunkCoordinates base = WorldUtils.offset(center, negative, (length - 1) / 2);
+        ChunkCoordinates base = ChunkCoordinateUtils.offset(center, negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
-        return new Column(base, WorldUtils.offset(base, axis, MathTool.floorToOdd(length) - 1));
+        return new Column(base, ChunkCoordinateUtils.offset(base, axis, MathTool.floorToOdd(length) - 1));
     }
 
     private final Region region;

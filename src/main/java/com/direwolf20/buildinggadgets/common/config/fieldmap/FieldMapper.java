@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.config.fieldmap;
 
-import com.direwolf20.buildinggadgets.common.config.PatternList;
-
 import java.util.function.Function;
+
+import com.direwolf20.buildinggadgets.common.config.PatternList;
 
 /**
  * Class representing a bijective Function and it's reverse Function used to Mapping Field Types to other Types which
@@ -31,10 +31,10 @@ public class FieldMapper<FieldVal, SyncedVal> {
      */
 
     public static final FieldMapper<PatternList, String[]> PATTERN_LIST_MAPPER = of(
-     PatternList::toArray,
-     PatternList::ofResourcePattern,
-     PatternList.class,
-     String[].class);
+        PatternList::toArray,
+        PatternList::ofResourcePattern,
+        PatternList.class,
+        String[].class);
 
     private final Function<FieldVal, SyncedVal> fieldToSync;
     private final Function<SyncedVal, FieldVal> syncToField;

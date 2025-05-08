@@ -1,4 +1,6 @@
-package com.direwolf20.buildinggadgets.common.tools;
+package com.direwolf20.buildinggadgets.util;
+
+import com.direwolf20.buildinggadgets.common.tools.ConstructionBlockEntityMetadata;
 
 public class MetadataUtils {
 

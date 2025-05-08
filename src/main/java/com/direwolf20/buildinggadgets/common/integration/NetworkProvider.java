@@ -5,15 +5,16 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.IIntegratedMod;
-import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.Phase;
-import com.direwolf20.buildinggadgets.common.tools.NetworkIO.Operation;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
+import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.IIntegratedMod;
+import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.Phase;
+import com.direwolf20.buildinggadgets.common.tools.NetworkIO.Operation;
+
 public abstract class NetworkProvider implements IIntegratedMod {
+
     private boolean isLoaded = true;
     private static final Set<NetworkProvider> PROVIDERS = new HashSet<>();
 

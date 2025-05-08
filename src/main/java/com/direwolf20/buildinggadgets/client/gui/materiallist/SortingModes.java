@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
-import com.direwolf20.buildinggadgets.common.tools.Sorter.ItemStacks;
+import java.util.List;
+import java.util.function.BiFunction;
+
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-import java.util.List;
-import java.util.function.BiFunction;
+import com.direwolf20.buildinggadgets.common.tools.Sorter.ItemStacks;
 
 public enum SortingModes {
 
@@ -19,7 +20,8 @@ public enum SortingModes {
     private final String translationKey;
     private final boolean reverse;
 
-    SortingModes(BiFunction<List<ItemStack>, Boolean, List<ItemStack>> sorter, BiFunction<List<ItemStack>, Boolean, List<ItemStack>> inplaceSorter, String translationKey, boolean reverse) {
+    SortingModes(BiFunction<List<ItemStack>, Boolean, List<ItemStack>> sorter,
+        BiFunction<List<ItemStack>, Boolean, List<ItemStack>> inplaceSorter, String translationKey, boolean reverse) {
         this.sorter = sorter;
         this.inplaceSorter = inplaceSorter;
         this.translationKey = "gui.buildinggadgets.materialList.button.sortingMode." + translationKey;

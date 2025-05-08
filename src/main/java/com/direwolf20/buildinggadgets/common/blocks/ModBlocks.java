@@ -1,12 +1,9 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
-
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManager;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.MathHelper;
 
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModBlocks {

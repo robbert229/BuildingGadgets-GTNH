@@ -1,21 +1,17 @@
-package com.direwolf20.buildinggadgets.common.tools;
+package com.direwolf20.buildinggadgets.util;
 
 import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import net.minecraft.util.ChunkCoordinates;
+
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -26,18 +22,22 @@ import it.unimi.dsi.fastutil.ints.IntList;
  */
 public class NBTTool {
 
+    public static final String NBT_CHUNK_COORDINATE_X = "x";
+    public static final String NBT_CHUNK_COORDINATE_Y = "y";
+    public static final String NBT_CHUNK_COORDINATE_Z = "z";
+
     public static NBTTagCompound createPosTag(ChunkCoordinates pos) {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("x", pos.posX);
-        compound.setInteger("y", pos.posY);
-        compound.setInteger("z", pos.posZ);
+        compound.setInteger(NBT_CHUNK_COORDINATE_X, pos.posX);
+        compound.setInteger(NBT_CHUNK_COORDINATE_Y, pos.posY);
+        compound.setInteger(NBT_CHUNK_COORDINATE_Z, pos.posZ);
         return compound;
     }
 
     public static ChunkCoordinates getPosFromTag(NBTTagCompound compound) {
-        int x = compound.getInteger("x");
-        int y = compound.getInteger("y");
-        int z = compound.getInteger("z");
+        int x = compound.getInteger(NBT_CHUNK_COORDINATE_X);
+        int y = compound.getInteger(NBT_CHUNK_COORDINATE_Y);
+        int z = compound.getInteger(NBT_CHUNK_COORDINATE_Z);
 
         return new ChunkCoordinates(x, y, z);
     }
@@ -310,6 +310,20 @@ public class NBTTool {
         return res;
     }
 
+    public static int[] readIntList(NBTBase list) {
+        // extract the list of integers that are stored in the list.
+        if (list instanceof NBTTagList intList) {
+            int[] res = new int[intList.tagCount()];
+            for (int i = 0; i < intList.tagCount(); i++) {
+                String value = intList.getStringTagAt(i);
+                var trimmedValue = value.replaceFirst("I;", "");
+                res[i] = Integer.parseInt(trimmedValue);
+            }
+            return res;
+        }
+        return null;
+    }
+
     public static Boolean[] readBBooleanList(NBTTagByteArray booleans) {
         byte[] bytes = booleans.func_150292_c();
         Boolean[] res = new Boolean[bytes.length];
@@ -320,7 +334,7 @@ public class NBTTool {
     }
 
     public static <K, V> NBTTagList serializeMap(Map<K, V> map, Function<K, NBTBase> keySerializer,
-                                                 Function<V, NBTBase> valueSerializer) {
+        Function<V, NBTBase> valueSerializer) {
         NBTTagList list = new NBTTagList();
         for (Map.Entry<K, V> entry : map.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -332,15 +346,15 @@ public class NBTTool {
     }
 
     public static <K, V> Map<K, V> deserializeMap(NBTTagList list, Map<K, V> toAppendTo,
-                                                  Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
+        Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
 
         for (int i = 0; i < list.tagCount(); i++) {
             NBTBase nbt = list.getCompoundTagAt(i);
             if (nbt instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) nbt;
                 toAppendTo.put(
-                        keyDeserializer.apply(compound.getTag("key")),
-                        valueDeserializer.apply(compound.getTag("val")));
+                    keyDeserializer.apply(compound.getTag("key")),
+                    valueDeserializer.apply(compound.getTag("val")));
             }
         }
         return toAppendTo;
@@ -360,7 +374,7 @@ public class NBTTool {
         return tag;
     }
 
-    private static final String NBT_BLOCK_ID = "block_id";
+    private static final String NBT_BLOCK_NAME = "Name";
     private static final String NBT_BLOCK_META = "block_meta";
 
     public static NBTTagCompound blockToCompound(BlockState block) {
@@ -370,13 +384,15 @@ public class NBTTool {
     }
 
     public static void writeBlockToCompound(NBTTagCompound compound, BlockState block) {
-        compound.setInteger(NBT_BLOCK_ID, Block.getIdFromBlock(block.getBlock()));
+        compound.setInteger(NBT_BLOCK_NAME, Block.getIdFromBlock(block.getBlock()));
         compound.setInteger(NBT_BLOCK_META, block.getMetadata());
     }
 
     public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
-        Block block = Block.getBlockById(compound.getInteger(NBT_BLOCK_ID));
+        var name = compound.getString(NBT_BLOCK_NAME);
+        Block block = GameData.getBlockRegistry().getObject(name);
+        // TODO (johnrowl) this needs to be fixed. This property doesn't exist.
         int meta = compound.getInteger(NBT_BLOCK_META);
 
         return new BlockState(block, meta);

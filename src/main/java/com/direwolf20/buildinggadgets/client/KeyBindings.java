@@ -1,14 +1,17 @@
 package com.direwolf20.buildinggadgets.client;
 
+import net.minecraft.client.settings.KeyBinding;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.settings.KeyBinding;
-import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
 public class KeyBindings {
-    public static KeyBinding menuSettings;
+
+    public static KeyBinding temporarilyEnableMenu;
     public static KeyBinding range;
     public static KeyBinding rotateMirror;
     public static KeyBinding undo;
@@ -18,7 +21,7 @@ public class KeyBindings {
     public static KeyBinding materialList;
 
     public static void init() {
-        menuSettings = createBinding("settings_menu", Keyboard.KEY_G);
+        temporarilyEnableMenu = createBinding("settings_menu", Keyboard.KEY_G);
         range = createBinding("range", Keyboard.KEY_R);
         undo = createBinding("undo", Keyboard.KEY_U);
         anchor = createBinding("anchor", Keyboard.KEY_H);

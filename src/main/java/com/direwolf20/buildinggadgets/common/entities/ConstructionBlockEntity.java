@@ -1,25 +1,19 @@
 package com.direwolf20.buildinggadgets.common.entities;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.world.World;
+
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockPowder;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
-import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-//import net.minecraft.block.state.IBlockState;
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
-import com.direwolf20.buildinggadgets.common.tools.NBTTool;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-//import net.minecraft.network.datasync.DataParameter;
-//import net.minecraft.network.datasync.DataSerializers;
-//import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-//import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class ConstructionBlockEntity extends Entity {
+
     private static int MAKING = 20;
     private static final int FIXED_X = 21;
     private static final int FIXED_Y = 22;
@@ -64,7 +58,7 @@ public class ConstructionBlockEntity extends Entity {
         }
 
         if (!isDespawning()) {
-//
+            //
         } else {
             despawnTick();
         }
@@ -82,20 +76,21 @@ public class ConstructionBlockEntity extends Entity {
                     TileEntity te = world.getTileEntity(setPos.posX, setPos.posY, setPos.posZ);
                     if (te instanceof ConstructionBlockTileEntity) {
                         BlockState tempState = ((ConstructionBlockTileEntity) te).getBlockState();
-                        if (tempState == null)
-                            return;
+                        if (tempState == null) return;
 
-                        int opacity = tempState.getBlock().getLightOpacity(world, setPos.posX, setPos.posY, setPos.posZ);
-                        boolean neighborBrightness = tempState.getBlock().getUseNeighborBrightness();
+                        int opacity = tempState.getBlock()
+                            .getLightOpacity(world, setPos.posX, setPos.posY, setPos.posZ);
+                        boolean neighborBrightness = tempState.getBlock()
+                            .getUseNeighborBrightness();
 
                         if (opacity == 255 || neighborBrightness) {
                             BlockState tempSetBlock = ((ConstructionBlockTileEntity) te).getBlockState();
                             BlockState tempActualSetBlock = ((ConstructionBlockTileEntity) te).getActualBlockState();
 
                             // TODO(johnrowl) this whole thing needs to get reimplemented to actually look right.
-//                            world.setBlockMetadataWithNotify(setPos, ModBlocks.constructionBlock.getDefaultState()
-//                                    .withProperty(ConstructionBlock.BRIGHT, opacity != 255)
-//                                    .withProperty(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness));
+                            // world.setBlockMetadataWithNotify(setPos, ModBlocks.constructionBlock.getDefaultState()
+                            // .withProperty(ConstructionBlock.BRIGHT, opacity != 255)
+                            // .withProperty(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness));
 
                             te = world.getTileEntity(setPos.posX, setPos.posY, setPos.posZ);
                             if (te instanceof ConstructionBlockTileEntity) {
@@ -141,7 +136,7 @@ public class ConstructionBlockEntity extends Entity {
 
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
-        //System.out.println(compound);
+        // System.out.println(compound);
         despawning = compound.getInteger("despawning");
         ticksExisted = compound.getInteger("ticksExisted");
         setPos = NBTTool.getPosFromTag(compound.getCompoundTag("setPos"));
@@ -170,7 +165,7 @@ public class ConstructionBlockEntity extends Entity {
 
     @Override
     public boolean shouldRenderInPass(int pass) {
-        return pass == 0; //After tr
+        return pass == 0; // After tr
     }
 
 }

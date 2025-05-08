@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.tools.BlockState;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +8,10 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+
 public class ConstructionBlockTileEntity extends TileEntity {
+
     private Block block;
     private int blockMeta;
     private Block actualBlock;
@@ -36,7 +38,6 @@ public class ConstructionBlockTileEntity extends TileEntity {
     public boolean setActualBlockState(BlockState blockState) {
         return this.setActualBlockState(blockState.getBlock(), blockState.getMetadata());
     }
-
 
     public BlockState getBlockState() {
         return new BlockState(this.getBlock(), this.getBlockMeta());
@@ -101,7 +102,13 @@ public class ConstructionBlockTileEntity extends TileEntity {
         readFromNBT(tagCompound);
         if (this.worldObj.isRemote) {
             if (getBlock() != oldBlock || getBlockMeta() != oldMeta) {
-                this.worldObj.markBlockRangeForRenderUpdate(this.xCoord, this.yCoord, this.zCoord, this.xCoord, this.yCoord, this.zCoord);
+                this.worldObj.markBlockRangeForRenderUpdate(
+                    this.xCoord,
+                    this.yCoord,
+                    this.zCoord,
+                    this.xCoord,
+                    this.yCoord,
+                    this.zCoord);
             }
         }
     }

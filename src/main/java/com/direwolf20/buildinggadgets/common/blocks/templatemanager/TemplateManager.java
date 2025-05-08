@@ -1,18 +1,7 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
-import com.direwolf20.buildinggadgets.common.items.ITemplate;
-import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import net.minecraft.block.Block;
-//import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-//import net.minecraft.block.properties.IProperty;
-//import net.minecraft.block.properties.PropertyDirection;
-//import net.minecraft.block.state.BlockStateContainer;
-//import net.minecraft.block.state.IBlockState;
-//import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -21,13 +10,18 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
+import com.direwolf20.buildinggadgets.common.items.ITemplate;
+import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 
 public class TemplateManager extends BlockModBase {
+
     private static final int GUI_ID = 1;
     private IIcon iconFront, iconSide, iconBottom, iconTop;
 
@@ -42,37 +36,37 @@ public class TemplateManager extends BlockModBase {
         world.setBlockMetadataWithNotify(x, y, z, facing, 2);
     }
 
+    // @SideOnly(Side.CLIENT)
+    // public void initModel() {
+    // ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new
+    // ModelResourceLocation(getRegistryName(), "inventory"));
+    // }
 
-//    @SideOnly(Side.CLIENT)
-//    public void initModel() {
-//        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-//    }
+    // @Override
+    // public IBlockState getStateForPlacement(World worldIn, ChunkCoordinates pos, EnumFacing facing, float hitX, float
+    // hitY, float hitZ, int meta, EntityLivingBase placer) {
+    // return this.getDefaultState().withProperty(FACING_HORIZ, placer.getHorizontalFacing().getOpposite());
+    // }
 
-//    @Override
-//    public IBlockState getStateForPlacement(World worldIn, ChunkCoordinates pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-//        return this.getDefaultState().withProperty(FACING_HORIZ, placer.getHorizontalFacing().getOpposite());
-//    }
+    // @Override
+    // protected BlockStateContainer createBlockState() {
+    // return new BlockStateContainer(this, new IProperty[]{FACING});
+    // }
 
-//    @Override
-//    protected BlockStateContainer createBlockState() {
-//        return new BlockStateContainer(this, new IProperty[]{FACING});
-//    }
+    // @Override
+    // public IBlockState getStateFromMeta(int meta) {
+    //
+    // EnumFacing enumfacing = EnumFacing.getFront(meta);
+    // if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
+    // enumfacing = EnumFacing.NORTH;
+    // }
+    // return this.getDefaultState().withProperty(FACING, enumfacing);
+    // }
 
-//    @Override
-//    public IBlockState getStateFromMeta(int meta) {
-//
-//        EnumFacing enumfacing = EnumFacing.getFront(meta);
-//        if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-//            enumfacing = EnumFacing.NORTH;
-//        }
-//        return this.getDefaultState().withProperty(FACING, enumfacing);
-//    }
-
-//    @Override
-//    public int getMetaFromState(IBlockState state) {
-//        return state.getValue(FACING).getIndex();
-//    }
-
+    // @Override
+    // public int getMetaFromState(IBlockState state) {
+    // return state.getValue(FACING).getIndex();
+    // }
 
     @Override
     public boolean hasTileEntity(int state) {
@@ -85,7 +79,8 @@ public class TemplateManager extends BlockModBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+        float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
@@ -98,7 +93,8 @@ public class TemplateManager extends BlockModBase {
         var container = ((TemplateManagerTileEntity) te).getContainer(player);
 
         for (int i = 0; i <= 1; i++) {
-            ItemStack itemStack = container.getSlot(i).getStack();
+            ItemStack itemStack = container.getSlot(i)
+                .getStack();
             if (itemStack == null || !(itemStack.getItem() instanceof ITemplate template)) {
                 continue;
             }
@@ -108,7 +104,8 @@ public class TemplateManager extends BlockModBase {
                 continue;
             }
 
-            NBTTagCompound tagCompound = template.getWorldSave(world).getCompoundFromUUID(UUID);
+            NBTTagCompound tagCompound = template.getWorldSave(world)
+                .getCompoundFromUUID(UUID);
             if (tagCompound != null) {
                 PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
             }
@@ -181,15 +178,17 @@ public class TemplateManager extends BlockModBase {
                 stack.stackSize -= splitStackSize;
                 ItemStack splitStack = new ItemStack(stack.getItem(), splitStackSize, stack.getItemDamage());
                 if (stack.hasTagCompound()) {
-                    splitStack.setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+                    splitStack.setTagCompound(
+                        (NBTTagCompound) stack.getTagCompound()
+                            .copy());
                 }
 
                 EntityItem entityItem = new EntityItem(
-                        world,
-                        coordinates.posX + offsetX,
-                        coordinates.posY + offsetY,
-                        coordinates.posZ + offsetZ, splitStack
-                );
+                    world,
+                    coordinates.posX + offsetX,
+                    coordinates.posY + offsetY,
+                    coordinates.posZ + offsetZ,
+                    splitStack);
                 entityItem.motionX = world.rand.nextGaussian() * 0.05D;
                 entityItem.motionY = world.rand.nextGaussian() * 0.05D + 0.2D;
                 entityItem.motionZ = world.rand.nextGaussian() * 0.05D;

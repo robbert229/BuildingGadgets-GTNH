@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
 public class GuiButtonSelect extends GuiButtonHelpText {
+
     protected boolean selected;
 
     public GuiButtonSelect(int buttonId, int x, int y, int width, int height, String text, String helpTextKey) {

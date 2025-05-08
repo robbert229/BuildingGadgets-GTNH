@@ -1,13 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-// import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
-// import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-// import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-// import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
-// import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
-// import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
-// import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,16 +10,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import cofh.lib.util.helpers.MathHelper;
-import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -39,11 +21,25 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+
+import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
+import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
+import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
+import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multiset;
+import com.mojang.realmsclient.gui.ChatFormatting;
+
+import cofh.lib.util.helpers.MathHelper;
 
 public class GadgetUtils {
 
@@ -66,11 +62,15 @@ public class GadgetUtils {
     private static Supplier<IInventory> remoteInventorySupplier;
 
     public static boolean mightBeLink(final String s) {
-        return LINK_STARTS.stream().anyMatch(s::startsWith);
+        return LINK_STARTS.stream()
+            .anyMatch(s::startsWith);
     }
 
     //
-    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator.comparingInt(ChunkCoordinateComparatorHelper::getX).thenComparingInt(ChunkCoordinateComparatorHelper::getY).thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
+    public static final Comparator<ChunkCoordinates> POSITION_COMPARATOR = Comparator
+        .comparingInt(ChunkCoordinateComparatorHelper::getX)
+        .thenComparingInt(ChunkCoordinateComparatorHelper::getY)
+        .thenComparingInt(ChunkCoordinateComparatorHelper::getZ);
 
     public static String getStackErrorSuffix(ItemStack stack) {
         return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();
@@ -80,9 +80,9 @@ public class GadgetUtils {
         return "the following stack: [" + stack + "]";
     }
 
-
     @Nullable
-    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name) throws IOException {
+    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
+        throws IOException {
         NBTTagCompound withText = name != null && !name.isEmpty() ? (NBTTagCompound) compound.copy() : compound;
         if (name != null && !name.isEmpty()) {
             withText.setString("name", name);
@@ -92,7 +92,6 @@ public class GadgetUtils {
         CompressedStreamTools.writeCompressed(withText, baos);
         return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
     }
-
 
     public static NBTTagCompound getStackTag(ItemStack stack) {
         NBTTagCompound tag = stack.getTagCompound();
@@ -104,7 +103,7 @@ public class GadgetUtils {
 
     //
     public static void pushUndoList(ItemStack stack, UndoState undoState) {
-        //When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
+        // When we have a new set of Undo Coordinates, push it onto a list stored in NBT, max 10
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -124,7 +123,7 @@ public class GadgetUtils {
     //
     @Nullable
     public static UndoState popUndoList(ItemStack stack) {
-        //Get the most recent Undo Coordinate set from the list in NBT
+        // Get the most recent Undo Coordinate set from the list in NBT
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             return null;
@@ -141,7 +140,7 @@ public class GadgetUtils {
 
     //
     private static NBTTagCompound undoStateToNBT(UndoState undoState) {
-        //Convert an UndoState object into NBT data. Uses ints to store relative positions to a start block for data
+        // Convert an UndoState object into NBT data. Uses ints to store relative positions to a start block for data
         // compression..
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("dim", undoState.dimension);
@@ -149,7 +148,7 @@ public class GadgetUtils {
         int[] array = new int[undoState.coordinates.size()];
         int idx = 0;
         for (ChunkCoordinates coord : undoState.coordinates) {
-            //Converts relative chunkCoordinates coordinates to a single integer value. Max range 127 due to 8 bits.
+            // Converts relative chunkCoordinates coordinates to a single integer value. Max range 127 due to 8 bits.
             int px = (((coord.posX - startBlock.posX) & 0xff) << 16);
             int py = (((coord.posY - startBlock.posY) & 0xff) << 8);
             int pz = (((coord.posZ - startBlock.posZ) & 0xff));
@@ -162,7 +161,7 @@ public class GadgetUtils {
     }
 
     private static UndoState NBTToUndoState(NBTTagCompound compound) {
-        //Convert an integer list stored in NBT into UndoState
+        // Convert an integer list stored in NBT into UndoState
         int dim = compound.getInteger("dim");
         List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
         int[] array = compound.getIntArray("undoIntCoords");
@@ -180,7 +179,7 @@ public class GadgetUtils {
     }
 
     public static void setAnchor(ItemStack stack, List<ChunkCoordinates> coordinates) {
-        //Store 1 set of ChunkCoordinates in NBT to anchor the Ghost Blocks in the world when the anchor key is pressed
+        // Store 1 set of ChunkCoordinates in NBT to anchor the Ghost Blocks in the world when the anchor key is pressed
         NBTTagCompound tagCompound = stack.getTagCompound();
         NBTTagList coords = new NBTTagList();
 
@@ -197,7 +196,7 @@ public class GadgetUtils {
     }
 
     public static List<ChunkCoordinates> getAnchor(ItemStack stack) {
-        //Return the list of coordinates in the NBT Tag for anchor Coordinates
+        // Return the list of coordinates in the NBT Tag for anchor Coordinates
         NBTTagCompound tagCompound = stack.getTagCompound();
         List<ChunkCoordinates> coordinates = new ArrayList<ChunkCoordinates>();
 
@@ -225,7 +224,7 @@ public class GadgetUtils {
     }
 
     public static void setToolRange(ItemStack stack, int range) {
-        //Store the tool's range in NBT as an Integer
+        // Store the tool's range in NBT as an Integer
         NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
         tagCompound.setInteger("range", range);
     }
@@ -235,23 +234,23 @@ public class GadgetUtils {
         return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
     }
 
-//     public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,
-//     IBlockState state) {
-//     if (operation == PacketRotateMirror.Operation.MIRROR)
-//     return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT :
-//     Mirror.FRONT_BACK);
-//
-//     return state.withRotation(Rotation.CLOCKWISE_90);
-//     }
-//
-//     public static void rotateOrMirrorToolBlock(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation
-//     operation) {
-//     setToolBlock(stack, rotateOrMirrorBlock(player, operation, getToolBlock(stack)));
-//     setToolActualBlock(stack, rotateOrMirrorBlock(player, operation, getToolActualBlock(stack)));
-//     }
+    // public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,
+    // IBlockState state) {
+    // if (operation == PacketRotateMirror.Operation.MIRROR)
+    // return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT :
+    // Mirror.FRONT_BACK);
+    //
+    // return state.withRotation(Rotation.CLOCKWISE_90);
+    // }
+    //
+    // public static void rotateOrMirrorToolBlock(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation
+    // operation) {
+    // setToolBlock(stack, rotateOrMirrorBlock(player, operation, getToolBlock(stack)));
+    // setToolActualBlock(stack, rotateOrMirrorBlock(player, operation, getToolActualBlock(stack)));
+    // }
 
     private static void setToolBlock(ItemStack stack, @Nullable BlockState state) {
-        //Store the selected block in the tool's NBT
+        // Store the selected block in the tool's NBT
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -292,7 +291,6 @@ public class GadgetUtils {
 
         return NBTTool.blockFromCompound(tagCompound.getCompoundTag("blockstate"));
     }
-
 
     public static BlockState getToolActualBlock(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -351,13 +349,13 @@ public class GadgetUtils {
     // }
     //
     public static boolean anchorBlocks(EntityPlayer player, ItemStack stack) {
-        //Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual
+        // Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual
         // render
         World world = player.worldObj;
         List<ChunkCoordinates> currentCoords = getAnchor(stack);
-        if (currentCoords.isEmpty()) { //If we don't have an anchor, find the block we're supposed to anchor to
+        if (currentCoords.isEmpty()) { // If we don't have an anchor, find the block we're supposed to anchor to
             MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-            if (lookingAt == null) { //If we aren't looking at anything, exit
+            if (lookingAt == null) { // If we aren't looking at anything, exit
                 return false;
             }
             ChunkCoordinates startBlock = VectorTools.getPosFromMovingObjectPosition(lookingAt);
@@ -365,7 +363,7 @@ public class GadgetUtils {
 
             int sideHit = lookingAt.sideHit;
             if (startBlock == null || startBlockBlock == Blocks.air || startBlockBlock == null) {
-                //If we are looking
+                // If we are looking
                 // at air, exit
                 return false;
             }
@@ -373,28 +371,43 @@ public class GadgetUtils {
             List<ChunkCoordinates> coords = new ArrayList<ChunkCoordinates>();
 
             if (stack.getItem() instanceof GadgetBuilding) {
-                coords = BuildingModes.collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build the
-                //positions list based on tool mode and range
+                coords = BuildingModes
+                    .collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build
+                                                                                                                      // the
+                // positions list based on tool mode and range
             } else if (stack.getItem() instanceof GadgetExchanger) {
-                coords = ExchangingModes.collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build the
+                coords = ExchangingModes
+                    .collectPlacementPos(world, player, startBlock, EnumFacing.getFront(sideHit), stack, startBlock); // Build
+                                                                                                                      // the
                 // positions list based on tool mode and range
             }
 
-            setAnchor(stack, coords); //Set the anchor NBT
-            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedText()));
+            setAnchor(stack, coords); // Set the anchor NBT
+            player.addChatMessage(
+                new ChatComponentText(
+                    ChatFormatting.AQUA
+                        + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedText()));
         } else {
-            //If there's already an anchor, remove it.
+            // If there's already an anchor, remove it.
             setAnchor(stack, new ArrayList<ChunkCoordinates>());
-            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+            player.addChatMessage(
+                new ChatComponentText(
+                    ChatFormatting.AQUA
+                        + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
         }
         return true;
     }
 
-    public static boolean setRemoteInventory(EntityPlayer player, ItemStack tool, ChunkCoordinates pos, int dim, World world) {
+    public static boolean setRemoteInventory(EntityPlayer player, ItemStack tool, ChunkCoordinates pos, int dim,
+        World world) {
         if (getRemoteInventory(pos, dim, world, player) != null) {
             boolean same = pos.equals(getPOSFromNBT(tool, "boundTE"));
             writePOSToNBT(tool, same ? null : pos, "boundTE", dim);
-            player.addChatMessage(new ChatComponentText(ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedText()));
+            player.addChatMessage(
+                new ChatComponentText(
+                    ChatFormatting.AQUA
+                        + new ChatComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE"))
+                            .getUnformattedText()));
             return true;
         }
         return false;
@@ -413,7 +426,8 @@ public class GadgetUtils {
      * Call {@link #clearCachedRemoteInventory clearCachedRemoteInventory} when done using this method
      */
     @Nullable
-    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player,
+        NetworkIO.Operation operation) {
         if (remoteInventorySupplier == null) {
             remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
                 Integer dim = getDIMFromNBT(tool, "boundTE");
@@ -435,7 +449,8 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ChunkCoordinates pos, int dim, World world, EntityPlayer player,
+        NetworkIO.Operation operation) {
         MinecraftServer server = MinecraftServer.getServer();
         if (server == null) {
             return null;
@@ -450,7 +465,8 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ChunkCoordinates coordinates, World world, EntityPlayer player,
+        NetworkIO.Operation operation) {
         TileEntity te = world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
         if (te == null) {
             return null;
@@ -509,7 +525,8 @@ public class GadgetUtils {
         stack.setTagCompound(tagCompound);
     }
 
-    public static void writePOSToNBT(NBTTagCompound tagCompound, @Nullable ChunkCoordinates pos, String tagName, Integer dim) {
+    public static void writePOSToNBT(NBTTagCompound tagCompound, @Nullable ChunkCoordinates pos, String tagName,
+        Integer dim) {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
@@ -652,7 +669,9 @@ public class GadgetUtils {
         Multiset<UniqueItem> itemCountMap = HashMultiset.create(tagList.tagCount());
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
-            UniqueItem uniqueItem = new UniqueItem(Item.getItemById(tagCompound.getInteger("item")), tagCompound.getInteger("meta"));
+            UniqueItem uniqueItem = new UniqueItem(
+                Item.getItemById(tagCompound.getInteger("item")),
+                tagCompound.getInteger("meta"));
             int count = tagCompound.getInteger("count");
             itemCountMap.setCount(uniqueItem, count);
         }

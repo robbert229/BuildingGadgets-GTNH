@@ -430,6 +430,9 @@ public class GadgetUtils {
         NetworkIO.Operation operation) {
         if (remoteInventorySupplier == null) {
             remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
+                if (tool == null) {
+                    return null;
+                }
                 Integer dim = getDIMFromNBT(tool, "boundTE");
                 if (dim == null) return null;
 

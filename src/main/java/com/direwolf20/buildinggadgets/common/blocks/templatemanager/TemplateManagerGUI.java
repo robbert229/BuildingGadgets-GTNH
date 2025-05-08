@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.direwolf20.buildinggadgets.util.NBTJson;
+import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -381,8 +383,10 @@ public class TemplateManagerGUI extends GuiContainer {
             }
             try {
                 // Anything larger than below is likely to overflow the max packet size, crashing your client.
+                var parsed = new JsonParser().parse(CBString);
+                var nbt = NBTJson.toNbt(parsed);
                 ByteArrayOutputStream pasteStream = GadgetUtils
-                    .getPasteStream((NBTTagCompound) JsonToNBT.func_150315_a(CBString), nameField.getText());
+                    .getPasteStream((NBTTagCompound) nbt, nameField.getText());
 
                 if (pasteStream != null) {
                     PacketHandler.INSTANCE.sendToServer(

@@ -1,3 +1,8 @@
+// This file was originally sourced from the gtnh nei fork.
+// https://github.com/GTNewHorizons/NotEnoughItems/blob/master/src/main/java/codechicken/nei/util/NBTJson.java
+//
+// SPDX-License-Identifier: LGPL-3.0-only
+
 package com.direwolf20.buildinggadgets.util;
 
 import java.lang.reflect.InvocationTargetException;
@@ -78,7 +83,6 @@ public class NBTJson {
         } else if (nbt instanceof NBTTagList) {
             // Tag List
             final NBTTagList list = (NBTTagList) nbt;
-            list.tag
 
             if (list.tagList.isEmpty()) {
                 return createEmptyList(list);
@@ -134,8 +138,10 @@ public class NBTJson {
             if (m.find()) {
                 // Number
                 final String numberString = m.group(1);
-                if (m.groupCount() == 2 && m.group(2).length() > 0) {
-                    final char numberType = m.group(2).charAt(0);
+                if (m.groupCount() == 2 && m.group(2)
+                    .length() > 0) {
+                    final char numberType = m.group(2)
+                        .charAt(0);
                     switch (numberType) {
                         case 'b':
                         case 'B':
@@ -166,26 +172,40 @@ public class NBTJson {
             final JsonArray jsonArray = (JsonArray) jsonElement;
             final List<NBTBase> nbtList = new ArrayList<>();
 
+            var initial = true;
             for (JsonElement element : jsonArray) {
-                nbtList.add(toNbt(element));
-            }
-
-            if (nbtList.stream().allMatch(n -> n instanceof NBTTagInt)) {
-                return new NBTTagIntArray(nbtList.stream().mapToInt(i -> ((NBTTagInt) i).func_150287_d()).toArray());
-            } else if (nbtList.stream().allMatch(n -> n instanceof NBTTagByte)) {
-                final byte[] abyte = new byte[nbtList.size()];
-
-                for (int i = 0; i < nbtList.size(); i++) {
-                    abyte[i] = ((NBTTagByte) nbtList.get(i)).func_150290_f();
+                if (initial && element instanceof JsonPrimitive primitive) {
+                    if (primitive.isString() && "I".equals(primitive.getAsString())) {
+                        initial = false;
+                        continue;
+                    }
                 }
 
-                return new NBTTagByteArray(abyte);
-            } else {
-                NBTTagList nbtTagList = new NBTTagList();
-                nbtList.forEach(nbtTagList::appendTag);
-
-                return nbtTagList;
+                nbtList.add(toNbt(element));
+                initial = false;
             }
+
+            if (nbtList.stream()
+                .allMatch(n -> n instanceof NBTTagInt)) {
+                return new NBTTagIntArray(
+                    nbtList.stream()
+                        .mapToInt(i -> ((NBTTagInt) i).func_150287_d())
+                        .toArray());
+            } else if (nbtList.stream()
+                .allMatch(n -> n instanceof NBTTagByte)) {
+                    final byte[] abyte = new byte[nbtList.size()];
+
+                    for (int i = 0; i < nbtList.size(); i++) {
+                        abyte[i] = ((NBTTagByte) nbtList.get(i)).func_150290_f();
+                    }
+
+                    return new NBTTagByteArray(abyte);
+                } else {
+                    NBTTagList nbtTagList = new NBTTagList();
+                    nbtList.forEach(nbtTagList::appendTag);
+
+                    return nbtTagList;
+                }
         } else if (jsonElement instanceof JsonObject) {
             // NBTTagCompound
             final JsonObject jsonObject = (JsonObject) jsonElement;
@@ -209,7 +229,11 @@ public class NBTJson {
 
     protected static JsonObject createEmptyList(Object obj) {
         JsonObject empty = new JsonObject();
-        empty.add("__custom_type", new JsonPrimitive(obj.getClass().getName()));
+        empty.add(
+            "__custom_type",
+            new JsonPrimitive(
+                obj.getClass()
+                    .getName()));
         return empty;
     }
 
@@ -217,10 +241,13 @@ public class NBTJson {
 
         if (obj.has("__custom_type")) {
             try {
-                final String className = obj.get("__custom_type").getAsString();
-                return (NBTBase) Class.forName(className).getConstructor().newInstance();
+                final String className = obj.get("__custom_type")
+                    .getAsString();
+                return (NBTBase) Class.forName(className)
+                    .getConstructor()
+                    .newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
-                     | SecurityException | ClassNotFoundException th) {}
+                | SecurityException | ClassNotFoundException th) {}
         }
 
         return null;

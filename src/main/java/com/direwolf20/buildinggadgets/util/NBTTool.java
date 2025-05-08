@@ -310,20 +310,6 @@ public class NBTTool {
         return res;
     }
 
-    public static int[] readIntList(NBTBase list) {
-        // extract the list of integers that are stored in the list.
-        if (list instanceof NBTTagList intList) {
-            int[] res = new int[intList.tagCount()];
-            for (int i = 0; i < intList.tagCount(); i++) {
-                String value = intList.getStringTagAt(i);
-                var trimmedValue = value.replaceFirst("I;", "");
-                res[i] = Integer.parseInt(trimmedValue);
-            }
-            return res;
-        }
-        return null;
-    }
-
     public static Boolean[] readBBooleanList(NBTTagByteArray booleans) {
         byte[] bytes = booleans.func_150292_c();
         Boolean[] res = new Boolean[bytes.length];

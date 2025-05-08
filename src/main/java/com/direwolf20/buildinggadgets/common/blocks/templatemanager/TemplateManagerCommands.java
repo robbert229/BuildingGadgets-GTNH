@@ -166,6 +166,10 @@ public class TemplateManagerCommands {
         ItemStack itemStack1 = container.getSlot(1)
             .getStack();
 
+        if (itemStack1 == null || itemStack1.stackSize == 0) {
+            return;
+        }
+
         if (!(allowedItemsRight.contains(itemStack1.getItem()))) {
             return;
         }

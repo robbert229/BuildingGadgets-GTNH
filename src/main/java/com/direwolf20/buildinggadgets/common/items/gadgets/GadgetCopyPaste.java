@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -168,9 +169,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         BlockMapIntState MapIntState = new BlockMapIntState();
         MapIntState.getIntStateMapFromNBT(MapIntStateTag);
-        var posIntArray = NBTTool.readIntList(tagCompound.getTag(NBTKeys.GADGET_POS_INT_ARRAY));
-        // int[] posIntArray = tagCompound.getIntArray("posIntArray");
-        int[] stateIntArray = NBTTool.readIntList(tagCompound.getTag(NBTKeys.GADGET_STATE_INT_ARRAY));
+
+        var posIntArray = ((NBTTagIntArray) tagCompound.getTag(NBTKeys.GADGET_POS_INT_ARRAY)).func_150302_c();
+        var stateIntArray = ((NBTTagIntArray) tagCompound.getTag(NBTKeys.GADGET_STATE_INT_ARRAY)).func_150302_c();
         for (int i = 0; i < posIntArray.length; i++) {
             int p = posIntArray[i];
             ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);

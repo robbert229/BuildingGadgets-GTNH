@@ -1,6 +1,5 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.util.NBTTool;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,13 +11,6 @@ import org.junit.jupiter.api.Test;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 
 public class GadgetUtilsTest {
-    @Test
-    void test() throws NBTException {
-        final String snippet = "{stateIntArray:[I;1,2]}";
-        NBTTagCompound tag = (NBTTagCompound) JsonToNBT.func_150315_a(snippet);
-        int[] result = NBTTool.readIntList(tag.getCompoundTag(NBTKeys.GADGET_STATE_INT_ARRAY));
-        Assertions.assertEquals(new int[]{1,2}, result);
-    }
 
     @Test
     void getPOSFromNBTShouldSupportBothCasingsOfXYZ() throws NBTException {

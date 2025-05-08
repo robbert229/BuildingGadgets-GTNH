@@ -194,16 +194,16 @@ public class TemplateManagerCommands {
             return;
         }
 
-        NBTTagCompound templateTagCompound;
-
-        templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
+        NBTTagCompound templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
         ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_START_POS);
         ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_END_POS);
         template.incrementCopyCounter(templateStack);
+
         templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
         templateTagCompound.setString("UUID", template.getUUID(templateStack));
-        // GadgetUtils.writePOSToNBT(templateTagCompound, startPos, GADGET_START_POS, 0);
-        // GadgetUtils.writePOSToNBT(templateTagCompound, endPos, GADGET_END_POS, 0);
+
+        GadgetUtils.writePOSToNBT(templateTagCompound, startPos, NBTKeys.GADGET_START_POS, 0);
+        GadgetUtils.writePOSToNBT(templateTagCompound, endPos, NBTKeys.GADGET_END_POS, 0);
         // Map<UniqueItem, Integer> tagMap = GadgetUtils.nbtToItemCount((NBTTagList)
         // templateTagCompound.getTag("itemcountmap"));
         // templateTagCompound.removeTag("itemcountmap");
@@ -268,7 +268,7 @@ public class TemplateManagerCommands {
             }
 
             NBTTagCompound newCompound = new NBTTagCompound();
-            newCompound.setIntArray("stateIntArray", tagCompound.getIntArray("stateIntArray"));
+            newCompound.setIntArray(NBTKeys.GADGET_STATE_INT_ARRAY, tagCompound.getIntArray("stateIntArray"));
             newCompound.setIntArray("posIntArray", tagCompound.getIntArray("posIntArray"));
             newCompound.setTag("mapIntState", tagCompound.getTag("mapIntState"));
             GadgetUtils.writePOSToNBT(

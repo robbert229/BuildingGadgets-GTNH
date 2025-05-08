@@ -1,7 +1,5 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
-import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +30,7 @@ import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -94,8 +93,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) return 1;
         if (!tagCompound.hasKey("Y")) return 1;
-        Integer tagInt = tagCompound.getInteger("Y");
-        return tagInt;
+        return tagCompound.getInteger("Y");
     }
 
     public static int getZ(ItemStack stack) {
@@ -103,7 +101,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     public static ChunkCoordinates getAnchor(ItemStack stack) {
-        return GadgetUtils.getPOSFromNBT(stack, "anchor");
+        return GadgetUtils.getPOSFromNBT(stack, NBTKeys.GADGET_ANCHOR);
     }
 
     @Override
@@ -155,7 +153,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     public static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound) {
-        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, GADGET_START_POS));
+        return getBlockMapList(tagCompound, GadgetUtils.getPOSFromNBT(tagCompound, NBTKeys.GADGET_START_POS));
     }
 
     private static List<BlockMap> getBlockMapList(@Nullable NBTTagCompound tagCompound, ChunkCoordinates startBlock) {
@@ -170,9 +168,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
         BlockMapIntState MapIntState = new BlockMapIntState();
         MapIntState.getIntStateMapFromNBT(MapIntStateTag);
-        var posIntArray = NBTTool.readIntList(tagCompound.getTag(GADGET_POS_INT_ARRAY));
+        var posIntArray = NBTTool.readIntList(tagCompound.getTag(NBTKeys.GADGET_POS_INT_ARRAY));
         // int[] posIntArray = tagCompound.getIntArray("posIntArray");
-        int[] stateIntArray = NBTTool.readIntList(tagCompound.getTag(GADGET_STATE_INT_ARRAY));
+        int[] stateIntArray = NBTTool.readIntList(tagCompound.getTag(NBTKeys.GADGET_STATE_INT_ARRAY));
         for (int i = 0; i < posIntArray.length; i++) {
             int p = posIntArray[i];
             ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
@@ -501,16 +499,16 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         int[] stateIntArray = stateIntArrayList.stream()
             .mapToInt(i -> i)
             .toArray();
-        tagCompound.setIntArray("posIntArray", posIntArray);
-        tagCompound.setIntArray("stateIntArray", stateIntArray);
+        tagCompound.setIntArray(NBTKeys.GADGET_POS_INT_ARRAY, posIntArray);
+        tagCompound.setIntArray(NBTKeys.GADGET_STATE_INT_ARRAY, stateIntArray);
 
-        tagCompound.setTag(GADGET_START_POS, NBTTool.createPosTag(start));
-        tagCompound.setTag(GADGET_END_POS, NBTTool.createPosTag(end));
-        tagCompound.setInteger("dim", player.dimension);
-        tagCompound.setString("UUID", tool.getUUID(stack));
+        tagCompound.setTag(NBTKeys.GADGET_START_POS, NBTTool.createPosTag(start));
+        tagCompound.setTag(NBTKeys.GADGET_END_POS, NBTTool.createPosTag(end));
+        tagCompound.setInteger(NBTKeys.GADGET_DIM, player.dimension);
+        tagCompound.setString(NBTKeys.GADGET_UUID, tool.getUUID(stack));
         tagCompound.setString("owner", player.getDisplayName());
         tool.incrementCopyCounter(stack);
-        tagCompound.setInteger("copycounter", tool.getCopyCounter(stack));
+        tagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, tool.getCopyCounter(stack));
 
         worldSave.addToMap(tool.getUUID(stack), tagCompound);
         worldSave.markForSaving();

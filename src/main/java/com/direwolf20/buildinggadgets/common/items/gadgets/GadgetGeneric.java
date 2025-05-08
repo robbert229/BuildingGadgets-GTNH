@@ -21,6 +21,7 @@ import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.util.NBTTool;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import cofh.api.energy.IEnergyContainerItem;
@@ -36,13 +37,6 @@ public abstract class GadgetGeneric extends ItemModBase {
     public int getEnergyMax() {
         return SyncedConfig.energyMax;
     }
-
-    // @Override
-    // @Nullable
-    // public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound tag) {
-    // return new MultiCapabilityProvider(new CapabilityProviderEnergy(stack, this::getEnergyMax), new
-    // CapabilityProviderBlockProvider(stack));
-    // }
 
     @Override
     public boolean isDamageable() {
@@ -64,15 +58,6 @@ public abstract class GadgetGeneric extends ItemModBase {
 
         return super.getDurabilityForDisplay(stack);
     }
-
-    // public int getRGBDurabilityForDisplay(ItemStack stack) {
-    // if (stack.getItem() instanceof IEnergyContainerItem energyItem) {
-    // float energyRatio = Math.max(0.0F, (float) energyItem.getEnergyStored(stack) / (float)
-    // energyItem.getMaxEnergyStored(stack));
-    // return MathHelper.hsvToRGB(energyRatio / 3.0F, 1.0F, 1.0F);
-    // }
-    // return super.getRGBDurabilityForDisplay(stack);
-    // }
 
     @Override
     public boolean isDamaged(ItemStack stack) {
@@ -158,12 +143,12 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     public static boolean getFuzzy(ItemStack stack) {
         return NBTTool.getOrNewTag(stack)
-            .getBoolean("fuzzy");
+            .getBoolean(NBTKeys.GADGET_FUZZY);
     }
 
     public static void toggleFuzzy(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-            .setBoolean("fuzzy", !getFuzzy(stack));
+            .setBoolean(NBTKeys.GADGET_FUZZY, !getFuzzy(stack));
         player.addChatComponentMessage(
             new ChatComponentText(
                 ChatFormatting.AQUA
@@ -174,12 +159,12 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     public static boolean getConnectedArea(ItemStack stack) {
         return !NBTTool.getOrNewTag(stack)
-            .getBoolean("unconnectedarea");
+            .getBoolean(NBTKeys.GADGET_UNCONNECTED_AREA);
     }
 
     public static void toggleConnectedArea(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-            .setBoolean("unconnectedarea", getConnectedArea(stack));
+            .setBoolean(NBTKeys.GADGET_UNCONNECTED_AREA, getConnectedArea(stack));
         String suffix = stack.getItem() instanceof GadgetDestruction ? "area" : "surface";
         player.addChatComponentMessage(
             new ChatComponentText(
@@ -191,12 +176,12 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     public static boolean shouldRayTraceFluid(ItemStack stack) {
         return NBTTool.getOrNewTag(stack)
-            .getBoolean("raytrace_fluid");
+            .getBoolean(NBTKeys.GADGET_RAYTRACE_FLUID);
     }
 
     public static void toggleRayTraceFluid(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack)
-            .setBoolean("raytrace_fluid", !shouldRayTraceFluid(stack));
+            .setBoolean(NBTKeys.GADGET_RAYTRACE_FLUID, !shouldRayTraceFluid(stack));
         player.addChatComponentMessage(
             new ChatComponentText(
                 ChatFormatting.AQUA

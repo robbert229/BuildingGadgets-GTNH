@@ -115,8 +115,8 @@ public class TemplateManagerCommands {
         NBTTagCompound tagCompound = isTool ? worldSave.getCompoundFromUUID(UUID) : templateWorldSave.getCompoundFromUUID(UUID);
         templateTagCompound = tagCompound.copy();
         template.incrementCopyCounter(templateStack);
-        templateTagCompound.setInteger("copycounter", template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
+        templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, ModItems.template.getUUID(templateStack));
 
         templateWorldSave.addToMap(UUIDTemplate, templateTagCompound);
         ChunkCoordinates startPos = template.getStartPos(itemStack0);
@@ -162,14 +162,14 @@ public class TemplateManagerCommands {
         NBTTagCompound templateTagCompound;
 
         templateTagCompound = sentTagCompound.copy();
-        ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "startPos");
-        ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "endPos");
+        ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_START_POS);
+        ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_END_POS);
         template.incrementCopyCounter(templateStack);
-        templateTagCompound.setInteger("copycounter", template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", template.getUUID(templateStack));
-        //GadgetUtils.writePOSToNBT(templateTagCompound, startPos, "startPos", 0);
-        //GadgetUtils.writePOSToNBT(templateTagCompound, endPos, "startPos", 0);
-        //Map<UniqueItem, Integer> tagMap = GadgetUtils.nbtToItemCount((NBTTagList) templateTagCompound.getTag("itemcountmap"));
+        templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, template.getUUID(templateStack));
+        GadgetUtils.writePOSToNBT(templateTagCompound, startPos, "startPos", 0);
+        GadgetUtils.writePOSToNBT(templateTagCompound, endPos, "endPos", 0);
+        Map<UniqueItem, Integer> tagMap = GadgetUtils.nbtToItemCount((NBTTagList) templateTagCompound.getTag("itemcountmap"));
         //templateTagCompound.removeTag("itemcountmap");
 
         NBTTagList MapIntStateTag = (NBTTagList) templateTagCompound.getTag("mapIntState");

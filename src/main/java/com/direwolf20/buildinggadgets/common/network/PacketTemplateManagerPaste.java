@@ -26,15 +26,12 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 
 public class PacketTemplateManagerPaste implements IMessage {
-
-    // ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private ChunkCoordinates pos;
     private byte[] data;
     private String templateName;
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        // System.out.println("Buf size: " + buf.readableBytes());
         int x = buf.readInt();
         int y = buf.readInt();
         int z = buf.readInt();
@@ -80,23 +77,27 @@ public class PacketTemplateManagerPaste implements IMessage {
         private void handle(PacketTemplateManagerPaste message, MessageContext ctx) {
             ByteArrayInputStream bais = new ByteArrayInputStream(message.data);
             try {
-                NBTTagCompound newTag = CompressedStreamTools.readCompressed(bais);
-                if (newTag.equals(new NBTTagCompound())) return;
-
-                System.out.println(newTag.toString());
-
-                EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-                World world = player.worldObj;
-                ChunkCoordinates pos = message.pos;
-                TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
-
-                if (!(te instanceof TemplateManagerTileEntity)) {
-                    return;
-                }
-
-                TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
-                TemplateManagerCommands.pasteTemplate(container, player, newTag, message.templateName);
+                var data = bais.readAllBytes();
+                return;
+//                NBTTagCompound newTag = CompressedStreamTools.readCompressed(bais);
+//                if (newTag.equals(new NBTTagCompound())) return;
+//
+//                // TODO (johnrowl) remove this at some point
+//                System.out.println(newTag.toString());
+//
+//                EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+//                World world = player.worldObj;
+//                ChunkCoordinates pos = message.pos;
+//                TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
+//
+//                if (!(te instanceof TemplateManagerTileEntity)) {
+//                    return;
+//                }
+//
+//                TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
+//                TemplateManagerCommands.pasteTemplate(container, player, newTag, message.templateName);
             } catch (Throwable t) {
+                // TODO (johnrowl) remove this at some point
                 System.out.println(t);
             }
 

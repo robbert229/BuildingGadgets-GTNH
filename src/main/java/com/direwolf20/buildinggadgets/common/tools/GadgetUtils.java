@@ -613,7 +613,12 @@ public class GadgetUtils {
         if (posTag.equals(new NBTTagCompound())) {
             return null;
         }
-        return NBTTool.getPosFromTag(posTag);
+
+        if (posTag.getInteger("X") != 0 || posTag.getInteger("Y") != 0 || posTag.getInteger("Z") != 0) {
+            return new ChunkCoordinates(posTag.getInteger("X"), posTag.getInteger("Y"), posTag.getInteger("Z"));
+        }
+
+        return new ChunkCoordinates(posTag.getInteger("x"), posTag.getInteger("y"), posTag.getInteger("z"));
     }
 
     @Nullable

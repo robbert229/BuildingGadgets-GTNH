@@ -12,6 +12,10 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
@@ -78,5 +82,19 @@ public class Template extends ItemModBase implements ITemplate {
         }
 
         return stack; // Return the same item stack as per 1.7.10 convention
+    }
+
+
+    private static ModularScreen createGUI() {
+        ModularPanel panel = ModularPanel.defaultPanel("tutorial_panel")
+            .size(256, 200);
+
+        panel.child(
+            IKey.str("My first screen")
+                .asWidget()
+                .top(7)
+                .left(7));
+
+        return new ModularScreen(panel);
     }
 }

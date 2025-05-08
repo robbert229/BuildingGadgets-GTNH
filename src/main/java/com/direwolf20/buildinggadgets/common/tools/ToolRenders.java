@@ -545,6 +545,7 @@ public class ToolRenders {
         GL11.glLineWidth(2.0F);
 
         tess.startDrawing(GL11.GL_LINE_STRIP);
+        tess.setColorRGBA(255, 255, 255, 255);
 
         // Bottom face
         tess.addVertex(bb.minX, bb.minY, bb.minZ);
@@ -556,6 +557,7 @@ public class ToolRenders {
         tess.draw();
 
         tess.startDrawing(GL11.GL_LINE_STRIP);
+        tess.setColorRGBA(255, 255, 255, 255);
 
         // Top face
         tess.addVertex(bb.minX, bb.maxY, bb.minZ);
@@ -567,8 +569,9 @@ public class ToolRenders {
         tess.draw();
 
         tess.startDrawing(GL11.GL_LINES);
-
+        tess.setColorRGBA(255, 255, 255, 255);
         // Vertical edges
+
         tess.addVertex(bb.maxX, bb.minY, bb.minZ);
         tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
 

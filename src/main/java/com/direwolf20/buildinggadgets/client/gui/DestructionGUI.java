@@ -175,8 +175,6 @@ public class DestructionGUI extends CustomModularScreen {
 
     @Override
     public ModularPanel buildUI(ModularGuiContext context) {
-        var slidersColumnHeight = 18 * 4;
-
         ModularPanel root = ModularPanel.defaultPanel(GuiUtils.getPanelName("destruction"))
             .widthRel(0.5f)
             .heightRel(0.5f);

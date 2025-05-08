@@ -24,8 +24,6 @@ import com.direwolf20.buildinggadgets.common.network.*;
 
 public class DestructionGUI extends GadgetGUI {
 
-
-
     private int left;
     private int right;
     private int depth;

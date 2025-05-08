@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.items;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,12 +12,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
-import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
+import com.direwolf20.buildinggadgets.client.gui.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
@@ -76,34 +74,11 @@ public class Template extends ItemModBase implements ITemplate {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ItemStack onItemRightClick(@Nonnull ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(
-                BuildingGadgets.instance,
-                GuiProxy.MaterialListID,
-                world,
-                (int) player.posX,
-                (int) player.posY,
-                (int) player.posZ);
+            ClientGUI.open(MaterialListGUI.createGUI(stack));
         }
 
-        // if (world.isRemote) {
-        // ClientGUI.open(createGUI());
-        // }
-
         return stack; // Return the same item stack as per 1.7.10 convention
-    }
-
-    private static ModularScreen createGUI() {
-        ModularPanel panel = ModularPanel.defaultPanel("tutorial_panel")
-            .size(256, 200);
-
-        panel.child(
-            IKey.str("My first screen")
-                .asWidget()
-                .top(7)
-                .left(7));
-
-        return new ModularScreen(panel);
     }
 }

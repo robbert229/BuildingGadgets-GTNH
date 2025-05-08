@@ -27,7 +27,6 @@ import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 
 public class MaterialListGUI {
-
     /**
      * <ol>
      * <li>Item name (localized)
@@ -35,7 +34,6 @@ public class MaterialListGUI {
      * </ol>
      */
     public static final String PATTERN_SIMPLE = "%s: %d";
-
     /**
      * <ol>
      * <li>Item name (localized)
@@ -73,8 +71,6 @@ public class MaterialListGUI {
 
     public static ModularScreen createGUI(@Nonnull ItemStack itemStack) {
         ITemplate item = (ITemplate) itemStack.getItem();
-
-        assert item != null;
 
         var materials = getMaterialsList(itemStack, item);
 
@@ -133,7 +129,7 @@ public class MaterialListGUI {
                         .expanded()
                         .debugName("sort")
                         .disabled()
-                        .addTooltipElement(IKey.str("Currently not implemented`")))
+                        .addTooltipElement(IKey.str("Currently not implemented")))
                 .child(
                     new ButtonWidget<>().overlay(IKey.lang("gui.buildinggadgets.materialList.button.copyList"))
                         .expanded()

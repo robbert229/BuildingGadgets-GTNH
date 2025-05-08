@@ -63,7 +63,7 @@ public class DestructionGUI extends GadgetGUI {
 
     private Flow getSliders() {
         return Flow.column()
-            .debugName("sliders")
+            .name("sliders")
             .child(
                 getSlider().stopper(1)
 

@@ -111,11 +111,9 @@ public class PasteToolBufferBuilder {
         GL11.glScalef(1.01f, 1.01f, 1.01f); // Slightly larger block to avoid z-fighting
 
         GL11.glDisable(GL11.GL_LIGHTING);
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-        ToolRenders.renderBoxTextured(tess, 0, 0, 0, 1, 1, 1, 0.5f);
+        ToolRenders.renderBoxTextured(tess, block.state, 0, 0, 0, 1, 1, 1);
 
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_LIGHTING);
 
         GL11.glPopMatrix();

@@ -3,7 +3,9 @@ package com.direwolf20.buildinggadgets.common.tools;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -740,97 +742,65 @@ public class ToolRenders {
 
     public static void renderBoxTextured(
             Tessellator tessellator,
+            BlockState block,
             double startX,
             double startY,
             double startZ,
             double endX,
             double endY,
-            double endZ,
-            float alpha
+            double endZ
         ) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        IIcon icon = Blocks.stone.getIcon(0, 0);
-        float minU = icon.getMinU();
-        float maxU = icon.getMaxU();
-        float minV = icon.getMinV();
-        float maxV = icon.getMaxV();
+        var sides = Arrays.stream(EnumFacing.values())
+                .map((side) -> block.getBlock().getIcon(side.ordinal(), block.getMetadata()))
+                .collect(Collectors.toList());
 
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
         // Set color once for all vertices
         tessellator.setNormal(0, -1, 0);
 
-//        // down
-//        tessellator.addVertex(startX, startY, startZ);
-//        tessellator.addVertex(endX, startY, startZ);
-//        tessellator.addVertex(endX, startY, endZ);
-//        tessellator.addVertex(startX, startY, endZ);
-//
-//        // up
-//        tessellator.addVertex(startX, endY, startZ);
-//        tessellator.addVertex(startX, endY, endZ);
-//        tessellator.addVertex(endX, endY, endZ);
-//        tessellator.addVertex(endX, endY, startZ);
-//
-//        // east
-//        tessellator.addVertex(startX, startY, startZ);
-//        tessellator.addVertex(startX, endY, startZ);
-//        tessellator.addVertex(endX, endY, startZ);
-//        tessellator.addVertex(endX, startY, startZ);
-//
-//        // west
-//        tessellator.addVertex(startX, startY, endZ);
-//        tessellator.addVertex(endX, startY, endZ);
-//        tessellator.addVertex(endX, endY, endZ);
-//        tessellator.addVertex(startX, endY, endZ);
-//
-//        // south
-//        tessellator.addVertex(endX, startY, startZ);
-//        tessellator.addVertex(endX, endY, startZ);
-//        tessellator.addVertex(endX, endY, endZ);
-//        tessellator.addVertex(endX, startY, endZ);
-//
-//        // north
-//        tessellator.addVertex(startX, startY, startZ);
-//        tessellator.addVertex(startX, startY, endZ);
-//        tessellator.addVertex(startX, endY, endZ);
-//        tessellator.addVertex(startX, endY, startZ);
-
         // down (y = startY)
-        tessellator.addVertexWithUV(startX, startY, startZ, minU, minV);
-        tessellator.addVertexWithUV(endX, startY, startZ, maxU, minV);
-        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
-        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
+        var icon = sides.get(EnumFacing.DOWN.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
 
-// up (y = endY)
-        tessellator.addVertexWithUV(startX, endY, startZ, minU, minV);
-        tessellator.addVertexWithUV(startX, endY, endZ, minU, maxV);
-        tessellator.addVertexWithUV(endX, endY, endZ, maxU, maxV);
-        tessellator.addVertexWithUV(endX, endY, startZ, maxU, minV);
+        // up (y = endY)
+        icon = sides.get(EnumFacing.UP.ordinal());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMaxU(), icon.getMinV());
 
-// east (z = startZ)
-        tessellator.addVertexWithUV(startX, startY, startZ, minU, maxV);
-        tessellator.addVertexWithUV(startX, endY, startZ, minU, minV);
-        tessellator.addVertexWithUV(endX, endY, startZ, maxU, minV);
-        tessellator.addVertexWithUV(endX, startY, startZ, maxU, maxV);
+        // east (z = startZ)
+        icon = sides.get(EnumFacing.EAST.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMaxU(), icon.getMaxV());
 
-// west (z = endZ)
-        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
-        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
-        tessellator.addVertexWithUV(endX, endY, endZ, maxU, minV);
-        tessellator.addVertexWithUV(startX, endY, endZ, minU, minV);
+        // west (z = endZ)
+        icon = sides.get(EnumFacing.WEST.ordinal());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMinV());
 
-// south (x = endX)
-        tessellator.addVertexWithUV(endX, startY, startZ, minU, maxV);
-        tessellator.addVertexWithUV(endX, endY, startZ, minU, minV);
-        tessellator.addVertexWithUV(endX, endY, endZ, maxU, minV);
-        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
+        // south (x = endX)
+        icon = sides.get(EnumFacing.SOUTH.ordinal());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
 
-// north (x = startX)
-        tessellator.addVertexWithUV(startX, startY, startZ, maxU, maxV);
-        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
-        tessellator.addVertexWithUV(startX, endY, endZ, minU, minV);
-        tessellator.addVertexWithUV(startX, endY, startZ, maxU, minV);
+        // north (x = startX)
+        icon = sides.get(EnumFacing.NORTH.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMaxU(), icon.getMinV());
 
         // Finalize the drawing
         tessellator.draw();

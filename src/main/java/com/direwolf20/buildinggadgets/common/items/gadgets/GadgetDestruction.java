@@ -242,7 +242,8 @@ public class GadgetDestruction extends GadgetGeneric {
         return stack;
     }
 
-    public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
+    @Override
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
             MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);

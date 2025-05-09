@@ -737,13 +737,14 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     //
     // }
     //
-    public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
             MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {
                 return;
             }
+
             currentAnchor = VectorTools.getPosFromMovingObjectPosition(lookingAt);
             setAnchor(stack, currentAnchor);
             player.addChatMessage(

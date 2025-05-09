@@ -75,6 +75,11 @@ public class GadgetExchanger extends GadgetGeneric {
     }
 
     @Override
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
+        GadgetUtils.anchorBlocks(player, stack);
+    }
+
+    @Override
     public int getItemEnchantability() {
         return 3;
     }

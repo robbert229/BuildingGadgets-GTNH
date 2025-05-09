@@ -227,4 +227,7 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     /// getShortcutMenuGUI returns the ModularUI gui to use for the gadget when the user presses the menu shortcut.
     public abstract ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled);
+
+    /// anchorBlocks sets the anchor to what the player is looking at.
+    public abstract void anchorBlocks(EntityPlayer player, ItemStack stack);
 }

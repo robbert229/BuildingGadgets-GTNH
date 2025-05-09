@@ -72,6 +72,11 @@ public class GadgetBuilding extends GadgetGeneric {
         return new ModularScreen(panel);
     }
 
+    @Override
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
+        GadgetUtils.anchorBlocks(player, stack);
+    }
+
     private static void setToolMode(ItemStack tool, BuildingModes mode) {
         // Store the tool's mode in NBT as a string
         NBTTagCompound tagCompound = NBTTool.getOrNewTag(tool);

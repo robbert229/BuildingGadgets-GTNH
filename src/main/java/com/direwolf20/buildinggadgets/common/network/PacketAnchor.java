@@ -17,8 +17,6 @@ public class PacketAnchor extends PacketEmpty {
 
         @Override
         public IMessage onMessage(PacketAnchor message, MessageContext ctx) {
-            // TODO(johnrowl) do I need to move this to another thread?
-            // FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(ctx));
             if (ctx.side == Side.CLIENT) {
                 return null;
             }
@@ -36,15 +34,11 @@ public class PacketAnchor extends PacketEmpty {
                 return;
             }
 
-            if (heldItem.getItem() instanceof GadgetBuilding) {
-                GadgetUtils.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetExchanger) {
-                GadgetUtils.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
-                GadgetCopyPaste.anchorBlocks(playerEntity, heldItem);
-            } else if (heldItem.getItem() instanceof GadgetDestruction) {
-                GadgetDestruction.anchorBlocks(playerEntity, heldItem);
+            if (!(heldItem.getItem() instanceof GadgetGeneric gadget)) {
+                return;
             }
+
+            gadget.anchorBlocks(playerEntity, heldItem);
         }
     }
 }

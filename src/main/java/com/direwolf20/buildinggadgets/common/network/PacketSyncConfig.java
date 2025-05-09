@@ -52,11 +52,9 @@ public class PacketSyncConfig implements IMessage {
                 return null;
             }
 
-            // Minecraft.getMinecraft().addScheduledTask(() -> {
             NBTTagCompound compound = message.getTagCompound();
             BuildingGadgets.LOG.info("Received SyncedConfig from Server.");
             SyncedConfig.onReadSynchronisation(compound);
-            // });
 
             return null;
         }

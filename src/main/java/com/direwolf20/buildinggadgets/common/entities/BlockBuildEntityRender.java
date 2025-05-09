@@ -48,7 +48,7 @@ public class BlockBuildEntityRender extends Render {
 
         float trans = (1 - scale) / 2;
 
-        GL11.glTranslated(x + trans, y + trans, z + trans);
+        GL11.glTranslated(x + trans+0.5, y + trans+0.5, z + trans+0.5);
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glScalef(scale, scale, scale);
 
@@ -110,7 +110,19 @@ public class BlockBuildEntityRender extends Render {
             alpha = 0.33f;
         }
 
-        ToolRenders.renderBoundingBox(tessellator, minX, minY, minZ, maxX, maxY, maxZ, red, green, blue, alpha);
+        ToolRenders.renderBoundingBox(
+                tessellator,
+                minX,
+                minY,
+                minZ,
+                maxX,
+                maxY,
+                maxZ,
+                red,
+                green,
+                blue,
+                alpha
+        );
 
         tessellator.draw();
 

@@ -171,7 +171,7 @@ public class DestructionGUI extends GadgetGUI {
             .coverChildrenHeight()
             .align(Alignment.TopCenter)
             .child(
-                new ButtonWidget<>().overlay(GuiUtils.getUITextureFromResource("undo"))
+                new ButtonWidget<>().overlay(GuiUtils.getUITextureFromResource("setting/undo.png"))
                     .addTooltipElement(IKey.str("Undo"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -180,8 +180,8 @@ public class DestructionGUI extends GadgetGUI {
                         return true;
                     }))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("anchor"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("anchor_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/anchor.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/anchor_selected.png"))
                     .addTooltipElement(IKey.str("Anchor"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -190,8 +190,8 @@ public class DestructionGUI extends GadgetGUI {
                         PacketHandler.INSTANCE.sendToServer(new PacketAnchor());
                     })))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("connected_area"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("connected_area_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/connected_area.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/connected_area_selected.png"))
                     .addTooltipElement(IKey.str("Connected Area"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -200,8 +200,8 @@ public class DestructionGUI extends GadgetGUI {
                         PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
                     })))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("raytrace_fluid"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("raytrace_fluid_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/raytrace_fluid.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/raytrace_fluid_selected.png"))
                     .addTooltipElement(IKey.str("Raytrace Fluid"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)

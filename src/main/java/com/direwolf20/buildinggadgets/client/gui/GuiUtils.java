@@ -17,7 +17,7 @@ public class GuiUtils {
     }
 
     public static UITexture getUITextureFromResource(String texture) {
-        var assetLocation = "textures/gui/setting/%s.png";
+        var assetLocation = "textures/gui/%s";
         var resourceLocation = new ResourceLocation(BuildingGadgets.MODID, String.format(assetLocation, texture));
         return UITexture.fullImage(resourceLocation);
     }

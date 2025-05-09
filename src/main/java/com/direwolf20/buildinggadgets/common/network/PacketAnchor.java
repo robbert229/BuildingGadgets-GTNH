@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 import com.direwolf20.buildinggadgets.common.items.gadgets.*;
-import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;

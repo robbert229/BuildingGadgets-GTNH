@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
@@ -432,7 +433,8 @@ public class ToolRenders {
             // Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty,
             // exit.
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
+            //if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
+            if (blockMapList.isEmpty()) {
                 return;
             }
 
@@ -463,9 +465,11 @@ public class ToolRenders {
             GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
             GlStateManager.scale(0.999f, 0.999f, 0.999f);// Slightly Larger block to avoid z-fighting.
 
-            // TODO(johnrowl) enable this again
-            // PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos,
-            // UUID); // Draw
+            PasteToolBufferBuilder.draw(
+                    player,
+                    startPos,
+                    UUID
+            ); // Draw
             // the cached buffer in the world.
 
             GlStateManager.popMatrix();
@@ -671,7 +675,7 @@ public class ToolRenders {
         tessellator.addVertex(minX, maxY, minZ);
     }
 
-    private static void renderBoxSolid(Tessellator tessellator, AxisAlignedBB box, float red, float green, float blue,
+    public static void renderBoxSolid(Tessellator tessellator, AxisAlignedBB box, float red, float green, float blue,
         float alpha) {
         renderBoxSolid(
             tessellator,
@@ -687,7 +691,7 @@ public class ToolRenders {
             alpha);
     }
 
-    private static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
+    public static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
         double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
@@ -729,6 +733,104 @@ public class ToolRenders {
         tessellator.addVertex(startX, startY, endZ);
         tessellator.addVertex(startX, endY, endZ);
         tessellator.addVertex(startX, endY, startZ);
+
+        // Finalize the drawing
+        tessellator.draw();
+    }
+
+    public static void renderBoxTextured(
+            Tessellator tessellator,
+            double startX,
+            double startY,
+            double startZ,
+            double endX,
+            double endY,
+            double endZ,
+            float alpha
+        ) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        IIcon icon = Blocks.stone.getIcon(0, 0);
+        float minU = icon.getMinU();
+        float maxU = icon.getMaxU();
+        float minV = icon.getMinV();
+        float maxV = icon.getMaxV();
+
+        tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
+
+        // Set color once for all vertices
+        tessellator.setNormal(0, -1, 0);
+
+//        // down
+//        tessellator.addVertex(startX, startY, startZ);
+//        tessellator.addVertex(endX, startY, startZ);
+//        tessellator.addVertex(endX, startY, endZ);
+//        tessellator.addVertex(startX, startY, endZ);
+//
+//        // up
+//        tessellator.addVertex(startX, endY, startZ);
+//        tessellator.addVertex(startX, endY, endZ);
+//        tessellator.addVertex(endX, endY, endZ);
+//        tessellator.addVertex(endX, endY, startZ);
+//
+//        // east
+//        tessellator.addVertex(startX, startY, startZ);
+//        tessellator.addVertex(startX, endY, startZ);
+//        tessellator.addVertex(endX, endY, startZ);
+//        tessellator.addVertex(endX, startY, startZ);
+//
+//        // west
+//        tessellator.addVertex(startX, startY, endZ);
+//        tessellator.addVertex(endX, startY, endZ);
+//        tessellator.addVertex(endX, endY, endZ);
+//        tessellator.addVertex(startX, endY, endZ);
+//
+//        // south
+//        tessellator.addVertex(endX, startY, startZ);
+//        tessellator.addVertex(endX, endY, startZ);
+//        tessellator.addVertex(endX, endY, endZ);
+//        tessellator.addVertex(endX, startY, endZ);
+//
+//        // north
+//        tessellator.addVertex(startX, startY, startZ);
+//        tessellator.addVertex(startX, startY, endZ);
+//        tessellator.addVertex(startX, endY, endZ);
+//        tessellator.addVertex(startX, endY, startZ);
+
+        // down (y = startY)
+        tessellator.addVertexWithUV(startX, startY, startZ, minU, minV);
+        tessellator.addVertexWithUV(endX, startY, startZ, maxU, minV);
+        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
+        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
+
+// up (y = endY)
+        tessellator.addVertexWithUV(startX, endY, startZ, minU, minV);
+        tessellator.addVertexWithUV(startX, endY, endZ, minU, maxV);
+        tessellator.addVertexWithUV(endX, endY, endZ, maxU, maxV);
+        tessellator.addVertexWithUV(endX, endY, startZ, maxU, minV);
+
+// east (z = startZ)
+        tessellator.addVertexWithUV(startX, startY, startZ, minU, maxV);
+        tessellator.addVertexWithUV(startX, endY, startZ, minU, minV);
+        tessellator.addVertexWithUV(endX, endY, startZ, maxU, minV);
+        tessellator.addVertexWithUV(endX, startY, startZ, maxU, maxV);
+
+// west (z = endZ)
+        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
+        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
+        tessellator.addVertexWithUV(endX, endY, endZ, maxU, minV);
+        tessellator.addVertexWithUV(startX, endY, endZ, minU, minV);
+
+// south (x = endX)
+        tessellator.addVertexWithUV(endX, startY, startZ, minU, maxV);
+        tessellator.addVertexWithUV(endX, endY, startZ, minU, minV);
+        tessellator.addVertexWithUV(endX, endY, endZ, maxU, minV);
+        tessellator.addVertexWithUV(endX, startY, endZ, maxU, maxV);
+
+// north (x = startX)
+        tessellator.addVertexWithUV(startX, startY, startZ, maxU, maxV);
+        tessellator.addVertexWithUV(startX, startY, endZ, minU, maxV);
+        tessellator.addVertexWithUV(startX, endY, endZ, minU, minV);
+        tessellator.addVertexWithUV(startX, endY, startZ, maxU, minV);
 
         // Finalize the drawing
         tessellator.draw();

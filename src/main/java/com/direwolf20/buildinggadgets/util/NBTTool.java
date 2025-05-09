@@ -376,10 +376,8 @@ public class NBTTool {
 
     public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
-        var name = compound.getString(NBT_BLOCK_NAME);
-        Block block = GameData.getBlockRegistry()
-            .getObject(name);
-        // TODO (johnrowl) this needs to be fixed. This property doesn't exist.
+        var name = compound.getInteger(NBT_BLOCK_NAME);
+        Block block = Block.getBlockById(name);
         int meta = compound.getInteger(NBT_BLOCK_META);
 
         return new BlockState(block, meta);

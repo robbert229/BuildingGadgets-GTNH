@@ -1,13 +1,14 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import com.cleanroommc.modularui.screen.CustomModularScreen;
-import com.direwolf20.buildinggadgets.client.KeyBindings;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import net.minecraft.item.ItemStack;
+
 import org.lwjgl.input.Keyboard;
 
+import com.cleanroommc.modularui.screen.CustomModularScreen;
+import com.direwolf20.buildinggadgets.client.KeyBindings;
+
 public abstract class GadgetGUI extends CustomModularScreen {
+
     protected boolean temporarilyEnabled = false;
 
     public GadgetGUI(ItemStack tool) {

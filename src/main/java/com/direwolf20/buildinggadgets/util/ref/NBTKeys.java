@@ -57,7 +57,7 @@ public final class NBTKeys {
     public static final String GADGET_UNDO_START_POS = "undo_start_pos";
     public static final String GADGET_REL_POS = "rel_pos";
     public static final String GADGET_UUID = "uuid";
-
+    public static final String GADGET_TEMPLATE_OWNER = "owner";
     public static final String GADGET_DIM = "dim";
     public static final String GADGET_VALUE_UP = "up";
     public static final String GADGET_VALUE_DOWN = "down";

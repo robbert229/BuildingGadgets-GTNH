@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.cleanroommc.modularui.screen.ModularScreen;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -20,6 +19,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
@@ -32,6 +32,7 @@ import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 
 public class GadgetDestruction extends GadgetGeneric {
 
@@ -105,10 +106,10 @@ public class GadgetDestruction extends GadgetGeneric {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        String uuid = tagCompound.getString("UUID");
+        String uuid = tagCompound.getString(NBTKeys.GADGET_UUID);
         if (uuid.isEmpty()) {
             UUID uid = UUID.randomUUID();
-            tagCompound.setString("UUID", uid.toString());
+            tagCompound.setString(NBTKeys.GADGET_UUID, uid.toString());
             stack.setTagCompound(tagCompound);
             uuid = uid.toString();
         }

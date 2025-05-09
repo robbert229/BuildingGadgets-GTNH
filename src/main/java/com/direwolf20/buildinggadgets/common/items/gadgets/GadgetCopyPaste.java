@@ -6,11 +6,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.direwolf20.buildinggadgets.client.gui.CopyGUI;
-import com.direwolf20.buildinggadgets.client.gui.CopyPasteGUI;
-import com.direwolf20.buildinggadgets.client.gui.PasteGUI;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,8 +16,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.client.gui.CopyGUI;
+import com.direwolf20.buildinggadgets.client.gui.CopyPasteGUI;
+import com.direwolf20.buildinggadgets.client.gui.PasteGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
@@ -40,7 +41,6 @@ import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -133,13 +133,13 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         if (tagCompound == null) {
             return null;
         }
-        String uuid = tagCompound.getString("UUID");
+        String uuid = tagCompound.getString(NBTKeys.GADGET_UUID);
         if (uuid.isEmpty()) {
             if (getStartPos(stack) == null && getEndPos(stack) == null) {
                 return null;
             }
             UUID uid = UUID.randomUUID();
-            tagCompound.setString("UUID", uid.toString());
+            tagCompound.setString(NBTKeys.GADGET_UUID, uid.toString());
             stack.setTagCompound(tagCompound);
             uuid = uid.toString();
         }
@@ -176,7 +176,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     private static int[] getTagIntArrayFromTagCompound(NBTTagCompound tagCompound, String key) {
         var tag = tagCompound.getTag(key);
         if (tag == null) {
-            return new int[]{};
+            return new int[] {};
         }
 
         // we intentionally don't do a null check here because we want to through an exception when a non array is in an
@@ -276,25 +276,19 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         setToolMode(heldItem, mode);
     }
 
-    private void resetArea(ItemStack stack, World world, EntityPlayer player){
+    private void resetArea(ItemStack stack, World world, EntityPlayer player) {
         setStartPos(stack, null);
         setEndPos(stack, null);
         player.addChatMessage(
-                new ChatComponentText(
-                        ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
+            new ChatComponentText(
+                ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.areareset").getUnformattedText()));
     }
 
     /**
      * tryCopyBlocks tries to copy the blocks but only if the start and end positions have been set.
      */
-    private static void tryCopyBlocks(
-            ItemStack stack,
-            EntityPlayer player,
-            World world,
-            ChunkCoordinates startPos,
-            ChunkCoordinates endPos
-    ) {
+    private static void tryCopyBlocks(ItemStack stack, EntityPlayer player, World world, ChunkCoordinates startPos,
+        ChunkCoordinates endPos) {
         if (startPos == null || endPos == null) {
             return;
         }
@@ -302,7 +296,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         copyBlocks(stack, player, world, startPos, endPos);
     }
 
-    private ItemStack onItemRightClickInPasteMode(ItemStack stack, World world, EntityPlayer player, ChunkCoordinates lookingAt) {
+    private ItemStack onItemRightClickInPasteMode(ItemStack stack, World world, EntityPlayer player,
+        ChunkCoordinates lookingAt) {
         if (player.isSneaking()) {
             if (world.isRemote) {
                 ClientGUI.open(PasteGUI.createGUI());
@@ -330,7 +325,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         return stack;
     }
 
-    private ItemStack onItemRightClickInCopyMode(ItemStack stack, World world, EntityPlayer player, ChunkCoordinates lookingAt) {
+    private ItemStack onItemRightClickInCopyMode(ItemStack stack, World world, EntityPlayer player,
+        ChunkCoordinates lookingAt) {
         // if the user sneak right clicks while looking at nothing then open up the copy area gui.
         if (isSneakClickOnAir(player, lookingAt)) {
             if (world.isRemote) {
@@ -376,7 +372,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     private static boolean isSneakClickOnInventory(World world, EntityPlayer player, ChunkCoordinates lookingAt) {
-        return isSneakClickOnBlock(player, lookingAt) && GadgetUtils.isRemoteInventory(player, lookingAt, player.dimension, world);
+        return isSneakClickOnBlock(player, lookingAt)
+            && GadgetUtils.isRemoteInventory(player, lookingAt, player.dimension, world);
     }
 
     private boolean isNormalClickOnBlock(EntityPlayer player, ChunkCoordinates lookingAt) {

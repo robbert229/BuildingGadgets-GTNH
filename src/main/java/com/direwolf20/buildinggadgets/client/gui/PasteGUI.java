@@ -17,10 +17,14 @@ import com.cleanroommc.modularui.screen.ModularScreen;
 ///
 /// The Okay button should close the gui.
 public class PasteGUI {
+
     public static ModularScreen createGUI() {
         ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("paste"));
-        panel.child(IKey.str("Paste").asWidget()
-                .top(7).left(7));
+        panel.child(
+            IKey.str("Paste")
+                .asWidget()
+                .top(7)
+                .left(7));
         return new ModularScreen(panel);
     }
 }

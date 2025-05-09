@@ -82,8 +82,8 @@ public class TemplateManagerCommands {
         tagCompound = (NBTTagCompound) templateTagCompound.copy();
         template.incrementCopyCounter(itemStack0);
         tagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(itemStack0));
-        tagCompound.setString("UUID", template.getUUID(itemStack0));
-        tagCompound.setString("owner", player.getCommandSenderName());
+        tagCompound.setString(NBTKeys.GADGET_UUID, template.getUUID(itemStack0));
+        tagCompound.setString(NBTKeys.GADGET_TEMPLATE_OWNER, player.getCommandSenderName());
         if (template.equals(ModItems.gadgetCopyPaste)) {
             worldSave.addToMap(UUID, tagCompound);
         } else {
@@ -139,7 +139,7 @@ public class TemplateManagerCommands {
         templateTagCompound = (NBTTagCompound) tagCompound.copy();
         template.incrementCopyCounter(templateStack);
         templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, ModItems.template.getUUID(templateStack));
 
         templateWorldSave.addToMap(UUIDTemplate, templateTagCompound);
         ChunkCoordinates startPos = template.getStartPos(itemStack0);
@@ -204,7 +204,7 @@ public class TemplateManagerCommands {
         template.incrementCopyCounter(templateStack);
 
         templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", template.getUUID(templateStack));
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, template.getUUID(templateStack));
 
         GadgetUtils.writePOSToNBT(templateTagCompound, startPos, NBTKeys.GADGET_START_POS, 0);
         GadgetUtils.writePOSToNBT(templateTagCompound, endPos, NBTKeys.GADGET_END_POS, 0);
@@ -218,7 +218,7 @@ public class TemplateManagerCommands {
         mapIntState.getIntStateMapFromNBT(MapIntStateTag);
         mapIntState.makeStackMapFromStateMap(player);
         templateTagCompound.setTag("mapIntStack", mapIntState.putIntStackMapIntoNBT());
-        templateTagCompound.setString("owner", player.getCommandSenderName());
+        templateTagCompound.setString(NBTKeys.GADGET_TEMPLATE_OWNER, player.getCommandSenderName());
 
         Multiset<UniqueItem> itemCountMap = HashMultiset.create();
         Map<BlockState, UniqueItem> intStackMap = mapIntState.intStackMap;

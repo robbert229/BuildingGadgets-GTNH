@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets.common.commands;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class DeleteBlockMapsCommand extends CommandAlterBlockMaps {
@@ -15,7 +16,7 @@ public class DeleteBlockMapsCommand extends CommandAlterBlockMaps {
         return ChatFormatting.RED + "Deleted stored map for "
             + tagCompound.getString("owner")
             + " with UUID:"
-            + tagCompound.getString("UUID");
+            + tagCompound.getString(NBTKeys.GADGET_UUID);
     }
 
     @Override

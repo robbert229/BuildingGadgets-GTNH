@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import static com.direwolf20.buildinggadgets.util.ref.NBTKeys.TEMPLATE_COPY_COUNT;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 
 public class PasteToolBufferBuilder {
 
@@ -50,26 +52,38 @@ public class PasteToolBufferBuilder {
         return null;
     }
 
-    // public static void addMapToBuffer(String UUID) {
-    // long time = System.nanoTime();
-    // List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(tagMap.get(UUID));
-    // BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-    // ToolDireBuffer bufferBuilder = new ToolDireBuffer(2097152);
-    // bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-    // for (BlockMap blockMap : blockMapList) {
-    // IBlockState renderBlockState = blockMap.state;
-    // if (!(renderBlockState.equals(Blocks.AIR.getDefaultState()))) {
-    // IBakedModel model = dispatcher.getModelForState(renderBlockState);
-    // dispatcher.getBlockModelRenderer().renderModelFlat(Minecraft.getMinecraft().world, model, renderBlockState,
-    // new ChunkCoordinates(blockMap.xOffset, blockMap.yOffset, blockMap.zOffset), bufferBuilder, false, 0L);
-    // }
-    // }
-    // bufferBuilder.finishDrawing();
-    // bufferMap.put(UUID, bufferBuilder);
-    //
-    // System.out.printf("Created %d Vertexes for %d blocks in %.2f ms%n", bufferBuilder.getVertexCount(),
-    // blockMapList.size(), (System.nanoTime() - time) * 1e-6);
-    // }
+    public static void addMapToBuffer(String UUID) {
+        long time = System.nanoTime();
+        List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(tagMap.get(UUID));
+        // BlockRendererDispatcher dispatcher = Minecraft.getMinecraft()
+        // .getBlockRendererDispatcher();
+        ToolDireBuffer bufferBuilder = new ToolDireBuffer(2097152);
+        // bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+
+        // for (BlockMap blockMap : blockMapList) {
+        // IBlockState renderBlockState = blockMap.state;
+        // if (!(renderBlockState.equals(Blocks.AIR.getDefaultState()))) {
+        // IBakedModel model = dispatcher.getModelForState(renderBlockState);
+        // dispatcher.getBlockModelRenderer()
+        // .renderModelFlat(
+        // Minecraft.getMinecraft().world,
+        // model,
+        // renderBlockState,
+        // new ChunkCoordinates(blockMap.xOffset, blockMap.yOffset, blockMap.zOffset),
+        // bufferBuilder,
+        // false,
+        // 0L);
+        // }
+        // }
+        // bufferBuilder.finishDrawing();
+        bufferMap.put(UUID, bufferBuilder);
+
+        System.out.printf(
+            "Created %d Vertexes for %d blocks in %.2f ms%n",
+            bufferBuilder.getVertexCount(),
+            blockMapList.size(),
+            (System.nanoTime() - time) * 1e-6);
+    }
 
     // public static void draw(EntityPlayer player, double x, double y, double z, ChunkCoordinates startPos, String
     // UUID) {

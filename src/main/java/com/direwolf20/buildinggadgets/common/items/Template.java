@@ -19,6 +19,7 @@ import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.WorldSave;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class Template extends ItemModBase implements ITemplate {
@@ -40,10 +41,10 @@ public class Template extends ItemModBase implements ITemplate {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        String uuid = tagCompound.getString("UUID");
+        String uuid = tagCompound.getString(NBTKeys.GADGET_UUID);
         if (uuid.isEmpty()) {
             UUID uid = UUID.randomUUID();
-            tagCompound.setString("UUID", uid.toString());
+            tagCompound.setString(NBTKeys.GADGET_UUID, uid.toString());
             stack.setTagCompound(tagCompound);
             uuid = uid.toString();
         }

@@ -135,16 +135,17 @@ public class VectorTools {
     }
 
     public static ChunkCoordinates Up(ChunkCoordinates base, int distance) {
-        return new ChunkCoordinates(base.posX, base.posY + distance, base.posZ );
+        return new ChunkCoordinates(base.posX, base.posY + distance, base.posZ);
     }
 
     public static ChunkCoordinates Down(ChunkCoordinates base, int distance) {
-        return new ChunkCoordinates(base.posX, base.posY - distance, base.posZ );
+        return new ChunkCoordinates(base.posX, base.posY - distance, base.posZ);
     }
 
     public static ChunkCoordinates East(ChunkCoordinates base, int distance) {
         return new ChunkCoordinates(base.posX + distance, base.posY, base.posZ);
     }
+
     public static ChunkCoordinates West(ChunkCoordinates base, int distance) {
         return new ChunkCoordinates(base.posX - distance, base.posY, base.posZ);
     }

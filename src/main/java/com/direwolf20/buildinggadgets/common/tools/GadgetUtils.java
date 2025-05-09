@@ -418,12 +418,7 @@ public class GadgetUtils {
         remoteInventorySupplier = null;
     }
 
-    public static boolean isRemoteInventory(
-            EntityPlayer player,
-            ChunkCoordinates pos,
-            int dim,
-            World world
-    ) {
+    public static boolean isRemoteInventory(EntityPlayer player, ChunkCoordinates pos, int dim, World world) {
         return getRemoteInventory(pos, dim, world, player) != null;
     }
 

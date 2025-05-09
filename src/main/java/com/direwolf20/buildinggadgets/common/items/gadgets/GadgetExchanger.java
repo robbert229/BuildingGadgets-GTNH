@@ -2,22 +2,22 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 // import net.minecraft.util.MovingObjectPosition;
 // import net.minecraft.util.text.TextComponentString;
 // import net.minecraft.util.text.TextComponentTranslation;
@@ -66,8 +66,11 @@ public class GadgetExchanger extends GadgetGeneric {
     @Override
     public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
         ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
-        panel.child(IKey.str("STUBBED").asWidget()
-                .top(7).left(7));
+        panel.child(
+            IKey.str("STUBBED")
+                .asWidget()
+                .top(7)
+                .left(7));
         return new ModularScreen(panel);
     }
 

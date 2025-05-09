@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.cleanroommc.modularui.drawable.BufferBuilder;
-import com.cleanroommc.modularui.utils.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -19,7 +17,9 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
+import com.cleanroommc.modularui.utils.GlStateManager;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
@@ -32,7 +32,6 @@ import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Multiset;
-import org.lwjgl.opengl.GL14;
 
 public class ToolRenders {
 
@@ -439,7 +438,8 @@ public class ToolRenders {
 
             // Don't draw on top of blocks being built by our tools.
             BlockState startBlock = BlockState.getBlockState(world, startPos);
-            if (startBlock == null || startBlock.getBlock().equals(ModBlocks.effectBlock)) {
+            if (startBlock == null || startBlock.getBlock()
+                .equals(ModBlocks.effectBlock)) {
                 return;
             }
 
@@ -456,14 +456,16 @@ public class ToolRenders {
             GlStateManager.translate(
                 startPos.posX - playerPos.xCoord,
                 startPos.posY - playerPos.yCoord,
-                startPos.posZ - playerPos.zCoord);// Now move the render position to the coordinates we want to render at
+                startPos.posZ - playerPos.zCoord);// Now move the render position to the coordinates we want to render
+                                                  // at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); // Set the alpha of the blocks we are rendering
             //
             GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
             GlStateManager.scale(0.999f, 0.999f, 0.999f);// Slightly Larger block to avoid z-fighting.
 
             // TODO(johnrowl) enable this again
-            //PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos, UUID); // Draw
+            // PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos,
+            // UUID); // Draw
             // the cached buffer in the world.
 
             GlStateManager.popMatrix();
@@ -481,16 +483,16 @@ public class ToolRenders {
             }
 
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            //if (blockMapList.isEmpty()) return;
+            // if (blockMapList.isEmpty()) return;
             // TODO(johnrowl) we probably want to add this back for performance reasons.
 
             // We want to draw from the starting position to the (ending position)+1
             int x = Math.min(startPos.posX, endPos.posX);
             int y = Math.min(startPos.posY, endPos.posY);
             int z = Math.min(startPos.posZ, endPos.posZ);
-            int dx = Math.max(startPos.posX, endPos.posX)+1;
-            int dy = Math.max(startPos.posY, endPos.posY)+1;
-            int dz = Math.max(startPos.posZ, endPos.posZ)+1;
+            int dx = Math.max(startPos.posX, endPos.posX) + 1;
+            int dy = Math.max(startPos.posY, endPos.posY) + 1;
+            int dz = Math.max(startPos.posZ, endPos.posZ) + 1;
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
@@ -505,7 +507,7 @@ public class ToolRenders {
                 GlStateManager.SourceFactor.ONE,
                 GlStateManager.DestFactor.ZERO);
 
-            renderBox(tessellator, AxisAlignedBB.getBoundingBox(x,y,z,dx,dy,dz), 255, 223, 127);
+            renderBox(tessellator, AxisAlignedBB.getBoundingBox(x, y, z, dx, dy, dz), 255, 223, 127);
             // Draw the box around the blocks we've copied.
 
             GL11.glLineWidth(1.0F);
@@ -518,61 +520,60 @@ public class ToolRenders {
         }
     }
 
-     private static void renderLinkedInventoryOutline(
-             RenderWorldLastEvent evt,
-             ItemStack item,
-             EntityPlayer player,
-             Tessellator tess
-     ) {
-         Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
-         ChunkCoordinates coordinate = GadgetUtils.getPOSFromNBT(item, "boundTE");
-         Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
+    private static void renderLinkedInventoryOutline(RenderWorldLastEvent evt, ItemStack item, EntityPlayer player,
+        Tessellator tess) {
+        Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
+        ChunkCoordinates coordinate = GadgetUtils.getPOSFromNBT(item, "boundTE");
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
 
-         if (dim == null) {
-             return;
-         }
+        if (dim == null) {
+            return;
+        }
 
-         if (player.dimension != dim) {
-             return;
-         }
+        if (player.dimension != dim) {
+            return;
+        }
 
-         if (coordinate == null) {
-             return;
-         }
+        if (coordinate == null) {
+            return;
+        }
 
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
+        // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
 
-         GlStateManager.pushMatrix();
-         GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
-         // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
+        GlStateManager.disableLighting();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO);
 
-         GlStateManager.disableLighting();
-         GlStateManager.disableTexture2D();
-         GlStateManager.enableBlend();
-         GlStateManager.tryBlendFuncSeparate(
-                 GlStateManager.SourceFactor.SRC_ALPHA,
-                 GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                 GlStateManager.SourceFactor.ONE,
-                 GlStateManager.DestFactor.ZERO);
+        renderBoxSolid(
+            tess,
+            AxisAlignedBB.getBoundingBox(
+                coordinate.posX - 0.001,
+                coordinate.posY - 0.001,
+                coordinate.posZ - 0.001,
+                coordinate.posX + 1.001,
+                coordinate.posY + 1.001,
+                coordinate.posZ + 1.001),
+            1f,
+            0.9f,
+            .5f,
+            0.2f);
+        // Draw the box around the blocks we've copied.
 
+        GL11.glLineWidth(1.0F);
+        GlStateManager.enableLighting();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
 
-         renderBoxSolid(tess, AxisAlignedBB.getBoundingBox(
-                 coordinate.posX - 0.001,
-                 coordinate.posY - 0.001,
-                 coordinate.posZ - 0.001,
-                 coordinate.posX + 1.001,
-                 coordinate.posY + 1.001,
-                 coordinate.posZ + 1.001
-         ), 1f, 0.9f, .5f, 0.2f);
-         // Draw the box around the blocks we've copied.
-
-         GL11.glLineWidth(1.0F);
-         GlStateManager.enableLighting();
-         GlStateManager.enableTexture2D();
-         GlStateManager.enableDepth();
-         GlStateManager.depthMask(true);
-
-         GlStateManager.popMatrix();
-     }
+        GlStateManager.popMatrix();
+    }
 
     /**
      * renderBox renders a box that completely covers the selected axis aligned bounding box.
@@ -670,30 +671,24 @@ public class ToolRenders {
         tessellator.addVertex(minX, maxY, minZ);
     }
 
-    private static void renderBoxSolid(
-            Tessellator tessellator,
-            AxisAlignedBB box,
-            float red,
-            float green,
-            float blue,
-            float alpha
-    ) {
-        renderBoxSolid(tessellator, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, red, green, blue, alpha);
+    private static void renderBoxSolid(Tessellator tessellator, AxisAlignedBB box, float red, float green, float blue,
+        float alpha) {
+        renderBoxSolid(
+            tessellator,
+            box.minX,
+            box.minY,
+            box.minZ,
+            box.maxX,
+            box.maxY,
+            box.maxZ,
+            red,
+            green,
+            blue,
+            alpha);
     }
 
-    private static void renderBoxSolid(
-            Tessellator tessellator,
-            double startX,
-            double startY,
-            double startZ,
-            double endX,
-            double endY,
-            double endZ,
-            float red,
-            float green,
-            float blue,
-            float alpha
-    ) {
+    private static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
+        double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
         // Set color once for all vertices

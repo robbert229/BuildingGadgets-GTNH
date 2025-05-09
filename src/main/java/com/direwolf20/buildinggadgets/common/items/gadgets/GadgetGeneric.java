@@ -2,8 +2,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
-import com.cleanroommc.modularui.screen.ModularScreen;
-import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +18,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;

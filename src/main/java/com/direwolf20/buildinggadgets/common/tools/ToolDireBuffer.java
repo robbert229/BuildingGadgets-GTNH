@@ -41,6 +41,7 @@ public class ToolDireBuffer {
         this.rawShortBuffer = this.byteBuffer.asShortBuffer();
         this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
     }
+
     //
     // private void growBuffer(int p_181670_1_) {
     // if (MathHelper.roundUp(p_181670_1_, 4) / 4 > this.rawIntBuffer.remaining() || this.vertexCount *
@@ -535,10 +536,10 @@ public class ToolDireBuffer {
     // return this.vertexFormat;
     // }
     //
-//     @Override
-     public int getVertexCount() {
+    // @Override
+    public int getVertexCount() {
         return this.vertexCount;
-     }
+    }
     //
     // @Override
     // public int getDrawMode() {

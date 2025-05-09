@@ -8,14 +8,11 @@
     "mcversion": "${minecraftVersion}",
     "url": "https://github.com/robbert229/BuildingGadgets-GTNH",
     "updateUrl": "",
-    "authorList": ["Direwolf20", "robbert229"],
-    "credits": "The Forge and FML guys, McJty, Vazkii, CPW, and Pahimar for helping me learn java/forge modding.  Rorax for the textures!",
+    "authorList": ["robbert229"],
+    "credits": "The renowned Direwolf20, the Forge and FML guys, McJty, Vazkii, CPW, and Pahimar for helping me learn java/forge modding.  Rorax for the textures! And lastly me John R who backported to 1.7.10 and optimized for GT",
     "logoFile": "assets/buildinggadgets/textures/logo/logo.png",
     "screenshots": [],
-    "requiredMods":["Forge"],
-    "dependencies": [
-      "ctm",
-      "Forge"
-    ]
+    "requiredMods":[],
+    "dependencies": []
   }]
 }

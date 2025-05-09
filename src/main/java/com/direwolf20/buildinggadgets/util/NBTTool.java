@@ -375,7 +375,7 @@ public class NBTTool {
         compound.setInteger(NBT_BLOCK_META, block.metadata());
     }
 
-    private static String tryKeys(NBTTagCompound tag, String ...keys) {
+    private static String tryKeys(NBTTagCompound tag, String... keys) {
         if (keys.length == 0) {
             throw new IllegalArgumentException("invalid empty list of keys to try");
         }

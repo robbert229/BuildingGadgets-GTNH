@@ -801,8 +801,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
             var currentBlock = BlockState.getBlockState(world, blockMap.pos);
 
-            boolean cancelled = !GadgetGeneric.EmitEvent
-                .breakBlock(world, blockMap.pos, currentBlock.block(), player);
+            boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, blockMap.pos, currentBlock.block(), player);
             if (distance < 256 && !cancelled && sameDim) { // Don't allow us to undo a block while its still being
                                                            // placed or too far away
                 if (currentBlock.block() == blockMap.state.block()

@@ -30,8 +30,8 @@ public class PacketToggleMode implements IMessage {
 
     public PacketToggleMode() {}
 
-    public PacketToggleMode(int modeInt) {
-        mode = modeInt;
+    public PacketToggleMode(int mode) {
+        this.mode = mode;
     }
 
     public static class Handler implements IMessageHandler<PacketToggleMode, IMessage> {
@@ -42,7 +42,6 @@ public class PacketToggleMode implements IMessage {
                 return null;
             }
 
-            // FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             this.handle(message, ctx);
 
             return null;

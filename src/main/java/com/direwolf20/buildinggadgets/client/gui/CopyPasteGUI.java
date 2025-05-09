@@ -6,396 +6,67 @@
 
 package com.direwolf20.buildinggadgets.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.ResourceLocation;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.client.util.MouseUtil;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.network.PacketCopyCoords;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.value.BoolValue;
+import com.cleanroommc.modularui.widgets.ToggleButton;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.mojang.realmsclient.gui.ChatFormatting;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleMode;
 
-public class CopyPasteGUI extends GuiScreen {
-    // public static final int WIDTH = 256;
-    // public static final int HEIGHT = 256;
+public class CopyPasteGUI extends GadgetGUI {
 
-    private GuiTextField startX;
-    private GuiTextField startY;
-    private GuiTextField startZ;
-    private GuiTextField endX;
-    private GuiTextField endY;
-    private GuiTextField endZ;
-
-    private boolean absoluteCoords = SyncedConfig.absoluteCoordDefault && SyncedConfig.allowAbsoluteCoords;
-
-    private int guiLeft = 15;
-    private int guiTop = 15;
-
-    private ItemStack copyPasteTool;
-    private ChunkCoordinates startPos;
-    private ChunkCoordinates endPos;
-
-    private static final ResourceLocation background = new ResourceLocation(
-        BuildingGadgets.MODID,
-        "textures/gui/testcontainer.png");
+    private GadgetCopyPaste.ToolMode mode;
 
     public CopyPasteGUI(ItemStack tool) {
-        super();
-        this.copyPasteTool = tool;
+        this(tool, false);
+    }
+
+    public CopyPasteGUI(ItemStack tool, boolean temporarilyEnabled) {
+        super(tool, temporarilyEnabled);
+
+        this.mode = GadgetCopyPaste.getToolMode(tool);
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        startPos = ModItems.gadgetCopyPaste.getStartPos(copyPasteTool);
-        endPos = ModItems.gadgetCopyPaste.getEndPos(copyPasteTool);
-        if (startPos == null) startPos = new ChunkCoordinates(0, 0, 0);
-        if (endPos == null) endPos = new ChunkCoordinates(0, 0, 0);
+    public ModularPanel buildUI(ModularGuiContext context) {
+        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("copy_paste"));
 
-        startX = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 65,
-            this.guiTop + 15,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        startX.setMaxStringLength(50);
-        startX.setVisible(true);
+        var buttonFlow = Flow.row()
+            .child(
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("mode/copy.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("mode/copy.png"))
+                    .addTooltipElement(IKey.str("Copy"))
+                    .marginRight(7)
+                    .value(new BoolValue.Dynamic(() -> this.mode == GadgetCopyPaste.ToolMode.Copy, (val) -> {
+                        this.mode = GadgetCopyPaste.ToolMode.Copy;
+                        PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(this.mode.ordinal()));
+                    })))
+            .child(
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("mode/paste.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("mode/paste.png"))
+                    .addTooltipElement(IKey.str("Paste"))
+                    .value(new BoolValue.Dynamic(() -> this.mode == GadgetCopyPaste.ToolMode.Paste, (val) -> {
+                        this.mode = GadgetCopyPaste.ToolMode.Paste;
+                        PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(this.mode.ordinal()));
+                    })))
+            .coverChildrenHeight()
+            .coverChildrenWidth();
 
-        startY = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 165,
-            this.guiTop + 15,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        startY.setMaxStringLength(50);
-        startY.setVisible(true);
+        var flow = Flow.column()
+            .child(
+                IKey.str("Copy Paste")
+                    .asWidget()
+                    .marginTop(7)
+                    .marginBottom(7))
+            .child(buttonFlow);
 
-        startZ = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 265,
-            this.guiTop + 15,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        startZ.setMaxStringLength(50);
-        startZ.setVisible(true);
+        panel.child(flow);
 
-        endX = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 65,
-            this.guiTop + 35,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        endX.setMaxStringLength(50);
-        endX.setVisible(true);
-
-        endY = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 165,
-            this.guiTop + 35,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        endY.setMaxStringLength(50);
-        endY.setVisible(true);
-
-        endZ = new GuiTextField(
-            this.fontRendererObj,
-            this.guiLeft + 265,
-            this.guiTop + 35,
-            40,
-            this.fontRendererObj.FONT_HEIGHT);
-        endZ.setMaxStringLength(50);
-        endZ.setVisible(true);
-
-        updateTextFields();
-        // NOTE: the id always has to be different or else it might get called twice or never!
-        this.buttonList.add(new GuiButton(1, this.guiLeft + 45, this.guiTop + 60, 40, 20, "Ok"));
-        this.buttonList.add(new GuiButton(2, this.guiLeft + 145, this.guiTop + 60, 40, 20, "Cancel"));
-        this.buttonList.add(new GuiButton(3, this.guiLeft + 245, this.guiTop + 60, 40, 20, "Clear"));
-
-        if (SyncedConfig.allowAbsoluteCoords)
-            this.buttonList.add(new GuiButton(4, this.guiLeft + 325, this.guiTop + 60, 80, 20, "CoordsMode"));
-
-        this.buttonList.add(new DireButton(5, this.guiLeft + 50, this.guiTop + 14, 10, 10, "-"));
-        this.buttonList.add(new DireButton(6, this.guiLeft + 110, this.guiTop + 14, 10, 10, "+"));
-        this.buttonList.add(new DireButton(7, this.guiLeft + 150, this.guiTop + 14, 10, 10, "-"));
-        this.buttonList.add(new DireButton(8, this.guiLeft + 210, this.guiTop + 14, 10, 10, "+"));
-        this.buttonList.add(new DireButton(9, this.guiLeft + 250, this.guiTop + 14, 10, 10, "-"));
-        this.buttonList.add(new DireButton(10, this.guiLeft + 310, this.guiTop + 14, 10, 10, "+"));
-        this.buttonList.add(new DireButton(11, this.guiLeft + 50, this.guiTop + 34, 10, 10, "-"));
-        this.buttonList.add(new DireButton(12, this.guiLeft + 110, this.guiTop + 34, 10, 10, "+"));
-        this.buttonList.add(new DireButton(13, this.guiLeft + 150, this.guiTop + 34, 10, 10, "-"));
-        this.buttonList.add(new DireButton(14, this.guiLeft + 210, this.guiTop + 34, 10, 10, "+"));
-        this.buttonList.add(new DireButton(15, this.guiLeft + 250, this.guiTop + 34, 10, 10, "-"));
-        this.buttonList.add(new DireButton(16, this.guiLeft + 310, this.guiTop + 34, 10, 10, "+"));
-    }
-
-    private void fieldChange(GuiTextField textField, int amount) {
-        nullCheckTextBoxes();
-        if (GuiScreen.isShiftKeyDown()) amount = amount * 10;
-        try {
-            int i = Integer.valueOf(textField.getText());
-            i = i + amount;
-            textField.setText(String.valueOf(i));
-        } catch (Throwable t) {
-            this.mc.displayGuiScreen(null);
-        }
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        mc.getTextureManager()
-            .bindTexture(background);
-        // drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        this.startX.drawTextBox();
-        this.startY.drawTextBox();
-        this.startZ.drawTextBox();
-        this.endX.drawTextBox();
-        this.endY.drawTextBox();
-        this.endZ.drawTextBox();
-        fontRendererObj.drawStringWithShadow("Start X", this.guiLeft, this.guiTop + 15, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Y", this.guiLeft + 131, this.guiTop + 15, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Z", this.guiLeft + 231, this.guiTop + 15, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("End X", this.guiLeft + 8, this.guiTop + 35, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Y", this.guiLeft + 131, this.guiTop + 35, 0xFFFFFF);
-        fontRendererObj.drawStringWithShadow("Z", this.guiLeft + 231, this.guiTop + 35, 0xFFFFFF);
-        super.drawScreen(mouseX, mouseY, partialTicks);
-    }
-
-    private void nullCheckTextBoxes() {
-        if (absoluteCoords) {
-            if (startX.getText()
-                .isEmpty()) {
-                startX.setText(String.valueOf(startPos.posX));
-            }
-            if (startY.getText()
-                .isEmpty()) {
-                startY.setText(String.valueOf(startPos.posY));
-            }
-            if (startZ.getText()
-                .isEmpty()) {
-                startZ.setText(String.valueOf(startPos.posZ));
-            }
-            if (endX.getText()
-                .isEmpty()) {
-                endX.setText(String.valueOf(endPos.posX));
-            }
-            if (endY.getText()
-                .isEmpty()) {
-                endY.setText(String.valueOf(endPos.posY));
-            }
-            if (endZ.getText()
-                .isEmpty()) {
-                endZ.setText(String.valueOf(endPos.posZ));
-            }
-        } else {
-            if (startX.getText()
-                .isEmpty()) {
-                startX.setText("0");
-            }
-            if (startY.getText()
-                .isEmpty()) {
-                startY.setText("0");
-            }
-            if (startZ.getText()
-                .isEmpty()) {
-                startZ.setText("0");
-            }
-            if (endX.getText()
-                .isEmpty()) {
-                endX.setText("0");
-            }
-            if (endY.getText()
-                .isEmpty()) {
-                endY.setText("0");
-            }
-            if (endZ.getText()
-                .isEmpty()) {
-                endZ.setText("0");
-            }
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton b) {
-        if (b.id == 1) {
-            nullCheckTextBoxes();
-            try {
-                if (absoluteCoords) {
-                    startPos = new ChunkCoordinates(
-                        Integer.parseInt(startX.getText()),
-                        Integer.parseInt(startY.getText()),
-                        Integer.parseInt(startZ.getText()));
-                    endPos = new ChunkCoordinates(
-                        Integer.parseInt(endX.getText()),
-                        Integer.parseInt(endY.getText()),
-                        Integer.parseInt(endZ.getText()));
-                } else {
-                    startPos = new ChunkCoordinates(
-                        startPos.posX + Integer.parseInt(startX.getText()),
-                        startPos.posY + Integer.parseInt(startY.getText()),
-                        startPos.posZ + Integer.parseInt(startZ.getText()));
-                    endPos = new ChunkCoordinates(
-                        startPos.posX + Integer.parseInt(endX.getText()),
-                        startPos.posY + Integer.parseInt(endY.getText()),
-                        startPos.posZ + Integer.parseInt(endZ.getText()));
-                }
-                PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(startPos, endPos));
-            } catch (Throwable t) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(
-                    new ChatComponentText(
-                        ChatFormatting.RED
-                            + new ChatComponentTranslation("message.gadget.copyguierror").getUnformattedText()));
-            }
-            this.mc.displayGuiScreen(null);
-        } else if (b.id == 2) {
-            this.mc.displayGuiScreen(null);
-        } else if (b.id == 3) {
-            PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(new ChunkCoordinates(), new ChunkCoordinates()));
-            this.mc.displayGuiScreen(null);
-        } else if (b.id == 4) {
-            coordsModeSwitch();
-            updateTextFields();
-        } else if (b.id == 5) {
-            fieldChange(startX, -1);
-        } else if (b.id == 6) {
-            fieldChange(startX, 1);
-        } else if (b.id == 7) {
-            fieldChange(startY, -1);
-        } else if (b.id == 8) {
-            fieldChange(startY, 1);
-        } else if (b.id == 9) {
-            fieldChange(startZ, -1);
-        } else if (b.id == 10) {
-            fieldChange(startZ, 1);
-        } else if (b.id == 11) {
-            fieldChange(endX, -1);
-        } else if (b.id == 12) {
-            fieldChange(endX, 1);
-        } else if (b.id == 13) {
-            fieldChange(endY, -1);
-        } else if (b.id == 14) {
-            fieldChange(endY, 1);
-        } else if (b.id == 15) {
-            fieldChange(endZ, -1);
-        } else if (b.id == 16) {
-            fieldChange(endZ, 1);
-        }
-
-    }
-
-    private void coordsModeSwitch() {
-        absoluteCoords = !absoluteCoords;
-    }
-
-    private void updateTextFields() {
-        String x, y, z;
-        if (absoluteCoords) {
-            ChunkCoordinates start = startX.getText() != "" ? new ChunkCoordinates(
-                startPos.posX + Integer.parseInt(startX.getText()),
-                startPos.posY + Integer.parseInt(startY.getText()),
-                startPos.posZ + Integer.parseInt(startZ.getText())) : startPos;
-            ChunkCoordinates end = endX.getText() != "" ? new ChunkCoordinates(
-                startPos.posX + Integer.parseInt(endX.getText()),
-                startPos.posY + Integer.parseInt(endY.getText()),
-                startPos.posZ + Integer.parseInt(endZ.getText())) : endPos;
-            startX.setText(String.valueOf(start.posX));
-            startY.setText(String.valueOf(start.posY));
-            startZ.setText(String.valueOf(start.posZ));
-            endX.setText(String.valueOf(end.posX));
-            endY.setText(String.valueOf(end.posY));
-            endZ.setText(String.valueOf(end.posZ));
-        } else {
-            x = startX.getText() != "" ? String.valueOf(Integer.parseInt(startX.getText()) - startPos.posX) : "0";
-            startX.setText(x);
-            y = startY.getText() != "" ? String.valueOf(Integer.parseInt(startY.getText()) - startPos.posY) : "0";
-            startY.setText(y);
-            z = startZ.getText() != "" ? String.valueOf(Integer.parseInt(startZ.getText()) - startPos.posZ) : "0";
-            startZ.setText(z);
-            x = endX.getText() != "" ? String.valueOf(Integer.parseInt(endX.getText()) - startPos.posX)
-                : String.valueOf(endPos.posX - startPos.posX);
-            endX.setText(x);
-            y = endY.getText() != "" ? String.valueOf(Integer.parseInt(endY.getText()) - startPos.posY)
-                : String.valueOf(endPos.posY - startPos.posY);
-            endY.setText(y);
-            z = endZ.getText() != "" ? String.valueOf(Integer.parseInt(endZ.getText()) - startPos.posZ)
-                : String.valueOf(endPos.posZ - startPos.posZ);
-            endZ.setText(z);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) {
-        if (this.startX.textboxKeyTyped(typedChar, keyCode) || this.startY.textboxKeyTyped(typedChar, keyCode)
-            || this.startZ.textboxKeyTyped(typedChar, keyCode)
-            || this.endX.textboxKeyTyped(typedChar, keyCode)
-            || this.endY.textboxKeyTyped(typedChar, keyCode)
-            || this.endZ.textboxKeyTyped(typedChar, keyCode)) {
-
-        } else {
-            super.keyTyped(typedChar, keyCode);
-        }
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (mouseButton == 1) {
-            if (MouseUtil.mouseClicked(startX, mouseX, mouseY, 0)) {
-                startX.setText("");
-            } else if (MouseUtil.mouseClicked(startY, mouseX, mouseY, 0)) {
-                startY.setText("");
-            } else if (MouseUtil.mouseClicked(startZ, mouseX, mouseY, 0)) {
-                startZ.setText("");
-            } else if (MouseUtil.mouseClicked(endX, mouseX, mouseY, 0)) {
-                endX.setText("");
-            } else if (MouseUtil.mouseClicked(endY, mouseX, mouseY, 0)) {
-                endY.setText("");
-            } else if (MouseUtil.mouseClicked(endZ, mouseX, mouseY, 0)) {
-                endZ.setText("");
-            } else {
-                // startX.setFocused(false);
-                super.mouseClicked(mouseX, mouseY, mouseButton);
-            }
-        } else {
-            if (MouseUtil.mouseClicked(startX, mouseX, mouseY, mouseButton)) {
-                startX.setFocused(true);
-            } else if (MouseUtil.mouseClicked(startY, mouseX, mouseY, mouseButton)) {
-                startY.setFocused(true);
-            } else if (MouseUtil.mouseClicked(startZ, mouseX, mouseY, mouseButton)) {
-                startZ.setFocused(true);
-            } else if (MouseUtil.mouseClicked(endX, mouseX, mouseY, mouseButton)) {
-                endX.setFocused(true);
-            } else if (MouseUtil.mouseClicked(endY, mouseX, mouseY, mouseButton)) {
-                endY.setFocused(true);
-            } else if (MouseUtil.mouseClicked(endZ, mouseX, mouseY, mouseButton)) {
-                endZ.setFocused(true);
-            } else {
-                // startX.setFocused(false);
-                super.mouseClicked(mouseX, mouseY, mouseButton);
-            }
-        }
-    }
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
+        return panel;
     }
 }

@@ -162,7 +162,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
         return MetadataUtils.getConstructionBlockEntityMetadataFromDamage(world.getBlockMetadata(x, y, z))
-            .getBright() ? 0 : 255;
+            .bright() ? 0 : 255;
     }
 
     //

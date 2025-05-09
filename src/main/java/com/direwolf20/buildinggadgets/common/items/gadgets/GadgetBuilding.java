@@ -10,10 +10,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
@@ -49,6 +54,27 @@ public class GadgetBuilding extends GadgetGeneric {
     @Override
     public int getDamageCost(ItemStack tool) {
         return SyncedConfig.damageCostBuilder;
+    }
+
+    @Override
+    public void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
+        // TODO(johnrowl) add renderer.
+    }
+
+    @Override
+    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
+        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
+        panel.child(
+            IKey.str("STUBBED")
+                .asWidget()
+                .top(7)
+                .left(7));
+        return new ModularScreen(panel);
+    }
+
+    @Override
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
+        GadgetUtils.anchorBlocks(player, stack);
     }
 
     private static void setToolMode(ItemStack tool, BuildingModes mode) {
@@ -298,7 +324,7 @@ public class GadgetBuilding extends GadgetGeneric {
             return false;
         }
 
-        if (!WorldUtils.isInsideWorldLimits(world, pos)) {
+        if (!WorldUtils.isInsideWorldLimits(pos)) {
             return false;
         }
 

@@ -30,20 +30,24 @@ public class GeneralMenuGUI extends CustomModularScreen {
 
         panel.child(
             new Column().child(
-                new ToggleButton().overlay(GuiUtils.getUITextureFromResource("destroy_overlay"))
-                    .hoverOverlay(GuiUtils.getUITextureFromResource("destroy_overlay"), IKey.str("Overlay"))
+                new ToggleButton().overlay(GuiUtils.getUITextureFromResource("setting/destroy_overlay.png"))
+                    .hoverOverlay(GuiUtils.getUITextureFromResource("setting/destroy_overlay.png"), IKey.str("Overlay"))
                     .size(ButtonSize, ButtonSize)
                     .left(0)
                     .top(0))
                 .child(
-                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("connected_area"))
-                        .hoverOverlay(GuiUtils.getUITextureFromResource("connected_area"), IKey.str("Connected Area"))
+                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("setting/connected_area.png"))
+                        .hoverOverlay(
+                            GuiUtils.getUITextureFromResource("setting/connected_area.png"),
+                            IKey.str("Connected Area"))
                         .size(ButtonSize, ButtonSize)
                         .left(ButtonSize + ButtonMargin)
                         .top(0))
                 .child(
-                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("raytrace_fluid"))
-                        .hoverOverlay(GuiUtils.getUITextureFromResource("raytrace_fluid"), IKey.str("Raytrace Fluid"))
+                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("setting/raytrace_fluid.png"))
+                        .hoverOverlay(
+                            GuiUtils.getUITextureFromResource("setting/raytrace_fluid.png"),
+                            IKey.str("Raytrace Fluid"))
                         .size(ButtonSize, ButtonSize)
                         .left((ButtonSize + ButtonMargin) * 2)
                         .top(0))
@@ -54,14 +58,14 @@ public class GeneralMenuGUI extends CustomModularScreen {
 
         panel.child(
             new Column().child(
-                new ToggleButton().overlay(GuiUtils.getUITextureFromResource("anchor"))
-                    .hoverOverlay(GuiUtils.getUITextureFromResource("anchor"), IKey.str("Anchor"))
+                new ToggleButton().overlay(GuiUtils.getUITextureFromResource("setting/anchor.png"))
+                    .hoverOverlay(GuiUtils.getUITextureFromResource("setting/anchor.png"), IKey.str("Anchor"))
                     .size(ButtonSize, ButtonSize)
                     .left(0)
                     .top(0))
                 .child(
-                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("undo"))
-                        .hoverOverlay(GuiUtils.getUITextureFromResource("undo"), IKey.str("Undo"))
+                    new ToggleButton().overlay(GuiUtils.getUITextureFromResource("setting/undo.png"))
+                        .hoverOverlay(GuiUtils.getUITextureFromResource("setting/undo.png"), IKey.str("Undo"))
                         .size(ButtonSize, ButtonSize)
                         .left(ButtonSize + ButtonMargin)
                         .top(0))

@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    //    testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
 
     //compileOnly("com.github.GTNewHorizons:ForestryMC:4.8.2:api") {transitive = false }
 //    runtime "cofh:RedstoneFlux:1.12-${rf_version}:universal"

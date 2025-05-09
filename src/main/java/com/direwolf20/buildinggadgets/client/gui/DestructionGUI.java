@@ -8,12 +8,9 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.item.ItemStack;
 
-import org.lwjgl.input.Keyboard;
-
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.drawable.text.DynamicKey;
-import com.cleanroommc.modularui.screen.CustomModularScreen;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
 import com.cleanroommc.modularui.utils.Alignment;
@@ -26,17 +23,14 @@ import com.cleanroommc.modularui.widgets.ToggleButton;
 import com.cleanroommc.modularui.widgets.layout.Column;
 import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Row;
-import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.network.*;
 
-public class DestructionGUI extends CustomModularScreen {
+public class DestructionGUI extends GadgetGUI {
 
     private static final int ButtonSize = 20;
     private static final int Spacing = 7;
-
-    private boolean temporarilyEnabled = false;
 
     private int left;
     private int right;
@@ -53,31 +47,17 @@ public class DestructionGUI extends CustomModularScreen {
     }
 
     public DestructionGUI(ItemStack tool, boolean temporarilyEnabled) {
+        super(tool, temporarilyEnabled);
+
         this.left = GadgetDestruction.getToolValue(tool, "left");
         this.right = GadgetDestruction.getToolValue(tool, "right");
         this.up = GadgetDestruction.getToolValue(tool, "up");
         this.down = GadgetDestruction.getToolValue(tool, "down");
         this.depth = GadgetDestruction.getToolValue(tool, "depth");
 
-        this.temporarilyEnabled = temporarilyEnabled;
         this.enableRayTraceFluid = GadgetGeneric.shouldRayTraceFluid(tool);
         this.enableConnectedArea = GadgetGeneric.getConnectedArea(tool);
         this.enableAnchored = GadgetDestruction.getAnchor(tool) != null;
-    }
-
-    @Override
-    public void onFrameUpdate() {
-        super.onFrameUpdate();
-
-        if (!this.temporarilyEnabled) {
-            return;
-        }
-
-        // we are doing this because I was running into some issues where the KeyBinding wasn't getting its actual state
-        // updated correctly, and was saying that the key was not down, when it was.
-        if (!Keyboard.isKeyDown(KeyBindings.temporarilyEnableMenu.getKeyCode())) {
-            this.close();
-        }
     }
 
     private Flow buildSliders() {
@@ -191,7 +171,7 @@ public class DestructionGUI extends CustomModularScreen {
             .coverChildrenHeight()
             .align(Alignment.TopCenter)
             .child(
-                new ButtonWidget<>().overlay(GuiUtils.getUITextureFromResource("undo"))
+                new ButtonWidget<>().overlay(GuiUtils.getUITextureFromResource("setting/undo.png"))
                     .addTooltipElement(IKey.str("Undo"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -200,8 +180,8 @@ public class DestructionGUI extends CustomModularScreen {
                         return true;
                     }))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("anchor"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("anchor_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/anchor.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/anchor_selected.png"))
                     .addTooltipElement(IKey.str("Anchor"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -210,8 +190,8 @@ public class DestructionGUI extends CustomModularScreen {
                         PacketHandler.INSTANCE.sendToServer(new PacketAnchor());
                     })))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("connected_area"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("connected_area_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/connected_area.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/connected_area_selected.png"))
                     .addTooltipElement(IKey.str("Connected Area"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)
@@ -220,8 +200,8 @@ public class DestructionGUI extends CustomModularScreen {
                         PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
                     })))
             .child(
-                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("raytrace_fluid"))
-                    .overlay(true, GuiUtils.getUITextureFromResource("raytrace_fluid_selected"))
+                new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/raytrace_fluid.png"))
+                    .overlay(true, GuiUtils.getUITextureFromResource("setting/raytrace_fluid_selected.png"))
                     .addTooltipElement(IKey.str("Raytrace Fluid"))
                     .marginRight(Spacing)
                     .size(ButtonSize, ButtonSize)

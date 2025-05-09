@@ -11,8 +11,8 @@ public class MetadataUtils {
     }
 
     public static int getDamageFromConstructionBlockEntityMetadata(ConstructionBlockEntityMetadata metadata) {
-        int bright = (metadata.getBright() ? 1 : 0);
-        int neighborBrightness = (metadata.getNeighborBrightness() ? 1 : 0) << 1;
+        int bright = (metadata.bright() ? 1 : 0);
+        int neighborBrightness = (metadata.neighborBrightness() ? 1 : 0) << 1;
         return neighborBrightness + bright;
     }
 }

@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
 import com.direwolf20.buildinggadgets.util.MetadataUtils;
@@ -14,8 +15,8 @@ public class MetadataUtilsTest {
         ConstructionBlockEntityMetadata decoded = MetadataUtils.getConstructionBlockEntityMetadataFromDamage(damage);
         int decodedDamage = MetadataUtils.getDamageFromConstructionBlockEntityMetadata(decoded);
 
-        Assertions.assertEquals(decoded, state);
-        Assertions.assertEquals(damage, decodedDamage);
+        assertEquals(decoded, state);
+        assertEquals(damage, decodedDamage);
     }
 
     @Test
@@ -25,8 +26,8 @@ public class MetadataUtilsTest {
         ConstructionBlockEntityMetadata decoded = MetadataUtils.getConstructionBlockEntityMetadataFromDamage(damage);
         int decodedDamage = MetadataUtils.getDamageFromConstructionBlockEntityMetadata(decoded);
 
-        Assertions.assertEquals(decoded, state);
-        Assertions.assertEquals(damage, decodedDamage);
+        assertEquals(decoded, state);
+        assertEquals(damage, decodedDamage);
     }
 
     @Test
@@ -36,8 +37,8 @@ public class MetadataUtilsTest {
         ConstructionBlockEntityMetadata decoded = MetadataUtils.getConstructionBlockEntityMetadataFromDamage(damage);
         int decodedDamage = MetadataUtils.getDamageFromConstructionBlockEntityMetadata(decoded);
 
-        Assertions.assertEquals(decoded, state);
-        Assertions.assertEquals(damage, decodedDamage);
+        assertEquals(decoded, state);
+        assertEquals(damage, decodedDamage);
     }
 
     @Test
@@ -47,7 +48,7 @@ public class MetadataUtilsTest {
         ConstructionBlockEntityMetadata decoded = MetadataUtils.getConstructionBlockEntityMetadataFromDamage(damage);
         int decodedDamage = MetadataUtils.getDamageFromConstructionBlockEntityMetadata(decoded);
 
-        Assertions.assertEquals(decoded, state);
-        Assertions.assertEquals(damage, decodedDamage);
+        assertEquals(decoded, state);
+        assertEquals(damage, decodedDamage);
     }
 }

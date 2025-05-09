@@ -4,7 +4,9 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumFacing;
@@ -30,12 +32,8 @@ public class WorldUtils {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    public static boolean isInsideWorldLimits(World worldIn, ChunkCoordinates coordinates) {
-        if (coordinates.posY >= 0 && coordinates.posY < 256) {
-            return true;
-        } else {
-            return false;
-        }
+    public static boolean isInsideWorldLimits(ChunkCoordinates coordinates) {
+        return coordinates.posY >= 0 && coordinates.posY < 256;
     }
 
     @Nullable
@@ -47,16 +45,29 @@ public class WorldUtils {
         return world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
-    public static boolean isBlockModifiable(EntityPlayer player, ChunkCoordinates coordinates, ItemStack itemStack) {
-        return isBlockModifiable(player, coordinates, EnumFacing.DOWN, itemStack);
+    public static boolean isBlockModifiableUsingItem(EntityPlayer player, ChunkCoordinates coordinates, ItemStack itemStack) {
+        return isBlockModifiableUsingItem(player, coordinates, EnumFacing.DOWN, itemStack);
     }
 
-    public static boolean isBlockModifiable(EntityPlayer player, ChunkCoordinates coordinates, EnumFacing side,
-        ItemStack itemStack) {
+    public static boolean isBlockModifiableUsingItem(EntityPlayer player, ChunkCoordinates coordinates, EnumFacing side,
+                                                     ItemStack itemStack) {
         if (side == null) {
             side = EnumFacing.DOWN;
         }
 
         return player.canPlayerEdit(coordinates.posX, coordinates.posY, coordinates.posZ, side.ordinal(), itemStack);
+    }
+
+    public static boolean isBlockModifiable(World world, EntityPlayer player,ChunkCoordinates pos) {
+        if (!player.capabilities.allowEdit) {
+            return false;
+        }
+
+        if (player instanceof EntityPlayerMP mp) {
+            MinecraftServer server = MinecraftServer.getServer();
+            return !server.isBlockProtected(world, pos.posX, pos.posY, pos.posZ, mp);
+        }
+
+        return true;
     }
 }

@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.direwolf20.buildinggadgets.common.tools.PasteToolBufferBuilder;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -35,7 +36,7 @@ public class PacketBlockMap implements IMessage {
 
         @Override
         public IMessage onMessage(PacketBlockMap message, MessageContext ctx) {
-            if (ctx.side != Side.SERVER) {
+            if (ctx.side != Side.CLIENT) {
                 return null;
             }
 
@@ -48,10 +49,9 @@ public class PacketBlockMap implements IMessage {
             if (message.tag.equals(new NBTTagCompound())) {
                 PasteToolBufferBuilder.clearMaps();
             }
-            String UUID = message.tag.getString("UUID");
+            String UUID = message.tag.getString(NBTKeys.GADGET_UUID);
             PasteToolBufferBuilder.addToMap(UUID, message.tag);
-            // TODO(johnrowl) re-enable buffer
-            // PasteToolBufferBuilder.addMapToBuffer(UUID);
+            PasteToolBufferBuilder.addMapToBuffer(UUID);
         }
     }
 }

@@ -19,10 +19,8 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.client.events.EventClientTick;
 import com.direwolf20.buildinggadgets.client.events.EventKeyInput;
 import com.direwolf20.buildinggadgets.common.entities.ModEntities;
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.proxy.CommonProxy;
-import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -34,7 +32,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         ModEntities.initModels();
-        // ModelLoaderRegistry.registerLoader(new BakedModelLoader());
         super.preInit(e);
     }
 
@@ -44,7 +41,6 @@ public class ClientProxy extends CommonProxy {
         KeyBindings.init();
         EventKeyInput.init();
         EventClientTick.init();
-        // EventTooltip.init();
 
         MinecraftForge.EVENT_BUS.register(this);
         FMLCommonHandler.instance()
@@ -59,19 +55,9 @@ public class ClientProxy extends CommonProxy {
         ItemStack heldItem = GadgetGeneric.getGadget(player);
         if (heldItem == null || heldItem.getItem() == null) return;
 
-        if (heldItem.getItem() instanceof GadgetDestruction) {
-            ToolRenders.renderDestructionOverlay(evt, player, heldItem);
+        if (heldItem.getItem() instanceof GadgetGeneric gadget) {
+            gadget.renderOverlay(evt, player, heldItem);
         }
-
-        // if (heldItem.getItem() instanceof GadgetBuilding) {
-        // ToolRenders.renderBuilderOverlay(evt, player, heldItem);
-        // } else if (heldItem.getItem() instanceof GadgetExchanger) {
-        // ToolRenders.renderExchangerOverlay(evt, player, heldItem);
-        // } else if (heldItem.getItem() instanceof GadgetCopyPaste) {
-        // ToolRenders.renderPasteOverlay(evt, player, heldItem);
-        // } else if (heldItem.getItem() instanceof GadgetDestruction) {
-        // ToolRenders.renderDestructionOverlay(evt, player, heldItem);
-        // }
     }
 
     public static void playSound(ResourceLocation sound, float pitch) {

@@ -1,1 +1,50 @@
 {stateIntArray:[I;1,2],dim:0,posIntArray:[I;16711680,0],startPos:{X:283,Y:3,Z:59},mapIntState:[{mapSlot:1s,mapState:{Properties:{snowy:"false"},Name:"minecraft:grass"}},{mapSlot:2s,mapState:{Name:"minecraft:lapis_block"}}],endPos:{X:282,Y:3,Z:59}}
+
+
+{
+    stateIntArray:[I;1,2],
+    dim:0,
+    posIntArray:[I;16711680,0],
+    startPos:{X:283,Y:3,Z:59},
+    mapIntState:[
+        {
+            mapSlot:1s,
+            mapState:{
+                Properties:{snowy:"false"},
+                Name:"minecraft:grass"
+            }
+        },
+        {
+            mapSlot:2s,
+            mapState:{
+                Name:"minecraft:lapis_block"
+            }
+        }
+    ],
+    endPos:{X:282,Y:3,Z:59}
+}
+
+{
+    dim:0,
+    stateIntArray:[1,2,],
+    mapIntState:[
+        0:{
+            mapSlot:1s,
+            mapState:{
+                block_meta:0,
+                Name:22
+            }
+        },
+        1:{
+            mapSlot:2s,
+            mapState:{
+                block_meta:0,
+                Name:2
+            }
+        }
+    ],
+    startPos:{z:-827,x:70,y:3},
+    endPos:{z:-828,x:70,y:3},
+    posIntArray:[255,0,]
+}
+

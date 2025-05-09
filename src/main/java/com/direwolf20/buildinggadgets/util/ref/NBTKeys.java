@@ -48,7 +48,7 @@ public final class NBTKeys {
     public static final String GADGET_FUZZY = "fuzzy";
     public static final String GADGET_RAYTRACE_FLUID = "raytrace_fluid";
     public static final String GADGET_PLACE_INSIDE = "start_inside";
-    public static final String GADGET_UNCONNECTED_AREA = "unconnected_area";
+    public static final String GADGET_UNCONNECTED_AREA = "unconnectedarea";
     public static final String GADGET_ANCHOR = "anchor";
     public static final String GADGET_ANCHOR_SIDE = "anchor_side";
     public static final String GADGET_ANCHOR_COORDS = "anchor_coords";
@@ -57,7 +57,7 @@ public final class NBTKeys {
     public static final String GADGET_UNDO_START_POS = "undo_start_pos";
     public static final String GADGET_REL_POS = "rel_pos";
     public static final String GADGET_UUID = "uuid";
-
+    public static final String GADGET_TEMPLATE_OWNER = "owner";
     public static final String GADGET_DIM = "dim";
     public static final String GADGET_VALUE_UP = "up";
     public static final String GADGET_VALUE_DOWN = "down";

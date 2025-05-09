@@ -14,6 +14,8 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
 
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
+
 public class WorldSave extends WorldSavedData {
 
     private final String TAG_NAME;
@@ -50,7 +52,7 @@ public class WorldSave extends WorldSavedData {
 
             for (int i = 0; i < tagList.tagCount(); i++) {
                 NBTTagCompound mapTag = tagList.getCompoundTagAt(i);
-                String ID = mapTag.getString("UUID");
+                String ID = mapTag.getString(NBTKeys.GADGET_UUID);
                 NBTTagCompound tagCompound = mapTag.getCompoundTag("tag");
                 tagMap.put(ID, tagCompound);
             }
@@ -63,7 +65,7 @@ public class WorldSave extends WorldSavedData {
 
         for (Map.Entry<String, NBTTagCompound> entry : tagMap.entrySet()) {
             NBTTagCompound map = new NBTTagCompound();
-            map.setString("UUID", entry.getKey());
+            map.setString(NBTKeys.GADGET_UUID, entry.getKey());
             map.setTag("tag", entry.getValue());
             tagList.appendTag(map);
         }

@@ -14,10 +14,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
@@ -30,6 +32,7 @@ import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
+import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 
 public class GadgetDestruction extends GadgetGeneric {
 
@@ -56,6 +59,16 @@ public class GadgetDestruction extends GadgetGeneric {
     @Override
     public int getDamageCost(ItemStack tool) {
         return SyncedConfig.damageCostDestruction * getCostMultiplier(tool);
+    }
+
+    @Override
+    public void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
+        ToolRenders.renderDestructionOverlay(evt, player, heldItem);
+    }
+
+    @Override
+    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
+        return new DestructionGUI(itemStack, temporarilyEnabled);
     }
 
     private int getCostMultiplier(ItemStack tool) {
@@ -93,10 +106,10 @@ public class GadgetDestruction extends GadgetGeneric {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        String uuid = tagCompound.getString("UUID");
+        String uuid = tagCompound.getString(NBTKeys.GADGET_UUID);
         if (uuid.isEmpty()) {
             UUID uid = UUID.randomUUID();
-            tagCompound.setString("UUID", uid.toString());
+            tagCompound.setString(NBTKeys.GADGET_UUID, uid.toString());
             stack.setTagCompound(tagCompound);
             uuid = uid.toString();
         }
@@ -190,43 +203,47 @@ public class GadgetDestruction extends GadgetGeneric {
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        if (!world.isRemote) {
-            if (!player.isSneaking()) {
-                MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-                if (lookingAt == null && getAnchor(stack) == null) {
-                    // If we aren't looking at anything, exit
-                    return stack;
-                }
-
-                ChunkCoordinates startBlock = (getAnchor(stack) == null)
-                    ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
-                    : getAnchor(stack);
-
-                EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
-                    : getAnchorSide(stack);
-
-                clearArea(world, startBlock, sideHit, player, stack);
-
-                if (getAnchor(stack) != null) {
-                    setAnchor(stack, null);
-                    setAnchorSide(stack, null);
-
-                    player.addChatMessage(
-                        new ChatComponentText(
-                            EnumChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
-                }
-            }
-        } else {
+        if (world.isRemote) {
             if (player.isSneaking()) {
                 ClientGUI.open(new DestructionGUI(stack));
                 return stack;
             }
+
+            return stack;
         }
+
+        if (!player.isSneaking()) {
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
+            if (lookingAt == null && getAnchor(stack) == null) {
+                // If we aren't looking at anything, exit
+                return stack;
+            }
+
+            ChunkCoordinates startBlock = (getAnchor(stack) == null)
+                ? VectorTools.getPosFromMovingObjectPosition(lookingAt)
+                : getAnchor(stack);
+
+            EnumFacing sideHit = (getAnchorSide(stack) == null) ? EnumFacing.getFront(lookingAt.sideHit)
+                : getAnchorSide(stack);
+
+            clearArea(world, startBlock, sideHit, player, stack);
+
+            if (getAnchor(stack) != null) {
+                setAnchor(stack, null);
+                setAnchorSide(stack, null);
+
+                player.addChatMessage(
+                    new ChatComponentText(
+                        EnumChatFormatting.AQUA
+                            + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedText()));
+            }
+        }
+
         return stack;
     }
 
-    public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
+    @Override
+    public void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
             MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
@@ -319,7 +336,7 @@ public class GadgetDestruction extends GadgetGeneric {
             return false;
         }
 
-        return WorldUtils.isBlockModifiable(player, voidPos, tool);
+        return WorldUtils.isBlockModifiableUsingItem(player, voidPos, tool);
     }
 
     private void clearArea(World world, ChunkCoordinates pos, EnumFacing side, EntityPlayer player, ItemStack stack) {

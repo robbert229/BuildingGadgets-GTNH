@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -17,11 +18,15 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
+import com.cleanroommc.modularui.utils.GlStateManager;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.items.FakeBuilderWorld;
+import com.direwolf20.buildinggadgets.common.items.ModItems;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
@@ -385,176 +390,240 @@ public class ToolRenders {
         GL11.glPopMatrix();
     }
 
-    // public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
-    // //Calculate the players current position, which is needed later
-    // Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
-    //
-    // renderLinkedInventoryOutline(stack, playerPos, player);
-    // if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null)
-    // return;
-    //
-    // mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-    // String UUID = ModItems.gadgetCopyPaste.getUUID(stack);
-    // World world = player.world;
-    // if (GadgetCopyPaste.getToolMode(stack) == GadgetCopyPaste.ToolMode.Paste) {
-    // //First check if we have an anchor, if not check if we're looking at a block, if not, exit
-    // ChunkCoordinates startPos = GadgetCopyPaste.getAnchor(stack);
-    // if (startPos == null) {
-    // startPos = VectorTools.getPosLookingAt(player, stack);
-    // if (startPos == null) return;
-    // startPos = startPos.up(GadgetCopyPaste.getY(stack));
-    // startPos = startPos.east(GadgetCopyPaste.getX(stack));
-    // startPos = startPos.south(GadgetCopyPaste.getZ(stack));
-    // } else {
-    // startPos = startPos.up(GadgetCopyPaste.getY(stack));
-    // startPos = startPos.east(GadgetCopyPaste.getX(stack));
-    // startPos = startPos.south(GadgetCopyPaste.getZ(stack));
-    // }
-    //
-    // //We store our buffers in PasteToolBufferBuilder (A client only class) -- retrieve the buffer from this locally
-    // cache'd map
-    // ToolDireBuffer toolDireBuffer = PasteToolBufferBuilder.getBufferFromMap(UUID);
-    // if (toolDireBuffer == null) {
-    // return;
-    // }
-    // //Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty, exit.
-    // List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-    // if (toolDireBuffer.getVertexCount() == 0 || blockMapList.size() == 0) {
-    // return;
-    // }
-    //
-    // //Don't draw on top of blocks being built by our tools.
-    // IBlockState startBlock = world.getBlockState(startPos);
-    // if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
-    //
-    // //Save the current position that is being rendered
-    // GlStateManager.pushMatrix();
-    //
-    // //Enable Blending (So we can have transparent effect)
-    // GlStateManager.enableBlend();
-    //
-    // //This blend function allows you to use a constant alpha, which is defined later
-    // GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
-    //
-    // GlStateManager.pushMatrix();//Push matrix again just because
-    // GlStateManager.translate(startPos.posX-playerPos.xCoord, startPos.posY - playerPos.yCoord, startPos.posZ -
-    // playerPos.z);//Now move the render position to the coordinates we want to render at
-    // GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
-    //
-    // GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
-    // GlStateManager.scale(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
-    // PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos, UUID); //Draw
-    // the cached buffer in the world.
-    //
-    // GlStateManager.popMatrix();
-    //
-    // GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    // GlStateManager.disableBlend();
-    // GlStateManager.popMatrix();
-    //
-    // } else {
-    // ChunkCoordinates startPos = ModItems.gadgetCopyPaste.getStartPos(stack);
-    // ChunkCoordinates endPos = ModItems.gadgetCopyPaste.getEndPos(stack);
-    // ChunkCoordinates blankPos = new ChunkCoordinates(0, 0, 0);
-    // if (startPos == null || endPos == null || startPos.equals(blankPos) || endPos.equals(blankPos)) {
-    // return;
-    // }
-    //
-    // List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-    // if (blockMapList.size() == 0)
-    // return;
-    //
-    // // We want to draw from the starting position to the (ending position)+1
-    // int x = (startPos.posX <= endPos.posX) ? startPos.posX : endPos.posX;
-    // int y = (startPos.posY <= endPos.posY) ? startPos.posY : endPos.posY;
-    // int z = (startPos.posZ <= endPos.posZ) ? startPos.posZ : endPos.posZ;
-    // int dx = (startPos.posX > endPos.posX) ? startPos.posX + 1 : endPos.posX + 1;
-    // int dy = (startPos.posY > endPos.posY) ? startPos.posY + 1 : endPos.posY + 1;
-    // int dz = (startPos.posZ > endPos.posZ) ? startPos.posZ + 1 : endPos.posZ + 1;
-    //
-    // Tessellator tessellator = Tessellator.getInstance();
-    // BufferBuilder bufferbuilder = tessellator.getBuffer();
-    //
-    // GlStateManager.pushMatrix();
-    // GlStateManager.translate(-playerPos.x, -playerPos.y, -playerPos.z);//The render starts at the player, so we
-    // subtract the player coords and move the render to 0,0,0
-    //
-    // GlStateManager.disableLighting();
-    // GlStateManager.disableTexture2D();
-    // GlStateManager.enableBlend();
-    // GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-    // GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-    //
-    // renderBox(tessellator, bufferbuilder, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks
-    // we've copied.
-    //
-    // GlStateManager.glLineWidth(1.0F);
-    // GlStateManager.enableLighting();
-    // GlStateManager.enableTexture2D();
-    // GlStateManager.enableDepth();
-    // GlStateManager.depthMask(true);
-    //
-    // GlStateManager.popMatrix();
-    // }
-    // }
+    public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
+        // Calculate the players current position, which is needed later
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
 
-    // private static void renderLinkedInventoryOutline(ItemStack item, Vec3 playerPos, EntityPlayer player) {
-    // Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
-    // ChunkCoordinates pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
-    //
-    // if (dim == null || pos == null) return;
-    //
-    // if (player.dimension != dim) return;
-    //
-    // GlStateManager.pushMatrix();
-    // ToolRenders.Utils.stateManagerPrepare(playerPos, pos, 0.0005f);
-    // ToolRenders.Utils.stateManagerPrepareBlend();
-    // GL14.glBlendColor(1F, 1F, 1F, 0.35f);
-    //
-    // // Render the overlay
-    // mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassYellow, 1f);
-    // GlStateManager.popMatrix();
-    // }
+        Tessellator tessellator = Tessellator.instance;
+        renderLinkedInventoryOutline(evt, stack, player, tessellator);
 
-    private static void renderBox(Tessellator tessellator, double startX, double startY, double startZ, double endX,
-        double endY, double endZ, int R, int G, int B) {
+        if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null) {
+            return;
+        }
+
+        //
+        // mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        String UUID = ModItems.gadgetCopyPaste.getUUID(stack);
+        World world = player.worldObj;
+        if (GadgetCopyPaste.getToolMode(stack) == GadgetCopyPaste.ToolMode.Paste) {
+            // First check if we have an anchor, if not check if we're looking at a block, if not, exit
+            ChunkCoordinates startPos = GadgetCopyPaste.getAnchor(stack);
+            if (startPos == null) {
+                startPos = VectorTools.getPosLookingAt(player, stack);
+                if (startPos == null) {
+                    return;
+                }
+
+                startPos = VectorTools.Up(startPos, GadgetCopyPaste.getY(stack));
+                startPos = VectorTools.East(startPos, GadgetCopyPaste.getX(stack));
+                startPos = VectorTools.South(startPos, GadgetCopyPaste.getZ(stack));
+            } else {
+                startPos = VectorTools.Up(startPos, GadgetCopyPaste.getY(stack));
+                startPos = VectorTools.East(startPos, GadgetCopyPaste.getX(stack));
+                startPos = VectorTools.South(startPos, GadgetCopyPaste.getZ(stack));
+            }
+
+            // We store our buffers in PasteToolBufferBuilder (A client only class) -- retrieve the buffer from this
+            // locally
+            // cache'd map
+            ToolDireBuffer toolDireBuffer = PasteToolBufferBuilder.getBufferFromMap(UUID);
+            if (toolDireBuffer == null) {
+                return;
+            }
+            // Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty,
+            // exit.
+            List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
+            // if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
+            if (blockMapList.isEmpty()) {
+                return;
+            }
+
+            // Don't draw on top of blocks being built by our tools.
+            BlockState startBlock = BlockState.getBlockState(world, startPos);
+            if (startBlock == null || startBlock.getBlock()
+                .equals(ModBlocks.effectBlock)) {
+                return;
+            }
+
+            // Save the current position that is being rendered
+            GlStateManager.pushMatrix();
+
+            // Enable Blending (So we can have transparent effect)
+            GlStateManager.enableBlend();
+
+            // This blend function allows you to use a constant alpha, which is defined later
+            GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+
+            GlStateManager.pushMatrix();// Push matrix again just because
+            GlStateManager.translate(
+                startPos.posX - playerPos.xCoord,
+                startPos.posY - playerPos.yCoord,
+                startPos.posZ - playerPos.zCoord);// Now move the render position to the coordinates we want to render
+                                                  // at
+            GL14.glBlendColor(1F, 1F, 1F, 0.55f); // Set the alpha of the blocks we are rendering
+            //
+            GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
+            GlStateManager.scale(0.999f, 0.999f, 0.999f);// Slightly Larger block to avoid z-fighting.
+
+            PasteToolBufferBuilder.draw(player, startPos, UUID); // Draw
+                                                                 // the cached buffer in the world.
+
+            GlStateManager.popMatrix();
+
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.disableBlend();
+            GlStateManager.popMatrix();
+
+        } else {
+            ChunkCoordinates startPos = ModItems.gadgetCopyPaste.getStartPos(stack);
+            ChunkCoordinates endPos = ModItems.gadgetCopyPaste.getEndPos(stack);
+            ChunkCoordinates blankPos = new ChunkCoordinates(0, 0, 0);
+            if (startPos == null || endPos == null || startPos.equals(blankPos) || endPos.equals(blankPos)) {
+                return;
+            }
+
+            List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
+            // if (blockMapList.isEmpty()) return;
+            // TODO(johnrowl) we probably want to add this back for performance reasons.
+
+            // We want to draw from the starting position to the (ending position)+1
+            int x = Math.min(startPos.posX, endPos.posX);
+            int y = Math.min(startPos.posY, endPos.posY);
+            int z = Math.min(startPos.posZ, endPos.posZ);
+            int dx = Math.max(startPos.posX, endPos.posX) + 1;
+            int dy = Math.max(startPos.posY, endPos.posY) + 1;
+            int dz = Math.max(startPos.posZ, endPos.posZ) + 1;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
+            // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
+
+            GlStateManager.disableLighting();
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO);
+
+            renderBox(tessellator, AxisAlignedBB.getBoundingBox(x, y, z, dx, dy, dz), 255, 223, 127);
+            // Draw the box around the blocks we've copied.
+
+            GL11.glLineWidth(1.0F);
+            GlStateManager.enableLighting();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(true);
+
+            GlStateManager.popMatrix();
+        }
+    }
+
+    private static void renderLinkedInventoryOutline(RenderWorldLastEvent evt, ItemStack item, EntityPlayer player,
+        Tessellator tess) {
+        Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
+        ChunkCoordinates coordinate = GadgetUtils.getPOSFromNBT(item, "boundTE");
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.partialTicks);
+
+        if (dim == null) {
+            return;
+        }
+
+        if (player.dimension != dim) {
+            return;
+        }
+
+        if (coordinate == null) {
+            return;
+        }
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);
+        // The render starts at the player, so we subtract the player coordinates and move the render to 0,0,0
+
+        GlStateManager.disableLighting();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO);
+
+        renderBoxSolid(
+            tess,
+            AxisAlignedBB.getBoundingBox(
+                coordinate.posX - 0.001,
+                coordinate.posY - 0.001,
+                coordinate.posZ - 0.001,
+                coordinate.posX + 1.001,
+                coordinate.posY + 1.001,
+                coordinate.posZ + 1.001),
+            1f,
+            0.9f,
+            .5f,
+            0.2f);
+        // Draw the box around the blocks we've copied.
+
+        GL11.glLineWidth(1.0F);
+        GlStateManager.enableLighting();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+
+        GlStateManager.popMatrix();
+    }
+
+    /**
+     * renderBox renders a box that completely covers the selected axis aligned bounding box.
+     */
+    private static void renderBox(Tessellator tess, AxisAlignedBB bb, int R, int G, int B) {
         // Set the line width
         GL11.glLineWidth(2.0F);
 
-        // Start drawing lines (mode 3 corresponds to GL_LINE_LOOP)
-        tessellator.startDrawing(GL11.GL_LINE_LOOP);
+        tess.startDrawing(GL11.GL_LINE_STRIP);
+        tess.setColorRGBA(255, 255, 255, 255);
 
-        // Set color for the first vertex (you can set transparency using alpha in this method, but here it's always
-        // 255)
-        tessellator.setColorRGBA(G, G, G, 0);
+        // Bottom face
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
 
-        // Define vertices for the box (down)
-        tessellator.addVertex(startX, startY, startZ);
-        tessellator.setColorRGBA(G, G, G, R);
-        tessellator.addVertex(endX, startY, startZ);
-        tessellator.addVertex(endX, startY, endZ);
-        tessellator.addVertex(startX, startY, endZ);
-        tessellator.addVertex(startX, startY, startZ);
+        tess.draw();
 
-        // Define vertices for the box (up)
-        tessellator.addVertex(startX, endY, startZ);
-        tessellator.addVertex(endX, endY, startZ);
-        tessellator.addVertex(endX, endY, endZ);
-        tessellator.addVertex(startX, endY, endZ);
-        tessellator.addVertex(startX, endY, startZ);
+        tess.startDrawing(GL11.GL_LINE_STRIP);
+        tess.setColorRGBA(255, 255, 255, 255);
 
-        // Define the vertical edges of the box
-        tessellator.addVertex(startX, startY, startZ);
-        tessellator.addVertex(startX, endY, startZ);
-        tessellator.addVertex(endX, startY, startZ);
-        tessellator.addVertex(endX, endY, startZ);
-        tessellator.addVertex(endX, startY, endZ);
-        tessellator.addVertex(endX, endY, endZ);
-        tessellator.addVertex(startX, startY, endZ);
-        tessellator.addVertex(startX, endY, endZ);
+        // Top face
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
 
-        // Finish drawing
-        tessellator.draw();
+        tess.draw();
+
+        tess.startDrawing(GL11.GL_LINES);
+        tess.setColorRGBA(255, 255, 255, 255);
+        // Vertical edges
+
+        tess.addVertex(bb.maxX, bb.minY, bb.minZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.minZ);
+
+        tess.addVertex(bb.maxX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.maxX, bb.maxY, bb.maxZ);
+
+        tess.addVertex(bb.minX, bb.minY, bb.maxZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.maxZ);
+
+        tess.setColorRGBA(0, 255, 0, 255);
+        tess.addVertex(bb.minX, bb.minY, bb.minZ);
+        tess.addVertex(bb.minX, bb.maxY, bb.minZ);
+
+        tess.draw();
 
         // Reset the line width back to default
         GL11.glLineWidth(1.0F);
@@ -602,8 +671,24 @@ public class ToolRenders {
         tessellator.addVertex(minX, maxY, minZ);
     }
 
-    private static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
-        double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
+    public static void renderBoxSolid(Tessellator tessellator, AxisAlignedBB box, float red, float green, float blue,
+        float alpha) {
+        renderBoxSolid(
+            tessellator,
+            box.minX,
+            box.minY,
+            box.minZ,
+            box.maxX,
+            box.maxY,
+            box.maxZ,
+            red,
+            green,
+            blue,
+            alpha);
+    }
+
+    public static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ, double endX,
+        double endY, double endZ, float red, float green, float blue, float alpha) {
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
         // Set color once for all vertices
@@ -649,6 +734,66 @@ public class ToolRenders {
         tessellator.draw();
     }
 
+    public static void renderBoxTextured(Tessellator tessellator, BlockState block, double startX, double startY,
+        double startZ, double endX, double endY, double endZ) {
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        var sides = Arrays.stream(EnumFacing.values())
+            .map(
+                (side) -> block.getBlock()
+                    .getIcon(side.ordinal(), block.getMetadata()))
+            .collect(Collectors.toList());
+
+        tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
+
+        // Set color once for all vertices
+        tessellator.setNormal(0, -1, 0);
+
+        // down (y = startY)
+        var icon = sides.get(EnumFacing.DOWN.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
+
+        // up (y = endY)
+        icon = sides.get(EnumFacing.UP.ordinal());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMaxU(), icon.getMinV());
+
+        // east (z = startZ)
+        icon = sides.get(EnumFacing.EAST.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMaxU(), icon.getMaxV());
+
+        // west (z = endZ)
+        icon = sides.get(EnumFacing.WEST.ordinal());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMinV());
+
+        // south (x = endX)
+        icon = sides.get(EnumFacing.SOUTH.ordinal());
+        tessellator.addVertexWithUV(endX, startY, startZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(endX, endY, startZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, endY, endZ, icon.getMaxU(), icon.getMinV());
+        tessellator.addVertexWithUV(endX, startY, endZ, icon.getMaxU(), icon.getMaxV());
+
+        // north (x = startX)
+        icon = sides.get(EnumFacing.NORTH.ordinal());
+        tessellator.addVertexWithUV(startX, startY, startZ, icon.getMaxU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, startY, endZ, icon.getMinU(), icon.getMaxV());
+        tessellator.addVertexWithUV(startX, endY, endZ, icon.getMinU(), icon.getMinV());
+        tessellator.addVertexWithUV(startX, endY, startZ, icon.getMaxU(), icon.getMinV());
+
+        // Finalize the drawing
+        tessellator.draw();
+    }
+
     private static class Utils {
 
         // private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
@@ -674,11 +819,12 @@ public class ToolRenders {
         // * Returns a Vec3i of the players position based on partial tick.
         // * Used for Render translation.
         // */
-        // private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
-        // return Vec3.createVectorHelper(player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
-        // player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick, player.lastTickPosZ + (player.posZ -
-        // player.lastTickPosZ) * partialTick);
-        // }
+        private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
+            return Vec3.createVectorHelper(
+                player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
+                player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
+                player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick);
+        }
         //
         // /**
         // * Attempts to get the Silk Touch Drop item but if it fails it'll return the original

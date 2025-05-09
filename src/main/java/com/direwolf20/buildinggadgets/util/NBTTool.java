@@ -12,7 +12,6 @@ import net.minecraft.util.ChunkCoordinates;
 
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
-import cpw.mods.fml.common.registry.GameData;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -310,20 +309,6 @@ public class NBTTool {
         return res;
     }
 
-    public static int[] readIntList(NBTBase list) {
-        // extract the list of integers that are stored in the list.
-        if (list instanceof NBTTagList intList) {
-            int[] res = new int[intList.tagCount()];
-            for (int i = 0; i < intList.tagCount(); i++) {
-                String value = intList.getStringTagAt(i);
-                var trimmedValue = value.replaceFirst("I;", "");
-                res[i] = Integer.parseInt(trimmedValue);
-            }
-            return res;
-        }
-        return null;
-    }
-
     public static Boolean[] readBBooleanList(NBTTagByteArray booleans) {
         byte[] bytes = booleans.func_150292_c();
         Boolean[] res = new Boolean[bytes.length];
@@ -390,10 +375,8 @@ public class NBTTool {
 
     public static BlockState blockFromCompound(NBTTagCompound compound) {
         // Retrieve block and metadata
-        var name = compound.getString(NBT_BLOCK_NAME);
-        Block block = GameData.getBlockRegistry()
-            .getObject(name);
-        // TODO (johnrowl) this needs to be fixed. This property doesn't exist.
+        var name = compound.getInteger(NBT_BLOCK_NAME);
+        Block block = Block.getBlockById(name);
         int meta = compound.getInteger(NBT_BLOCK_META);
 
         return new BlockState(block, meta);

@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
 import static net.minecraft.client.gui.GuiScreen.setClipboardString;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,14 +21,16 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.Template;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerPaste;
+import com.direwolf20.buildinggadgets.common.network.PacketUtils;
 import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.util.NBTJson;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
@@ -82,8 +83,8 @@ public class TemplateManagerCommands {
         tagCompound = (NBTTagCompound) templateTagCompound.copy();
         template.incrementCopyCounter(itemStack0);
         tagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(itemStack0));
-        tagCompound.setString("UUID", template.getUUID(itemStack0));
-        tagCompound.setString("owner", player.getCommandSenderName());
+        tagCompound.setString(NBTKeys.GADGET_UUID, template.getUUID(itemStack0));
+        tagCompound.setString(NBTKeys.GADGET_TEMPLATE_OWNER, player.getCommandSenderName());
         if (template.equals(ModItems.gadgetCopyPaste)) {
             worldSave.addToMap(UUID, tagCompound);
         } else {
@@ -139,7 +140,7 @@ public class TemplateManagerCommands {
         templateTagCompound = (NBTTagCompound) tagCompound.copy();
         template.incrementCopyCounter(templateStack);
         templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, ModItems.template.getUUID(templateStack));
 
         templateWorldSave.addToMap(UUIDTemplate, templateTagCompound);
         ChunkCoordinates startPos = template.getStartPos(itemStack0);
@@ -165,6 +166,10 @@ public class TemplateManagerCommands {
         NBTTagCompound sentTagCompound, String templateName) {
         ItemStack itemStack1 = container.getSlot(1)
             .getStack();
+
+        if (itemStack1 == null || itemStack1.stackSize == 0) {
+            return;
+        }
 
         if (!(allowedItemsRight.contains(itemStack1.getItem()))) {
             return;
@@ -194,16 +199,16 @@ public class TemplateManagerCommands {
             return;
         }
 
-        NBTTagCompound templateTagCompound;
-
-        templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
+        NBTTagCompound templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
         ChunkCoordinates startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_START_POS);
         ChunkCoordinates endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, NBTKeys.GADGET_END_POS);
         template.incrementCopyCounter(templateStack);
+
         templateTagCompound.setInteger(NBTKeys.TEMPLATE_COPY_COUNT, template.getCopyCounter(templateStack));
-        templateTagCompound.setString("UUID", template.getUUID(templateStack));
-        // GadgetUtils.writePOSToNBT(templateTagCompound, startPos, GADGET_START_POS, 0);
-        // GadgetUtils.writePOSToNBT(templateTagCompound, endPos, GADGET_END_POS, 0);
+        templateTagCompound.setString(NBTKeys.GADGET_UUID, template.getUUID(templateStack));
+
+        GadgetUtils.writePOSToNBT(templateTagCompound, startPos, NBTKeys.GADGET_START_POS, 0);
+        GadgetUtils.writePOSToNBT(templateTagCompound, endPos, NBTKeys.GADGET_END_POS, 0);
         // Map<UniqueItem, Integer> tagMap = GadgetUtils.nbtToItemCount((NBTTagList)
         // templateTagCompound.getTag("itemcountmap"));
         // templateTagCompound.removeTag("itemcountmap");
@@ -214,7 +219,7 @@ public class TemplateManagerCommands {
         mapIntState.getIntStateMapFromNBT(MapIntStateTag);
         mapIntState.makeStackMapFromStateMap(player);
         templateTagCompound.setTag("mapIntStack", mapIntState.putIntStackMapIntoNBT());
-        templateTagCompound.setString("owner", player.getCommandSenderName());
+        templateTagCompound.setString(NBTKeys.GADGET_TEMPLATE_OWNER, player.getCommandSenderName());
 
         Multiset<UniqueItem> itemCountMap = HashMultiset.create();
         Map<BlockState, UniqueItem> intStackMap = mapIntState.intStackMap;
@@ -245,7 +250,6 @@ public class TemplateManagerCommands {
 
         template.setStartPos(templateStack, startPos);
         template.setEndPos(templateStack, endPos);
-        // template.setItemCountMap(templateStack, tagMap);
         template.setItemCountMap(templateStack, itemCountMap);
         Template.setName(templateStack, templateName);
         container.putStackInSlot(1, templateStack);
@@ -268,7 +272,7 @@ public class TemplateManagerCommands {
             }
 
             NBTTagCompound newCompound = new NBTTagCompound();
-            newCompound.setIntArray("stateIntArray", tagCompound.getIntArray("stateIntArray"));
+            newCompound.setIntArray(NBTKeys.GADGET_STATE_INT_ARRAY, tagCompound.getIntArray("stateIntArray"));
             newCompound.setIntArray("posIntArray", tagCompound.getIntArray("posIntArray"));
             newCompound.setTag("mapIntState", tagCompound.getTag("mapIntState"));
             GadgetUtils.writePOSToNBT(
@@ -282,22 +286,21 @@ public class TemplateManagerCommands {
                 NBTKeys.GADGET_END_POS,
                 0);
 
-            try {
-                if (GadgetUtils.getPasteStream(newCompound, tagCompound.getString("name")) != null) {
-                    String jsonTag = newCompound.toString();
-                    setClipboardString(jsonTag);
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(
-                        new ChatComponentText(
-                            ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
-                } else {
-                    pasteIsTooLarge();
-                }
-            } catch (IOException e) {
-                BuildingGadgets.LOG
-                    .error("Failed to evaluate template network size. Template will be considered too large.", e);
+            var jsonTag = NBTJson.toJson(newCompound);
+            var name = tagCompound.getString("name");
+            var message = new PacketTemplateManagerPaste(jsonTag, new ChunkCoordinates(0, 0, 0), name);
+            if (PacketUtils.isPacketTooLarge(message)) {
                 pasteIsTooLarge();
+                return;
             }
+
+            setClipboardString(jsonTag);
+
+            Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentText(
+                    ChatFormatting.AQUA
+                        + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
+
         }
     }
 

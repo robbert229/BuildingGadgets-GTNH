@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.util.WorldUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.util.BlockSnapshot;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -38,12 +38,12 @@ import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.direwolf20.buildinggadgets.util.VectorTools;
+import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import net.minecraftforge.common.util.BlockSnapshot;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -677,8 +677,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
 
         if ((SyncedConfig.canOverwriteBlocks && !testState.getBlock()
-            .isReplaceable(world, pos.posX, pos.posY, pos.posZ)) || (!SyncedConfig.canOverwriteBlocks && testState.getBlock()
-                .isAir(world,  pos.posX, pos.posY, pos.posZ))) {
+            .isReplaceable(world, pos.posX, pos.posY, pos.posZ))
+            || (!SyncedConfig.canOverwriteBlocks && testState.getBlock()
+                .isAir(world, pos.posX, pos.posY, pos.posZ))) {
             return;
         }
 
@@ -703,7 +704,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         int neededItems = 0;
 
         for (ItemStack drop : drops) {
-            if (drop.getItem().equals(itemStack.getItem()) &&  drop.getItemDamage() == itemStack.getItemDamage()) {
+            if (drop.getItem()
+                .equals(itemStack.getItem()) && drop.getItemDamage() == itemStack.getItemDamage()) {
                 neededItems++;
             }
         }

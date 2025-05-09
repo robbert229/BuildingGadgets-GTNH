@@ -45,12 +45,13 @@ public class WorldUtils {
         return world.getTileEntity(coordinates.posX, coordinates.posY, coordinates.posZ);
     }
 
-    public static boolean isBlockModifiableUsingItem(EntityPlayer player, ChunkCoordinates coordinates, ItemStack itemStack) {
+    public static boolean isBlockModifiableUsingItem(EntityPlayer player, ChunkCoordinates coordinates,
+        ItemStack itemStack) {
         return isBlockModifiableUsingItem(player, coordinates, EnumFacing.DOWN, itemStack);
     }
 
     public static boolean isBlockModifiableUsingItem(EntityPlayer player, ChunkCoordinates coordinates, EnumFacing side,
-                                                     ItemStack itemStack) {
+        ItemStack itemStack) {
         if (side == null) {
             side = EnumFacing.DOWN;
         }
@@ -58,7 +59,7 @@ public class WorldUtils {
         return player.canPlayerEdit(coordinates.posX, coordinates.posY, coordinates.posZ, side.ordinal(), itemStack);
     }
 
-    public static boolean isBlockModifiable(World world, EntityPlayer player,ChunkCoordinates pos) {
+    public static boolean isBlockModifiable(World world, EntityPlayer player, ChunkCoordinates pos) {
         if (!player.capabilities.allowEdit) {
             return false;
         }

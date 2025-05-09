@@ -479,6 +479,10 @@ public class InventoryManipulation {
         ItemStack tempItem;
         for (int i = 0; i < container.getSizeInventory(); i++) {
             tempItem = container.getStackInSlot(i);
+            if (tempItem == null) {
+                continue;
+            }
+
             if (tempItem.getItem() == item && tempItem.getItemDamage() == meta) {
                 count += tempItem.stackSize;
             }

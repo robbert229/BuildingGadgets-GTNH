@@ -336,7 +336,7 @@ public class GadgetDestruction extends GadgetGeneric {
             return false;
         }
 
-        return WorldUtils.isBlockModifiable(player, voidPos, tool);
+        return WorldUtils.isBlockModifiableUsingItem(player, voidPos, tool);
     }
 
     private void clearArea(World world, ChunkCoordinates pos, EnumFacing side, EntityPlayer player, ItemStack stack) {

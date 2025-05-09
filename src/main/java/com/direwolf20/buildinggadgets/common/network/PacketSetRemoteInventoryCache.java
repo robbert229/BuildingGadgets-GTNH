@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -119,7 +120,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
                 EventTooltip.setCache(message.cache);
             } else {
                 // TODO(johnrowl) re-enable ToolRenders.
-                // ToolRenders.setInventoryCache(message.cache);
+                ToolRenders.setInventoryCache(message.cache);
             }
 
             return null;

@@ -2,10 +2,12 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.direwolf20.buildinggadgets.util.WorldUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -41,6 +43,7 @@ import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraftforge.common.util.BlockSnapshot;
 
 public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
@@ -642,101 +645,106 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     private void buildBlockMap(World world, ChunkCoordinates startPos, ItemStack stack, EntityPlayer player) {
-        // TODO(johnrowl) implement
+        ChunkCoordinates anchorPos = getAnchor(stack);
+        ChunkCoordinates pos = anchorPos == null ? startPos : anchorPos;
+        NBTTagCompound tagCompound = WorldSave.getWorldSave(world)
+            .getCompoundFromUUID(getUUID(stack));
+
+        pos = VectorTools.Up(pos, GadgetCopyPaste.getY(stack));
+        pos = VectorTools.East(pos, GadgetCopyPaste.getX(stack));
+        pos = VectorTools.South(pos, GadgetCopyPaste.getZ(stack));
+
+        List<BlockMap> blockMapList = getBlockMapList(tagCompound, pos);
+        setLastBuild(stack, pos, player.dimension);
+
+        for (BlockMap blockMap : blockMapList)
+            placeBlock(world, blockMap.pos, player, blockMap.state, getBlockMapIntState(tagCompound).getIntStackMap());
+
+        GadgetUtils.clearCachedRemoteInventory();
+        setAnchor(stack, null);
+        // System.out.printf("Built %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
     }
 
-    //
-    // private void buildBlockMap(World world, ChunkCoordinates startPos, ItemStack stack, EntityPlayer player) {
-    //// long time = System.nanoTime();
-    //
-    // ChunkCoordinates anchorPos = getAnchor(stack);
-    // ChunkCoordinates pos = anchorPos == null ? startPos : anchorPos;
-    // NBTTagCompound tagCompound = WorldSave.getWorldSave(world).getCompoundFromUUID(getUUID(stack));
-    //
-    // pos = pos.up(GadgetCopyPaste.getY(stack));
-    // pos = pos.east(GadgetCopyPaste.getX(stack));
-    // pos = pos.south(GadgetCopyPaste.getZ(stack));
-    //
-    // List<BlockMap> blockMapList = getBlockMapList(tagCompound, pos);
-    // setLastBuild(stack, pos, player.dimension);
-    //
-    // for (BlockMap blockMap : blockMapList)
-    // placeBlock(world, blockMap.pos, player, blockMap.state, getBlockMapIntState(tagCompound).getIntStackMap());
-    //
-    // GadgetUtils.clearCachedRemoteInventory();
-    // setAnchor(stack, null);
-    // //System.out.printf("Built %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
-    // }
-    //
-    // private void placeBlock(World world, ChunkCoordinates pos, EntityPlayer player, IBlockState state,
-    // Map<IBlockState, UniqueItem> IntStackMap) {
-    // if( world.isOutsideBuildHeight(pos) )
-    // return;
-    //
-    // IBlockState testState = world.getBlockState(pos);
-    // if ((SyncedConfig.canOverwriteBlocks && !testState.getBlock().isReplaceable(world, pos)) ||
-    // (!SyncedConfig.canOverwriteBlocks && testState.getBlock().isAir(testState, world, pos)))
-    // return;
-    //
-    // if (pos.getY() < 0 || state.equals(Blocks.AIR.getDefaultState()) || !player.isAllowEdit())
-    // return;
-    //
-    // ItemStack heldItem = getGadget(player);
-    // if (heldItem.isEmpty())
-    // return;
-    //
-    // if (ModItems.gadgetCopyPaste.getStartPos(heldItem) == null || ModItems.gadgetCopyPaste.getEndPos(heldItem) ==
-    // null)
-    // return;
-    //
-    // UniqueItem uniqueItem = IntStackMap.get(state);
-    // if (uniqueItem == null) return; //This shouldn't happen I hope!
-    // ItemStack itemStack = new ItemStack(uniqueItem.item, 1, uniqueItem.meta);
-    // NonNullList<ItemStack> drops = NonNullList.create();
-    // state.getBlock().getDrops(drops, world, pos, state, 0);
-    // int neededItems = 0;
-    // for (ItemStack drop : drops) {
-    // if (drop.getItem().equals(itemStack.getItem())) {
-    // neededItems++;
-    // }
-    // }
-    // if (neededItems == 0) {
-    // neededItems = 1;
-    // }
-    // if (!world.isBlockModifiable(player, pos)) {
-    // return;
-    // }
-    //
-    // BlockSnapshot blockSnapshot = BlockSnapshot.getBlockSnapshot(world, pos);
-    // if( !GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, EnumFacing.UP, EnumHand.MAIN_HAND) )
-    // return;
-    //
-    // ItemStack constructionPaste = new ItemStack(ModItems.constructionPaste);
-    // boolean useConstructionPaste = false;
-    // if (InventoryManipulation.countItem(itemStack, player, world) < neededItems) {
-    // if (InventoryManipulation.countPaste(player) < neededItems) {
-    // return;
-    // }
-    // itemStack = constructionPaste.copy();
-    // useConstructionPaste = true;
-    // }
-    //
-    // if (!this.canUse(heldItem, player))
-    // return;
-    //
-    // boolean useItemSuccess;
-    // if (useConstructionPaste) {
-    // useItemSuccess = InventoryManipulation.usePaste(player, 1);
-    // } else {
-    // useItemSuccess = InventoryManipulation.useItem(itemStack, player, neededItems, world);
-    // }
-    // if (useItemSuccess) {
-    // this.applyDamage(heldItem, player);
-    // world.spawnEntity(new BlockBuildEntity(world, pos, player, state, 1, state, useConstructionPaste));
-    // }
-    //
-    // }
-    //
+    private void placeBlock(World world, ChunkCoordinates pos, EntityPlayer player, BlockState state,
+        Map<BlockState, UniqueItem> IntStackMap) {
+        if (!WorldUtils.isInsideWorldLimits(pos) || state.isAir() || !player.capabilities.allowEdit) {
+            return;
+        }
+
+        var testState = BlockState.getBlockState(world, pos);
+        if (testState == null) {
+            return;
+        }
+
+        if ((SyncedConfig.canOverwriteBlocks && !testState.getBlock()
+            .isReplaceable(world, pos.posX, pos.posY, pos.posZ)) || (!SyncedConfig.canOverwriteBlocks && testState.getBlock()
+                .isAir(world,  pos.posX, pos.posY, pos.posZ))) {
+            return;
+        }
+
+        ItemStack heldItem = getGadget(player);
+        if (heldItem == null) {
+            return;
+        }
+
+        if (ModItems.gadgetCopyPaste.getStartPos(heldItem) == null
+            || ModItems.gadgetCopyPaste.getEndPos(heldItem) == null) {
+            return;
+        }
+
+        UniqueItem uniqueItem = IntStackMap.get(state);
+        if (uniqueItem == null) {
+            return; // This shouldn't happen I hope!
+        }
+
+        ItemStack itemStack = new ItemStack(uniqueItem.item, 1, uniqueItem.meta);
+        var drops = state.getBlock()
+            .getDrops(world, pos.posX, pos.posY, pos.posZ, state.getMetadata(), 0);
+        int neededItems = 0;
+
+        for (ItemStack drop : drops) {
+            if (drop.getItem().equals(itemStack.getItem()) &&  drop.getItemDamage() == itemStack.getItemDamage()) {
+                neededItems++;
+            }
+        }
+        if (neededItems == 0) {
+            neededItems = 1;
+        }
+
+        if (!WorldUtils.isBlockModifiable(world, player, pos)) {
+            return;
+        }
+
+        BlockSnapshot blockSnapshot = BlockSnapshot.getBlockSnapshot(world, pos.posX, pos.posY, pos.posZ);
+        if (!GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, EnumFacing.UP)) {
+            return;
+        }
+
+        ItemStack constructionPaste = new ItemStack(ModItems.constructionPaste);
+        boolean useConstructionPaste = false;
+        if (InventoryManipulation.countItem(itemStack, player, world) < neededItems) {
+            if (InventoryManipulation.countPaste(player) < neededItems) {
+                return;
+            }
+
+            itemStack = constructionPaste.copy();
+            useConstructionPaste = true;
+        }
+
+        if (!this.canUse(heldItem, player)) return;
+
+        boolean useItemSuccess;
+        if (useConstructionPaste) {
+            useItemSuccess = InventoryManipulation.usePaste(player, 1);
+        } else {
+            useItemSuccess = InventoryManipulation.useItem(itemStack, player, neededItems, world);
+        }
+        if (useItemSuccess) {
+            this.applyDamage(heldItem, player);
+            world.spawnEntityInWorld(new BlockBuildEntity(world, pos, player, state, 1, state, useConstructionPaste));
+        }
+    }
+
     public void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {

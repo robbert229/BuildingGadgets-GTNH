@@ -324,7 +324,7 @@ public class GadgetBuilding extends GadgetGeneric {
             return false;
         }
 
-        if (!WorldUtils.isInsideWorldLimits(world, pos)) {
+        if (!WorldUtils.isInsideWorldLimits(pos)) {
             return false;
         }
 

@@ -5,12 +5,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
@@ -435,7 +433,7 @@ public class ToolRenders {
             // Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty,
             // exit.
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            //if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
+            // if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
             if (blockMapList.isEmpty()) {
                 return;
             }
@@ -467,12 +465,8 @@ public class ToolRenders {
             GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
             GlStateManager.scale(0.999f, 0.999f, 0.999f);// Slightly Larger block to avoid z-fighting.
 
-            PasteToolBufferBuilder.draw(
-                    player,
-                    startPos,
-                    UUID
-            ); // Draw
-            // the cached buffer in the world.
+            PasteToolBufferBuilder.draw(player, startPos, UUID); // Draw
+                                                                 // the cached buffer in the world.
 
             GlStateManager.popMatrix();
 
@@ -693,8 +687,8 @@ public class ToolRenders {
             alpha);
     }
 
-    public static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ,
-        double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
+    public static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ, double endX,
+        double endY, double endZ, float red, float green, float blue, float alpha) {
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 
         // Set color once for all vertices
@@ -740,20 +734,14 @@ public class ToolRenders {
         tessellator.draw();
     }
 
-    public static void renderBoxTextured(
-            Tessellator tessellator,
-            BlockState block,
-            double startX,
-            double startY,
-            double startZ,
-            double endX,
-            double endY,
-            double endZ
-        ) {
+    public static void renderBoxTextured(Tessellator tessellator, BlockState block, double startX, double startY,
+        double startZ, double endX, double endY, double endZ) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         var sides = Arrays.stream(EnumFacing.values())
-                .map((side) -> block.getBlock().getIcon(side.ordinal(), block.getMetadata()))
-                .collect(Collectors.toList());
+            .map(
+                (side) -> block.getBlock()
+                    .getIcon(side.ordinal(), block.getMetadata()))
+            .collect(Collectors.toList());
 
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads
 

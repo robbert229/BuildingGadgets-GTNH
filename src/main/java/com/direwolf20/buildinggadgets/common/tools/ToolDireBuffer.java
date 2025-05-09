@@ -4,8 +4,6 @@ import java.nio.*;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.client.renderer.GLAllocation;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,35 +16,35 @@ public class ToolDireBuffer {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public List<BlockMap> blockMapList;
-//    private ByteBuffer byteBuffer;
-//    private IntBuffer rawIntBuffer;
-//    private ShortBuffer rawShortBuffer;
-//    private FloatBuffer rawFloatBuffer;
-//    private int vertexCount;
-//    // private VertexFormatElement vertexFormatElement;
-//    private int vertexFormatIndex;
-//    /**
-//     * None
-//     */
-//    private boolean noColor;
-//    private int drawMode;
-//    private double xOffset;
-//    private double yOffset;
-//    private double zOffset;
-//    // private VertexFormat vertexFormat;
-//    private boolean isDrawing;
+    // private ByteBuffer byteBuffer;
+    // private IntBuffer rawIntBuffer;
+    // private ShortBuffer rawShortBuffer;
+    // private FloatBuffer rawFloatBuffer;
+    // private int vertexCount;
+    // // private VertexFormatElement vertexFormatElement;
+    // private int vertexFormatIndex;
+    // /**
+    // * None
+    // */
+    // private boolean noColor;
+    // private int drawMode;
+    // private double xOffset;
+    // private double yOffset;
+    // private double zOffset;
+    // // private VertexFormat vertexFormat;
+    // private boolean isDrawing;
 
     public ToolDireBuffer(List<BlockMap> blockMapList) {
         this.blockMapList = blockMapList;
     }
 
-//    public ToolDireBuffer(int bufferSizeIn) {
-//        // super(bufferSizeIn);
-//        this.byteBuffer = GLAllocation.createDirectByteBuffer(bufferSizeIn * 4);
-//        this.rawIntBuffer = this.byteBuffer.asIntBuffer();
-//        this.rawShortBuffer = this.byteBuffer.asShortBuffer();
-//        this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
-//    }
+    // public ToolDireBuffer(int bufferSizeIn) {
+    // // super(bufferSizeIn);
+    // this.byteBuffer = GLAllocation.createDirectByteBuffer(bufferSizeIn * 4);
+    // this.rawIntBuffer = this.byteBuffer.asIntBuffer();
+    // this.rawShortBuffer = this.byteBuffer.asShortBuffer();
+    // this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
+    // }
 
     //
     // private void growBuffer(int p_181670_1_) {

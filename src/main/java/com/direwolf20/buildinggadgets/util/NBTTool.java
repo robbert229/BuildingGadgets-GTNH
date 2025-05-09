@@ -12,7 +12,6 @@ import net.minecraft.util.ChunkCoordinates;
 
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
-import cpw.mods.fml.common.registry.GameData;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 

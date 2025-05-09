@@ -157,5 +157,4 @@ public class VectorTools {
     public static ChunkCoordinates South(ChunkCoordinates base, int distance) {
         return new ChunkCoordinates(base.posX, base.posY, base.posZ + distance);
     }
-
 }

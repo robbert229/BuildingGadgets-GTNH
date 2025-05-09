@@ -1,30 +1,17 @@
 dependencies {
+    implementation("com.github.GTNewHorizons:ModularUI2:2.2.7-1.7.10")
+    api("com.github.GTNewHorizons:ModularUI2:2.2.7-1.7.10")
+    implementation("com.github.GTNewHorizons:StructureLib:1.4.10:dev")
+    implementation("com.github.GTNewHorizons:GTNHLib:0.6.21:dev")
     implementation 'com.google.guava:guava:32.1.2-jre'
     implementation 'it.unimi.dsi:fastutil:8.5.12'
 
-    //runtimeOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
-    compile("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
-    implementation("curse.maven:cofh-core-69162:2388751") { transitive = false }
-    implementation("com.github.GTNewHorizons:Chisel:2.10.17-GTNH:dev")
-    implementation("com.github.GTNewHorizons:ModularUI2:2.2.7-1.7.10")
+    compileOnly("curse.maven:cofh-core-69162:2388751") { transitive = false }
+    //implementation("com.github.GTNewHorizons:Chisel:2.10.17-GTNH:dev")
+
+    compileOnly("com.github.GTNewHorizons:GT5-Unofficial:5.09.51.266:dev") { transitive = false }
 
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
-
-    //compileOnly("com.github.GTNewHorizons:ForestryMC:4.8.2:api") {transitive = false }
-//    runtime "cofh:RedstoneFlux:1.12-${rf_version}:universal"
-//    deobfCompile "team.chisel.ctm:CTM:MC${minecraft_version}-${ctm_version}:api"
-//    deobfCompile "refinedstorage:refinedstorage:${rs_version}:api"
-//    deobfCompile "appeng:appliedenergistics2:${ae2_version}:api"
-//    deobfCompile "simple-storage-network:SimpleStorageNetwork:${ssn_version}"
-//    deobfCompile "cofh:CoFHCore:${cofh_core_version}:universal"
-//    deobfCompile "de.ellpeck.actuallyadditions:ActuallyAdditions:${aa_version}:api"
-//    deobfCompile "blusunrize:ImmersiveEngineering:${ei_version}"
-//    deobfCompile "net.industrial-craft:industrialcraft-2:${ic2_version}:api"
-//    deobfCompile "net.sengir.forestry:forestry_${forestry_version}:api"
-//    deobfCompile "mekanism:Mekanism:${mekanism_version}"
-//    deobfCompile "cyclic:Cyclic:${cyclic_version}"
-
-
 }

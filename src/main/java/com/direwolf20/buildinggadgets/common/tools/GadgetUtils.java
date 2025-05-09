@@ -1,13 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +12,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
@@ -78,19 +74,6 @@ public class GadgetUtils {
 
     private static String getStackErrorText(ItemStack stack) {
         return "the following stack: [" + stack + "]";
-    }
-
-    @Nullable
-    public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name)
-        throws IOException {
-        NBTTagCompound withText = name != null && !name.isEmpty() ? (NBTTagCompound) compound.copy() : compound;
-        if (name != null && !name.isEmpty()) {
-            withText.setString("name", name);
-        }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        CompressedStreamTools.writeCompressed(withText, baos);
-        return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
     }
 
     public static NBTTagCompound getStackTag(ItemStack stack) {

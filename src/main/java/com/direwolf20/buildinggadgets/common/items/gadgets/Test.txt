@@ -10,13 +10,15 @@
         {
             mapSlot:1s,
             mapState:{
-            Properties:{snowy:"false"},
-            Name:"minecraft:grass"
+                Properties:{snowy:"false"},
+                Name:"minecraft:grass"
             }
         },
         {
             mapSlot:2s,
-            mapState:{Name:"minecraft:lapis_block"}
+            mapState:{
+                Name:"minecraft:lapis_block"
+            }
         }
     ],
     endPos:{X:282,Y:3,Z:59}
@@ -45,3 +47,4 @@
     endPos:{z:-828,x:70,y:3},
     posIntArray:[255,0,]
 }
+

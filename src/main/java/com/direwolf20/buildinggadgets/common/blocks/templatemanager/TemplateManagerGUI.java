@@ -6,7 +6,6 @@
 
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.inventory.Slot;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
@@ -33,13 +31,8 @@ import com.direwolf20.buildinggadgets.client.gui.GuiButtonHelp;
 import com.direwolf20.buildinggadgets.client.gui.GuiButtonHelpText;
 import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.client.gui.IHoverHelpText;
-import com.direwolf20.buildinggadgets.common.network.PacketHandler;
-import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerLoad;
-import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerPaste;
-import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerSave;
+import com.direwolf20.buildinggadgets.common.network.*;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.util.NBTJson;
-import com.google.gson.JsonParser;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 public class TemplateManagerGUI extends GuiContainer {
@@ -371,9 +364,9 @@ public class TemplateManagerGUI extends GuiContainer {
         } else if (b.id == 2) {
             TemplateManagerCommands.copyTemplate(container);
         } else if (b.id == 3) {
-            String CBString = getClipboardString();
+            String cbJson = getClipboardString();
 
-            if (GadgetUtils.mightBeLink(CBString)) {
+            if (GadgetUtils.mightBeLink(cbJson)) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(
                     new ChatComponentText(
                         ChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastefailed.linkcopied")
@@ -382,28 +375,26 @@ public class TemplateManagerGUI extends GuiContainer {
             }
             try {
                 // Anything larger than below is likely to overflow the max packet size, crashing your client.
-                var parsed = new JsonParser().parse(CBString);
-                var nbt = NBTJson.toNbt(parsed);
-                ByteArrayOutputStream pasteStream = GadgetUtils
-                    .getPasteStream((NBTTagCompound) nbt, nameField.getText());
 
-                if (pasteStream != null) {
-                    PacketHandler.INSTANCE.sendToServer(
-                        new PacketTemplateManagerPaste(
-                            pasteStream,
-                            new ChunkCoordinates(te.xCoord, te.yCoord, te.zCoord),
-                            nameField.getText()));
+                var packet = new PacketTemplateManagerPaste(
+                    cbJson,
+                    new ChunkCoordinates(te.xCoord, te.yCoord, te.zCoord),
+                    nameField.getText());
 
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(
-                        new ChatComponentText(
-                            ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.pastesuccess")
-                                .getUnformattedTextForChat()));
-                } else {
+                if (PacketUtils.isPacketTooLarge(packet)) {
                     Minecraft.getMinecraft().thePlayer.addChatMessage(
                         new ChatComponentText(
                             ChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig")
                                 .getUnformattedTextForChat()));
+                    return;
                 }
+
+                PacketHandler.INSTANCE.sendToServer(packet);
+
+                Minecraft.getMinecraft().thePlayer.addChatMessage(
+                    new ChatComponentText(
+                        ChatFormatting.AQUA
+                            + new ChatComponentTranslation("message.gadget.pastesuccess").getUnformattedTextForChat()));
             } catch (Throwable t) {
                 BuildingGadgets.LOG.error(t);
 

@@ -2,7 +2,6 @@ package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
 import static net.minecraft.client.gui.GuiScreen.setClipboardString;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,14 +21,16 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.Template;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.PacketTemplateManagerPaste;
+import com.direwolf20.buildinggadgets.common.network.PacketUtils;
 import com.direwolf20.buildinggadgets.common.tools.*;
+import com.direwolf20.buildinggadgets.util.NBTJson;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
 import com.google.common.collect.HashMultiset;
@@ -249,7 +250,6 @@ public class TemplateManagerCommands {
 
         template.setStartPos(templateStack, startPos);
         template.setEndPos(templateStack, endPos);
-        // template.setItemCountMap(templateStack, tagMap);
         template.setItemCountMap(templateStack, itemCountMap);
         Template.setName(templateStack, templateName);
         container.putStackInSlot(1, templateStack);
@@ -286,22 +286,21 @@ public class TemplateManagerCommands {
                 NBTKeys.GADGET_END_POS,
                 0);
 
-            try {
-                if (GadgetUtils.getPasteStream(newCompound, tagCompound.getString("name")) != null) {
-                    String jsonTag = newCompound.toString();
-                    setClipboardString(jsonTag);
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(
-                        new ChatComponentText(
-                            ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
-                } else {
-                    pasteIsTooLarge();
-                }
-            } catch (IOException e) {
-                BuildingGadgets.LOG
-                    .error("Failed to evaluate template network size. Template will be considered too large.", e);
+            var jsonTag = NBTJson.toJson(newCompound);
+            var name = tagCompound.getString("name");
+            var message = new PacketTemplateManagerPaste(jsonTag, new ChunkCoordinates(0, 0, 0), name);
+            if (PacketUtils.isPacketTooLarge(message)) {
                 pasteIsTooLarge();
+                return;
             }
+
+            setClipboardString(jsonTag);
+
+            Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentText(
+                    ChatFormatting.AQUA
+                        + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
+
         }
     }
 

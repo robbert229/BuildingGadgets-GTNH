@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -27,6 +26,7 @@ import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 
 public class MaterialListGUI {
+
     /**
      * <ol>
      * <li>Item name (localized)

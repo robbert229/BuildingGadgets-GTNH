@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common;
 import net.minecraft.util.ResourceLocation;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
-import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
+import com.direwolf20.buildinggadgets.ClientProxy;
 
 public enum ModSounds {
 

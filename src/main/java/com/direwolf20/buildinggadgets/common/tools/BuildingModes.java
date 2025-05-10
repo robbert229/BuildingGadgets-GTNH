@@ -7,6 +7,8 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChunkCoordinates;
@@ -17,7 +19,6 @@ import net.minecraft.world.World;
 import com.direwolf20.buildinggadgets.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.modes.*;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
@@ -116,7 +117,7 @@ public enum BuildingModes {
             if (!target.getBlock()
                 .canPlaceBlockAt(world, pos.posX, pos.posY, pos.posZ)) return false;
             if (pos.posY < 0) return false;
-            if (SyncedConfig.canOverwriteBlocks) return current.getBlock()
+            if (GeneralConfig.canOverwriteBlocks) return current.getBlock()
                 .isReplaceable(world, pos.posX, pos.posY, pos.posZ);
             return current.getBlock()
                 .isAir(world, pos.posX, pos.posY, pos.posZ);

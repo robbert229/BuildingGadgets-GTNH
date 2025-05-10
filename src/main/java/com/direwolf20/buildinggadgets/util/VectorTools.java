@@ -1,14 +1,13 @@
 package com.direwolf20.buildinggadgets.util;
 
-import static com.direwolf20.buildinggadgets.common.config.SyncedConfig.rayTraceRange;
-
 import javax.annotation.Nullable;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
 public class VectorTools {
@@ -24,9 +23,9 @@ public class VectorTools {
         Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         // rayTraceRange here refers to SyncedConfig.rayTraceRange
         Vec3 end = Vec3.createVectorHelper(
-            player.posX + look.xCoord * rayTraceRange,
-            player.posY + player.getEyeHeight() + look.yCoord * rayTraceRange,
-            player.posZ + look.zCoord * rayTraceRange);
+            player.posX + look.xCoord * GeneralConfig.rayTraceRange,
+            player.posY + player.getEyeHeight() + look.yCoord * GeneralConfig.rayTraceRange,
+            player.posZ + look.zCoord * GeneralConfig.rayTraceRange);
 
         return world.rayTraceBlocks(start, end, rayTraceFluid);
     }
@@ -102,7 +101,7 @@ public class VectorTools {
             return pos.posX;
         }
 
-        if (axis.getFrontOffsetZ() != 0) {
+        if (axis.getFrontOffsetY() != 0) {
             return pos.posY;
         }
 

@@ -8,6 +8,9 @@ dependencies {
 
     compile("com.github.GTNewHorizons:NotEnoughItems:2.5.4-GTNH:dev")
 
+    compile("com.github.GTNewHorizons:CarpentersBlocks:3.7.0-GTNH")
+    compile("com.github.GTNewHorizons:Ztones-Unofficial:2.3.1-GTNH")
+
     implementation("curse.maven:cofh-core-69162:2388751") { transitive = false }
     implementation("com.github.GTNewHorizons:Chisel:2.10.17-GTNH:dev")
 

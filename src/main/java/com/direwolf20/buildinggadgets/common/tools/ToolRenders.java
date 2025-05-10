@@ -465,8 +465,8 @@ public class ToolRenders {
             GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
             GlStateManager.scale(0.999f, 0.999f, 0.999f);// Slightly Larger block to avoid z-fighting.
 
-            PasteToolBufferBuilder.draw(player, startPos, UUID); // Draw
-                                                                 // the cached buffer in the world.
+            // the cached buffer in the world.
+            PasteToolBufferBuilder.draw(player, startPos, UUID);
 
             GlStateManager.popMatrix();
 

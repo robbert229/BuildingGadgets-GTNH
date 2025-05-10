@@ -24,8 +24,7 @@ import com.direwolf20.buildinggadgets.common.network.*;
 
 public class DestructionGUI extends GadgetGUI {
 
-    private static final int ButtonSize = 20;
-    private static final int Spacing = 7;
+
 
     private int left;
     private int right;
@@ -108,8 +107,8 @@ public class DestructionGUI extends GadgetGUI {
             .child(
                 new ButtonWidget<>().overlay(GuiUtils.getUITextureFromResource("setting/undo.png"))
                     .addTooltipElement(IKey.str("Undo"))
-                    .marginRight(Spacing)
-                    .size(ButtonSize, ButtonSize)
+                    .marginRight(GuiUtils.Spacing)
+                    .size(GuiUtils.ButtonSize, GuiUtils.ButtonSize)
                     .onMousePressed(button -> {
                         PacketHandler.INSTANCE.sendToServer(new PacketUndo());
                         return true;
@@ -118,8 +117,8 @@ public class DestructionGUI extends GadgetGUI {
                 new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/anchor.png"))
                     .overlay(true, GuiUtils.getUITextureFromResource("setting/anchor_selected.png"))
                     .addTooltipElement(IKey.str("Anchor"))
-                    .marginRight(Spacing)
-                    .size(ButtonSize, ButtonSize)
+                    .marginRight(GuiUtils.Spacing)
+                    .size(GuiUtils.ButtonSize, GuiUtils.ButtonSize)
                     .value(new BoolValue.Dynamic(() -> this.enableAnchored, val -> {
                         this.enableAnchored = val;
                         PacketHandler.INSTANCE.sendToServer(new PacketAnchor());
@@ -128,8 +127,8 @@ public class DestructionGUI extends GadgetGUI {
                 new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/connected_area.png"))
                     .overlay(true, GuiUtils.getUITextureFromResource("setting/connected_area_selected.png"))
                     .addTooltipElement(IKey.str("Connected Area"))
-                    .marginRight(Spacing)
-                    .size(ButtonSize, ButtonSize)
+                    .marginRight(GuiUtils.Spacing)
+                    .size(GuiUtils.ButtonSize, GuiUtils.ButtonSize)
                     .value(new BoolValue.Dynamic(() -> this.enableConnectedArea, val -> {
                         this.enableConnectedArea = val;
                         PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
@@ -138,7 +137,7 @@ public class DestructionGUI extends GadgetGUI {
                 new ToggleButton().overlay(false, GuiUtils.getUITextureFromResource("setting/raytrace_fluid.png"))
                     .overlay(true, GuiUtils.getUITextureFromResource("setting/raytrace_fluid_selected.png"))
                     .addTooltipElement(IKey.str("Raytrace Fluid"))
-                    .size(ButtonSize, ButtonSize)
+                    .size(GuiUtils.ButtonSize, GuiUtils.ButtonSize)
                     .value(new BoolValue.Dynamic(() -> this.enableRayTraceFluid, val -> {
                         this.enableRayTraceFluid = val;
                         PacketHandler.INSTANCE.sendToServer(new PacketToggleRayTraceFluid());
@@ -163,7 +162,7 @@ public class DestructionGUI extends GadgetGUI {
                             .marginBottom(7))
                     .child(
                         new ButtonWidget<>().overlay(IKey.str("Okay"))
-                            .size(ButtonSize * 4, ButtonSize)
+                            .size(GuiUtils.ButtonSize * 4, GuiUtils.ButtonSize)
                             .marginBottom(7)
                             .onMousePressed(mouseButton -> {
                                 PacketHandler.INSTANCE

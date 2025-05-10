@@ -7,10 +7,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;

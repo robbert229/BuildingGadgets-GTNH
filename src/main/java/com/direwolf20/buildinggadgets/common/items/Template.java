@@ -2,13 +2,16 @@ package com.direwolf20.buildinggadgets.common.items;
 
 import java.util.List;
 import java.util.UUID;
+
 import javax.annotation.Nullable;
-import com.cleanroommc.modularui.factory.ClientGUI;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+
+import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;

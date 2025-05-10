@@ -78,9 +78,9 @@ public class ConstructionBlockEntity extends Entity {
                         BlockState tempState = ((ConstructionBlockTileEntity) te).getBlockState();
                         if (tempState == null) return;
 
-                        int opacity = tempState.getBlock()
+                        int opacity = tempState.block()
                             .getLightOpacity(world, setPos.posX, setPos.posY, setPos.posZ);
-                        boolean neighborBrightness = tempState.getBlock()
+                        boolean neighborBrightness = tempState.block()
                             .getUseNeighborBrightness();
 
                         if (opacity == 255 || neighborBrightness) {

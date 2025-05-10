@@ -40,6 +40,7 @@ public class BuildingGadgetsConfig {
 
     @Config(modid = BuildingGadgets.MODID, category = "general")
     public static final class GeneralConfig {
+
         @Config.RangeDouble(min = 1, max = 48)
         @Config.DefaultDouble(32)
         @Config.Name("Max Build Distance")
@@ -64,7 +65,7 @@ public class BuildingGadgetsConfig {
 
         @Config.Name("Default to absolute Coord-Mode")
         @Config.Comment({ "Determines if the Copy/Paste GUI's coordinate mode starts in 'Absolute' mode by default.",
-                "Set to true for Absolute, set to False for Relative." })
+            "Set to true for Absolute, set to False for Relative." })
         @Config.LangKey(LANG_KEY_ROOT + ".absoluteCoordDefault")
         @Config.DefaultBoolean(false)
         public static boolean absoluteCoordDefault;
@@ -76,8 +77,8 @@ public class BuildingGadgetsConfig {
 
         @Config.Name("Allow non-Air-Block-Overwrite")
         @Config.Comment({
-                "Whether the Building / CopyPaste Gadget can overwrite blocks like water, lava, grass, etc (like a player can).",
-                "False will only allow it to overwrite air blocks." })
+            "Whether the Building / CopyPaste Gadget can overwrite blocks like water, lava, grass, etc (like a player can).",
+            "False will only allow it to overwrite air blocks." })
         @Config.LangKey(LANG_KEY_ROOT + ".canOverwriteBlocks")
         @Config.DefaultBoolean(true)
         public static boolean canOverwriteBlocks;
@@ -88,10 +89,10 @@ public class BuildingGadgetsConfig {
 
         @Config.Name("Blacklisted Blocks")
         @Config.Comment({ "All Blocks added to this will be treated similar to TileEntities. Not at all.",
-                "Notice that you can use Regular Expressions as defined by Java Patterns to express more complex name combinations.",
-                "Use for example \"awfulmod:.*\" to blacklist all awfulmod Blocks." })
+            "Notice that you can use Regular Expressions as defined by Java Patterns to express more complex name combinations.",
+            "Use for example \"awfulmod:.*\" to blacklist all awfulmod Blocks." })
         @Config.LangKey(LANG_KEY_BLACKLIST + " + blockBlacklist")
-        @Config.DefaultStringList({"minecraft:.*_door.*", "minecraft:piston_head", "astralsorcery:blockflarelight"})
+        @Config.DefaultStringList({ "minecraft:.*_door.*", "minecraft:piston_head", "astralsorcery:blockflarelight" })
         public static String[] blockBlacklist;
     }
 

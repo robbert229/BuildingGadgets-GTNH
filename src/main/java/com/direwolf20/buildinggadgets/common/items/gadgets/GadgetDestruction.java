@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -23,6 +21,7 @@ import net.minecraftforge.common.util.Constants;
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetDestructionConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
@@ -355,7 +354,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 continue;
             }
 
-            if (blockState.getBlock() == ModBlocks.constructionBlock) {
+            if (blockState.block() == ModBlocks.constructionBlock) {
                 TileEntity te = world.getTileEntity(voidPos.posX, voidPos.posY, voidPos.posZ);
                 if (te instanceof ConstructionBlockTileEntity cbte && cbte.getBlock() != null) {
                     pasteState = new BlockState(cbte.getActualBlock(), cbte.getActualBlockMeta());

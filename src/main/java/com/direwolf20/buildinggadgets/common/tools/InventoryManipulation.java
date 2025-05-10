@@ -533,7 +533,7 @@ public class InventoryManipulation {
     public static BlockState getSpecificStates(BlockState originalState, World world, EntityPlayer player,
         ChunkCoordinates pos, ItemStack tool) {
         BlockState placeState;
-        Block block = originalState.getBlock();
+        Block block = originalState.block();
 
         ItemStack item;
         try {
@@ -541,7 +541,7 @@ public class InventoryManipulation {
             item = block.getPickBlock(null, world, pos.posX, pos.posY, pos.posZ);
         } catch (Exception ignored) {
             // This may introduce issues. I hope it doesn't
-            item = InventoryManipulation.getSilkTouchDrop(originalState.getBlock(), originalState.getMetadata());
+            item = InventoryManipulation.getSilkTouchDrop(originalState.block(), originalState.metadata());
         }
 
         int meta = item.getItemDamage();
@@ -549,9 +549,9 @@ public class InventoryManipulation {
         // TODO(johnrowl) this is questionable now.
         try {
 
-            placeState = new BlockState(originalState.getBlock(), meta);
+            placeState = new BlockState(originalState.block(), meta);
         } catch (Exception var8) {
-            placeState = new BlockState(originalState.getBlock(), 0);
+            placeState = new BlockState(originalState.block(), 0);
         }
 
         // TODO(johnrowl) figure out what to do with the properties.

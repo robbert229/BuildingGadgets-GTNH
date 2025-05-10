@@ -103,7 +103,7 @@ public class BlockBuildEntity extends Entity {
         world.setBlock(spawnPos.posX, spawnPos.posY, spawnPos.posZ, ModBlocks.effectBlock);
         // world.setBlockState(spawnPos, ModBlocks.effectBlock.getDefaultState());
 
-        if (setBlock.getBlock() instanceof BlockLeaves) {
+        if (setBlock.block() instanceof BlockLeaves) {
             // Set the metadata to prevent leaf decay
             int metadata = world.getBlockMetadata(spawnPos.posX, spawnPos.posY, spawnPos.posZ);
             world.setBlockMetadataWithNotify(spawnPos.posX, spawnPos.posY, spawnPos.posZ, metadata & (~8), 2); // `~8`
@@ -140,10 +140,10 @@ public class BlockBuildEntity extends Entity {
     public void setSetBlock(@Nullable BlockState state) {
         int metadata = 0;
         if (state != null) {
-            metadata = state.getMetadata();
+            metadata = state.metadata();
         }
 
-        this.dataWatcher.updateObject(SET_BLOCK_ID_INDEX, Block.getIdFromBlock(state.getBlock()));
+        this.dataWatcher.updateObject(SET_BLOCK_ID_INDEX, Block.getIdFromBlock(state.block()));
         this.dataWatcher.updateObject(SET_BLOCK_METADATA_INDEX, metadata);
     }
 
@@ -197,19 +197,19 @@ public class BlockBuildEntity extends Entity {
 
                     TileEntity te = world.getTileEntity(setPos.posX, setPos.posY, setPos.posZ);
                     if (te instanceof ConstructionBlockTileEntity) {
-                        ((ConstructionBlockTileEntity) te).setBlockState(setBlock.getBlock(), setBlock.getMetadata());
+                        ((ConstructionBlockTileEntity) te).setBlockState(setBlock.block(), setBlock.metadata());
                         ((ConstructionBlockTileEntity) te)
-                            .setActualBlockState(actualSetBlock.getBlock(), actualSetBlock.getMetadata());
+                            .setActualBlockState(actualSetBlock.block(), actualSetBlock.metadata());
                     }
 
                     world.spawnEntityInWorld(new ConstructionBlockEntity(world, setPos, false));
                 } else {
-                    world.setBlock(setPos.posX, setPos.posY, setPos.posZ, setBlock.getBlock());
-                    world.setBlockMetadataWithNotify(setPos.posX, setPos.posY, setPos.posZ, setBlock.getMetadata(), 2);
+                    world.setBlock(setPos.posX, setPos.posY, setPos.posZ, setBlock.block());
+                    world.setBlockMetadataWithNotify(setPos.posX, setPos.posY, setPos.posZ, setBlock.metadata(), 2);
                     var neighborBlock = WorldUtils.getBlock(world, ChunkCoordinateUtils.up(setPos));
 
                     BlockState.getBlockState(world, setPos)
-                        .getBlock()
+                        .block()
                         .onNeighborBlockChange(world, setPos.posX, setPos.posY, setPos.posZ, neighborBlock);
                 }
             } else if (setPos != null && setBlock != null && getToolMode() == 2) {

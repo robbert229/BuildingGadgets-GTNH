@@ -32,7 +32,7 @@ public final class PlacementTarget {
      * @param world the world to place block
      */
     public void placeIn(World world) {
-        world.setBlock(pos.posX, pos.posY, pos.posZ, state.getBlock(), state.getMetadata(), 2);
+        world.setBlock(pos.posX, pos.posY, pos.posZ, state.block(), state.metadata(), 2);
     }
 
 }

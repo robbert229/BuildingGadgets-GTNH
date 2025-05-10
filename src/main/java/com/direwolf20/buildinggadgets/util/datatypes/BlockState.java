@@ -2,21 +2,15 @@ package com.direwolf20.buildinggadgets.util.datatypes;
 
 import javax.annotation.Nullable;
 
+import com.github.bsideup.jabel.Desugar;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockState {
-
-    private final int metadata;
-    private final Block block;
-
-    public BlockState(Block block, int metadata) {
-        this.metadata = metadata;
-        this.block = block;
-    }
+@Desugar
+public record BlockState(Block block, int metadata) {
 
     @Nullable
     public static BlockState getBlockState(World world, int x, int y, int z) {
@@ -33,14 +27,6 @@ public class BlockState {
     @Nullable
     public static BlockState getBlockState(World world, ChunkCoordinates coordinates) {
         return getBlockState(world, coordinates.posX, coordinates.posY, coordinates.posZ);
-    }
-
-    public Block getBlock() {
-        return block;
-    }
-
-    public int getMetadata() {
-        return metadata;
     }
 
     @Override
@@ -60,13 +46,6 @@ public class BlockState {
         }
 
         return block == blockMeta.block;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = block.hashCode();
-        result = 31 * result + metadata;
-        return result;
     }
 
     public boolean isAir(IBlockAccess world, int x, int y, int z) {

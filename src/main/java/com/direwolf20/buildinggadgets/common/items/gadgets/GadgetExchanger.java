@@ -2,8 +2,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +15,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetExchangerConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
@@ -115,7 +114,7 @@ public class GadgetExchanger extends GadgetGeneric {
             EnumChatFormatting.DARK_GREEN + StatCollector.translateToLocal("tooltip.gadget.block")
                 + ": "
                 + GadgetUtils.getToolBlock(stack)
-                    .getBlock()
+                    .block()
                     .getLocalizedName());
 
         ExchangingModes mode = getToolMode(stack);

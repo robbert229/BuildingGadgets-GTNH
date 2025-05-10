@@ -203,8 +203,8 @@ public class EventTooltip {
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = IntStackMap.get(blockMap.state);
 
-            List<ItemStack> drops = blockMap.state.getBlock()
-                .getDrops(Minecraft.getMinecraft().theWorld, 0, 0, 0, blockMap.state.getMetadata(), 0);
+            List<ItemStack> drops = blockMap.state.block()
+                .getDrops(Minecraft.getMinecraft().theWorld, 0, 0, 0, blockMap.state.metadata(), 0);
             int neededItems = 0;
             for (ItemStack drop : drops) {
                 if (drop.getItem()

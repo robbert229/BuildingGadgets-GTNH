@@ -1,12 +1,11 @@
 package com.direwolf20.buildinggadgets.common.events;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

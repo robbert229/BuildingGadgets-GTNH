@@ -65,11 +65,11 @@ public class BlockBuildEntityRender extends Render {
         int blockX = (int) blockEntity.posX;
         int blockY = (int) blockEntity.posY;
         int blockZ = (int) blockEntity.posZ;
-        int metadata = renderBlockState.getBlock()
+        int metadata = renderBlockState.block()
             .getDamageValue(mc.theWorld, blockX, blockY, blockZ);
 
         RenderBlocks renderBlocks = new RenderBlocks();
-        renderBlocks.renderBlockAsItem(renderBlockState.getBlock(), metadata, 1.0f);
+        renderBlocks.renderBlockAsItem(renderBlockState.block(), metadata, 1.0f);
 
         GL11.glPopMatrix();
 

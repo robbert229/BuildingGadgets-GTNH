@@ -34,9 +34,13 @@ public interface IPasteRecipeRegistry extends IIntegratedMod {
             new ItemStack(ModItems.constructionPaste));
     }
 
-    default void registerHydrationRecipe(RecipieType type, ItemStack input, ItemStack output) {}
+    default void registerHydrationRecipe(RecipieType type, ItemStack input, ItemStack output) {
+        //
+    }
 
-    default void registerDeconstructRecipe(RecipieType type, ItemStack input, ItemStack output) {}
+    default void registerDeconstructRecipe(RecipieType type, ItemStack input, ItemStack output) {
+        //
+    }
 
     public static enum RecipieType {
         POWDER_TO_BLOCK,

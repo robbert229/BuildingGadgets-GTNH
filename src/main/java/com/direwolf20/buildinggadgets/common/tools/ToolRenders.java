@@ -298,7 +298,7 @@ public class ToolRenders {
 
         EnumFacing facing = (GadgetDestruction.getAnchorSide(heldItem) == null) ? EnumFacing.getFront(lookingAt.sideHit)
             : GadgetDestruction.getAnchorSide(heldItem);
-        if (startBlock.getBlock() == ModBlocks.effectBlock) {
+        if (startBlock.block() == ModBlocks.effectBlock) {
             return;
         }
 
@@ -440,7 +440,7 @@ public class ToolRenders {
 
             // Don't draw on top of blocks being built by our tools.
             BlockState startBlock = BlockState.getBlockState(world, startPos);
-            if (startBlock == null || startBlock.getBlock()
+            if (startBlock == null || startBlock.block()
                 .equals(ModBlocks.effectBlock)) {
                 return;
             }
@@ -739,8 +739,8 @@ public class ToolRenders {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         var sides = Arrays.stream(EnumFacing.values())
             .map(
-                (side) -> block.getBlock()
-                    .getIcon(side.ordinal(), block.getMetadata()))
+                (side) -> block.block()
+                    .getIcon(side.ordinal(), block.metadata()))
             .collect(Collectors.toList());
 
         tessellator.startDrawingQuads(); // In 1.7.10, mode 7 corresponds to quads

@@ -382,26 +382,15 @@ public class TemplateManagerGUI extends GuiContainer {
                     nameField.getText());
 
                 if (PacketUtils.isPacketTooLarge(packet)) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(
-                        new ChatComponentText(
-                            ChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig")
-                                .getUnformattedTextForChat()));
+                    TemplateManagerCommands.pasteIsTooLarge();
                     return;
                 }
 
                 PacketHandler.INSTANCE.sendToServer(packet);
-
-                Minecraft.getMinecraft().thePlayer.addChatMessage(
-                    new ChatComponentText(
-                        ChatFormatting.AQUA
-                            + new ChatComponentTranslation("message.gadget.pastesuccess").getUnformattedTextForChat()));
             } catch (Throwable t) {
                 BuildingGadgets.LOG.error(t);
 
-                Minecraft.getMinecraft().thePlayer.addChatMessage(
-                    new ChatComponentText(
-                        ChatFormatting.RED
-                            + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()));
+                TemplateManagerCommands.pasteFailed();
             }
         }
     }

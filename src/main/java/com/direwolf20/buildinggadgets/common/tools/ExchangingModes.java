@@ -103,7 +103,7 @@ public enum ExchangingModes {
             if (!GadgetGeneric.getFuzzy(tool) && worldBlockState != initialBlockState) return false;
 
             // If the target is already enqueued, don't replace it
-            if (worldBlockState.getBlock()
+            if (worldBlockState.block()
                 .equals(ModBlocks.effectBlock)) {
                 return false;
             }
@@ -118,8 +118,8 @@ public enum ExchangingModes {
 
             TileEntity tile = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
             // Only replace construction block with same block state
-            if (tile instanceof ConstructionBlockTileEntity cbte && cbte.getBlockMetadata() == state.getMetadata()
-                && cbte.blockType.equals(state.getBlock())) {
+            if (tile instanceof ConstructionBlockTileEntity cbte && cbte.getBlockMetadata() == state.metadata()
+                && cbte.blockType.equals(state.block())) {
                 return false;
             } else if (tile != null) {
                 // Otherwise if the block has a tile entity, ignore it
@@ -128,7 +128,7 @@ public enum ExchangingModes {
             }
 
             // Bedrock, End Portal Frame, etc.
-            if (worldBlockState.getBlock()
+            if (worldBlockState.block()
                 .getBlockHardness(world, pos.posX, pos.posY, pos.posZ) < 0) return false;
 
             // Don't replace liquids

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -360,6 +361,7 @@ public class NBTTool {
     }
 
     private static final String NBT_BLOCK_NAME = "Name";
+    private static final String NBT_BLOCK_NAME_V2 = "name";
     private static final String NBT_BLOCK_META = "block_meta";
 
     public static NBTTagCompound blockToCompound(BlockState block) {
@@ -369,16 +371,34 @@ public class NBTTool {
     }
 
     public static void writeBlockToCompound(NBTTagCompound compound, BlockState block) {
-        compound.setInteger(NBT_BLOCK_NAME, Block.getIdFromBlock(block.getBlock()));
-        compound.setInteger(NBT_BLOCK_META, block.getMetadata());
+        compound.setInteger(NBT_BLOCK_NAME, Block.getIdFromBlock(block.block()));
+        compound.setInteger(NBT_BLOCK_META, block.metadata());
     }
 
-    public static BlockState blockFromCompound(NBTTagCompound compound) {
-        // Retrieve block and metadata
-        var name = compound.getInteger(NBT_BLOCK_NAME);
-        Block block = Block.getBlockById(name);
-        int meta = compound.getInteger(NBT_BLOCK_META);
+    private static String tryKeys(NBTTagCompound tag, String ...keys) {
+        if (keys.length == 0) {
+            throw new IllegalArgumentException("invalid empty list of keys to try");
+        }
 
+        for (var k : keys) {
+            if (tag.hasKey(k)) {
+                return k;
+            }
+        }
+
+        throw new RuntimeException("invalid nbt tag with no keys matching the try key list");
+    }
+
+    @Nullable
+    public static BlockState blockFromCompound(@Nonnull NBTTagCompound compound) {
+        // Retrieve block and metadata
+        var name = compound.getString(tryKeys(compound, NBT_BLOCK_NAME_V2, NBT_BLOCK_NAME));
+        Block block = Block.getBlockFromName(name);
+        if (block == null) {
+            return null;
+        }
+
+        int meta = compound.getInteger(NBT_BLOCK_META);
         return new BlockState(block, meta);
     }
 }

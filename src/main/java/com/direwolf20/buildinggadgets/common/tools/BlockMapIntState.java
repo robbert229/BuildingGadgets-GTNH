@@ -83,8 +83,7 @@ public class BlockMapIntState {
             var mapSlot = compound.getShort("mapSlot");
             var mapState = compound.getCompoundTag("mapState");
             var decoded = NBTTool.blockFromCompound(mapState);
-
-            if (decoded.isAir()) {
+            if (decoded == null || decoded.isAir()) {
                 continue;
             }
 
@@ -110,7 +109,7 @@ public class BlockMapIntState {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
 
             var state = NBTTool.blockFromCompound(compound.getCompoundTag("state"));
-            var bm = new BlockState(state.getBlock(), state.getMetadata());
+            var bm = new BlockState(state.block(), state.metadata());
             var ui = new UniqueItem(Item.getItemById(compound.getInteger("item")), compound.getInteger("meta"));
 
             intStackMap.put(bm, ui);
@@ -139,14 +138,14 @@ public class BlockMapIntState {
         ItemStack itemStack;
 
         try {
-            itemStack = state.getBlock()
+            itemStack = state.block()
                 .getPickBlock(null, player.worldObj, pos.posX, pos.posY, pos.posZ, player);
         } catch (Exception e) {
-            itemStack = InventoryManipulation.getSilkTouchDrop(state.getBlock(), state.getMetadata());
+            itemStack = InventoryManipulation.getSilkTouchDrop(state.block(), state.metadata());
         }
 
         if (itemStack == null) {
-            itemStack = InventoryManipulation.getSilkTouchDrop(state.getBlock(), state.getMetadata());
+            itemStack = InventoryManipulation.getSilkTouchDrop(state.block(), state.metadata());
         }
 
         if (itemStack != null) {

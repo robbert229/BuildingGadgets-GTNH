@@ -227,8 +227,8 @@ public class TemplateManagerCommands {
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = intStackMap.get(blockMap.state);
             if (!(uniqueItem == null)) {
-                List<ItemStack> drops = blockMap.state.getBlock()
-                    .getDrops(world, 0, 0, 0, blockMap.state.getMetadata(), 0);
+                List<ItemStack> drops = blockMap.state.block()
+                    .getDrops(world, 0, 0, 0, blockMap.state.metadata(), 0);
 
                 int neededItems = 0;
                 for (ItemStack drop : drops) {
@@ -253,6 +253,12 @@ public class TemplateManagerCommands {
         template.setItemCountMap(templateStack, itemCountMap);
         Template.setName(templateStack, templateName);
         container.putStackInSlot(1, templateStack);
+
+        Minecraft.getMinecraft().thePlayer.addChatMessage(
+            new ChatComponentText(
+                ChatFormatting.AQUA
+                    + new ChatComponentTranslation("message.gadget.pastesuccess").getUnformattedTextForChat()));
+
         PacketHandler.INSTANCE.sendTo(new PacketBlockMap(templateTagCompound), (EntityPlayerMP) player);
     }
 
@@ -296,15 +302,29 @@ public class TemplateManagerCommands {
 
             setClipboardString(jsonTag);
 
-            Minecraft.getMinecraft().thePlayer.addChatMessage(
-                new ChatComponentText(
-                    ChatFormatting.AQUA
-                        + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
-
+            pasteIsSuccessful();
         }
     }
 
-    private static void pasteIsTooLarge() {
+    public static void pasteFailed(){
+        pasteFailed(Minecraft.getMinecraft().thePlayer);
+    }
+
+    public static void pasteFailed(EntityPlayer player){
+        player.addChatMessage(
+                new ChatComponentText(
+                        ChatFormatting.RED
+                                + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()));
+    }
+
+    public static void pasteIsSuccessful(){
+        Minecraft.getMinecraft().thePlayer.addChatMessage(
+                new ChatComponentText(
+                        ChatFormatting.AQUA
+                                + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
+    }
+
+    public static void pasteIsTooLarge() {
         Minecraft.getMinecraft().thePlayer.addChatMessage(
             new ChatComponentText(
                 ChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig").getUnformattedText()));

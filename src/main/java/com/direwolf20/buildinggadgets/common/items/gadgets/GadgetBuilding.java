@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,9 +20,10 @@ import net.minecraftforge.event.ForgeEventFactory;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetBuildingConfig;
 import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.FakeBuilderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
@@ -38,22 +41,22 @@ public class GadgetBuilding extends GadgetGeneric {
     public GadgetBuilding() {
         super("buildingtool");
 
-        setMaxDamage(SyncedConfig.durabilityBuilder);
+        setMaxDamage(GadgetBuildingConfig.durabilityBuilder);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return SyncedConfig.poweredByFE ? 0 : SyncedConfig.durabilityBuilder;
+        return GeneralConfig.poweredByFE ? 0 : GadgetBuildingConfig.durabilityBuilder;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return SyncedConfig.energyCostBuilder;
+        return GadgetBuildingConfig.energyCostBuilder;
     }
 
     @Override
     public int getDamageCost(ItemStack tool) {
-        return SyncedConfig.damageCostBuilder;
+        return GadgetBuildingConfig.damageCostBuilder;
     }
 
     @Override
@@ -181,9 +184,9 @@ public class GadgetBuilding extends GadgetGeneric {
         int changeAmount = (getToolMode(heldItem) != BuildingModes.Surface || (range % 2 == 0)) ? 1 : 2;
 
         if (player.isSneaking()) {
-            range = (range == 1) ? SyncedConfig.maxRange : range - changeAmount;
+            range = (range == 1) ? GadgetsConfig.maxRange : range - changeAmount;
         } else {
-            range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
+            range = (range >= GadgetsConfig.maxRange) ? 1 : range + changeAmount;
         }
 
         GadgetUtils.setToolRange(heldItem, range);

@@ -19,7 +19,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 
 import com.cleanroommc.modularui.screen.ModularScreen;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
 import com.direwolf20.buildinggadgets.util.NBTTool;
@@ -37,7 +37,7 @@ public abstract class GadgetGeneric extends ItemModBase {
     }
 
     public int getEnergyMax() {
-        return SyncedConfig.energyMax;
+        return GadgetsConfig.maxEnergy;
     }
 
     @Override

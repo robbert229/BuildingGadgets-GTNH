@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -20,12 +22,12 @@ import net.minecraftforge.common.util.Constants;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetDestructionConfig;
 import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
@@ -38,27 +40,27 @@ public class GadgetDestruction extends GadgetGeneric {
 
     public GadgetDestruction() {
         super("destructiontool");
-        setMaxDamage(SyncedConfig.durabilityDestruction);
+        setMaxDamage(GadgetDestructionConfig.durabilityDestruction);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return SyncedConfig.poweredByFE ? 0 : SyncedConfig.durabilityDestruction;
+        return GeneralConfig.poweredByFE ? 0 : GadgetDestructionConfig.durabilityDestruction;
     }
 
     @Override
     public int getEnergyMax() {
-        return SyncedConfig.energyMaxDestruction;
+        return GadgetDestructionConfig.energyMaxDestruction;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return SyncedConfig.energyCostDestruction * getCostMultiplier(tool);
+        return GadgetDestructionConfig.energyCostDestruction * getCostMultiplier(tool);
     }
 
     @Override
     public int getDamageCost(ItemStack tool) {
-        return SyncedConfig.damageCostDestruction * getCostMultiplier(tool);
+        return GadgetDestructionConfig.damageCostDestruction * getCostMultiplier(tool);
     }
 
     @Override
@@ -72,8 +74,8 @@ public class GadgetDestruction extends GadgetGeneric {
     }
 
     private int getCostMultiplier(ItemStack tool) {
-        return (int) (SyncedConfig.nonFuzzyEnabledDestruction && !getFuzzy(tool)
-            ? SyncedConfig.nonFuzzyMultiplierDestruction
+        return (int) (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool)
+            ? GadgetDestructionConfig.nonFuzzyMultiplier
             : 1);
     }
 
@@ -89,7 +91,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 + getConnectedArea(stack));
 
         // Check for the configuration setting (or your method for it in 1.7.10)
-        if (SyncedConfig.nonFuzzyEnabledDestruction) {
+        if (GadgetDestructionConfig.nonFuzzyEnabled) {
             list.add(
                 EnumChatFormatting.GOLD + StatCollector.translateToLocal("tooltip.gadget.fuzzy")
                     + ": "
@@ -285,7 +287,7 @@ public class GadgetDestruction extends GadgetGeneric {
             selectionRegion = selectionRegion.union(new Region(offset));
         }
 
-        boolean fuzzy = !SyncedConfig.nonFuzzyEnabledDestruction || GadgetGeneric.getFuzzy(stack);
+        boolean fuzzy = !GadgetDestructionConfig.nonFuzzyEnabled || GadgetGeneric.getFuzzy(stack);
         Block stateTarget = fuzzy ? null : WorldUtils.getBlock(world, pos);
         if (GadgetGeneric.getConnectedArea(stack)) {
             return ConnectedSurface

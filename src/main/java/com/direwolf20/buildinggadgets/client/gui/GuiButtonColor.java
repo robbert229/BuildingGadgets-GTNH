@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 
-import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
+import com.direwolf20.buildinggadgets.ClientProxy;
 
 public class GuiButtonColor extends GuiButtonSound {
 

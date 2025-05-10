@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import com.direwolf20.buildinggadgets.common.commands.DeleteBlockMapsCommand;
 import com.direwolf20.buildinggadgets.common.commands.FindBlockMapsCommand;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.common.proxy.CommonProxy;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -45,8 +44,8 @@ public class BuildingGadgets {
     };
 
     @SidedProxy(
-        clientSide = "com.direwolf20.buildinggadgets.client.proxy.ClientProxy",
-        serverSide = "com.direwolf20.buildinggadgets.common.proxy.ServerProxy")
+        clientSide = "com.direwolf20.buildinggadgets.ClientProxy",
+        serverSide = "com.direwolf20.buildinggadgets.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance

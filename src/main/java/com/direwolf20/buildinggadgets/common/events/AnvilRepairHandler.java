@@ -1,11 +1,12 @@
 package com.direwolf20.buildinggadgets.common.events;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -19,7 +20,7 @@ public class AnvilRepairHandler {
 
     @SubscribeEvent
     public static void onPlayerEvent(PlayerEvent event) {
-        if (SyncedConfig.poweredByFE && (event.entityPlayer.getCurrentEquippedItem()
+        if (GeneralConfig.poweredByFE && (event.entityPlayer.getCurrentEquippedItem()
             .getItem() instanceof GadgetGeneric)
             && (event.entityPlayer.inventory.getCurrentItem()
                 .getItem() == Items.diamond)) {

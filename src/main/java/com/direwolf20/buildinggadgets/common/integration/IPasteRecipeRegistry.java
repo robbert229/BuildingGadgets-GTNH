@@ -2,8 +2,8 @@ package com.direwolf20.buildinggadgets.common.integration;
 
 import net.minecraft.item.ItemStack;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.PasteConfig;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-import com.direwolf20.buildinggadgets.common.config.Config;
 import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.IIntegratedMod;
 import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler.Phase;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
@@ -16,7 +16,7 @@ public interface IPasteRecipeRegistry extends IIntegratedMod {
 
     @Override
     default void initialize(Phase phase) {
-        if (getPhase() == phase && Config.enablePaste) registerAllRecipes();
+        if (getPhase() == phase && PasteConfig.enablePaste) registerAllRecipes();
     }
 
     default void registerAllRecipes() {

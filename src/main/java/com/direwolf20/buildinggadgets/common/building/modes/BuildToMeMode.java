@@ -7,10 +7,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import com.direwolf20.buildinggadgets.common.building.placement.ExclusiveAxisChasing;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 
 /**
@@ -36,7 +36,7 @@ public class BuildToMeMode extends AtopSupportedMode {
                 (int) Math.floor(player.posY),
                 (int) Math.floor(player.posZ)),
             sideHit,
-            SyncedConfig.maxRange);
+            GadgetsConfig.maxRange);
     }
 
     @Override

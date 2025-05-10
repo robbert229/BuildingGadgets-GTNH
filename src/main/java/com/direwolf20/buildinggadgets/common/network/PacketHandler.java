@@ -32,7 +32,6 @@ public class PacketHandler {
         registerMessage(PacketTemplateManagerPaste.Handler.class, PacketTemplateManagerPaste.class, Side.SERVER);
         registerMessage(PacketCopyCoords.Handler.class, PacketCopyCoords.class, Side.SERVER);
         registerMessage(PacketPasteGUI.Handler.class, PacketPasteGUI.class, Side.SERVER);
-        registerMessage(PacketRequestConfigSync.Handler.class, PacketRequestConfigSync.class, Side.SERVER);
 
         // ReImplemented
         registerMessage(PacketDestructionGUI.Handler.class, PacketDestructionGUI.class, Side.SERVER);
@@ -44,7 +43,6 @@ public class PacketHandler {
         registerMessage(PacketToggleRayTraceFluid.Handler.class, PacketToggleRayTraceFluid.class, Side.SERVER);
 
         // Client side
-        registerMessage(PacketSyncConfig.Handler.class, PacketSyncConfig.class, Side.CLIENT);
         registerMessage(PacketBlockMap.Handler.class, PacketBlockMap.class, Side.CLIENT);
 
         // Both sides

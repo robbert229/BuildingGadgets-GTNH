@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
-import static codechicken.lib.gui.GuiDraw.fontRenderer;
+import static cofh.repack.codechicken.lib.render.FontUtils.fontRenderer;
 
 import java.awt.*;
 import java.util.List;

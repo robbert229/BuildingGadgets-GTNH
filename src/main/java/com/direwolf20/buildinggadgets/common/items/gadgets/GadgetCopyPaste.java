@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,6 +24,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetCopyPasteConfig;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.CopyGUI;
 import com.direwolf20.buildinggadgets.client.gui.CopyPasteGUI;
@@ -29,7 +32,6 @@ import com.direwolf20.buildinggadgets.client.gui.PasteGUI;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
@@ -61,22 +63,22 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
     public GadgetCopyPaste() {
         super("copypastetool");
-        setMaxDamage(SyncedConfig.durabilityCopyPaste);
+        setMaxDamage(GadgetCopyPasteConfig.durabilityCopyPaste);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return SyncedConfig.poweredByFE ? 0 : SyncedConfig.durabilityCopyPaste;
+        return GeneralConfig.poweredByFE ? 0 : GadgetCopyPasteConfig.durabilityCopyPaste;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return SyncedConfig.energyCostCopyPaste;
+        return GadgetCopyPasteConfig.energyCostCopyPaste;
     }
 
     @Override
     public int getDamageCost(ItemStack tool) {
-        return SyncedConfig.damageCostCopyPaste;
+        return GadgetCopyPasteConfig.damageCostCopyPaste;
     }
 
     @Override
@@ -676,9 +678,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             return;
         }
 
-        if ((SyncedConfig.canOverwriteBlocks && !testState.getBlock()
+        if ((GeneralConfig.canOverwriteBlocks && !testState.getBlock()
             .isReplaceable(world, pos.posX, pos.posY, pos.posZ))
-            || (!SyncedConfig.canOverwriteBlocks && testState.getBlock()
+            || (!GeneralConfig.canOverwriteBlocks && testState.getBlock()
                 .isAir(world, pos.posX, pos.posY, pos.posZ))) {
             return;
         }

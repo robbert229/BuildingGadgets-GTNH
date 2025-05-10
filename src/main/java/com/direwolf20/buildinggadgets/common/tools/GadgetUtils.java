@@ -17,11 +17,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
 import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.integration.NetworkProvider;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
@@ -34,8 +35,6 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multiset;
 import com.mojang.realmsclient.gui.ChatFormatting;
-
-import cofh.lib.util.helpers.MathHelper;
 
 public class GadgetUtils {
 
@@ -214,7 +213,8 @@ public class GadgetUtils {
 
     public static int getToolRange(ItemStack stack) {
         NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
-        return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
+        return MathHelper
+            .clamp_int(tagCompound.getInteger("range"), 1, BuildingGadgetsConfig.GadgetsConfig.maxRange);
     }
 
     // public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation,

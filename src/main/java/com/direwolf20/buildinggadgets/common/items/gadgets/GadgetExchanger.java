@@ -2,6 +2,8 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,8 +15,9 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetExchangerConfig;
 import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
-import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
@@ -40,22 +43,22 @@ public class GadgetExchanger extends GadgetGeneric {
 
     public GadgetExchanger() {
         super("exchangertool");
-        setMaxDamage(SyncedConfig.durabilityExchanger);
+        setMaxDamage(GadgetExchangerConfig.durabilityExchanger);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return SyncedConfig.poweredByFE ? 0 : SyncedConfig.durabilityExchanger;
+        return GeneralConfig.poweredByFE ? 0 : GadgetExchangerConfig.durabilityExchanger;
     }
 
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return SyncedConfig.energyCostExchanger;
+        return GadgetExchangerConfig.energyCostExchanger;
     }
 
     @Override
     public int getDamageCost(ItemStack tool) {
-        return SyncedConfig.damageCostExchanger;
+        return GadgetExchangerConfig.damageCostExchanger;
     }
 
     @Override
@@ -161,9 +164,9 @@ public class GadgetExchanger extends GadgetGeneric {
         int range = GadgetUtils.getToolRange(heldItem);
         int changeAmount = (getToolMode(heldItem) == ExchangingModes.Grid || (range % 2 == 0)) ? 1 : 2;
         if (player.isSneaking()) {
-            range = (range <= 1) ? SyncedConfig.maxRange : range - changeAmount;
+            range = (range <= 1) ? GadgetsConfig.maxRange : range - changeAmount;
         } else {
-            range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
+            range = (range >= GadgetsConfig.maxRange) ? 1 : range + changeAmount;
         }
         GadgetUtils.setToolRange(heldItem, range);
         player.addChatMessage(

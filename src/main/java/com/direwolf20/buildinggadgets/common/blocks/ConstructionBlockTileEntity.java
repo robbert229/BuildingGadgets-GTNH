@@ -25,7 +25,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
     }
 
     public boolean setBlockState(BlockState blockState) {
-        return this.setBlockState(blockState.getBlock(), blockState.getMetadata());
+        return this.setBlockState(blockState.block(), blockState.metadata());
     }
 
     public boolean setActualBlockState(Block block, int meta) {
@@ -36,7 +36,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
     }
 
     public boolean setActualBlockState(BlockState blockState) {
-        return this.setActualBlockState(blockState.getBlock(), blockState.getMetadata());
+        return this.setActualBlockState(blockState.block(), blockState.metadata());
     }
 
     public BlockState getBlockState() {

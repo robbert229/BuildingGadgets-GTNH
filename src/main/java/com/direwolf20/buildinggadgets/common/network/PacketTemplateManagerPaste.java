@@ -7,7 +7,10 @@ package com.direwolf20.buildinggadgets.common.network;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
@@ -16,6 +19,7 @@ import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateMana
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 import com.direwolf20.buildinggadgets.util.NBTJson;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -71,25 +75,32 @@ public class PacketTemplateManagerPaste implements IMessage {
         }
 
         private void handle(PacketTemplateManagerPaste message, MessageContext ctx) {
-            var parsed = new JsonParser().parse(message.jsonString);
-            var nbt = NBTJson.toNbt(parsed);
-            if (nbt.equals(new NBTTagCompound()) || !(nbt instanceof NBTTagCompound)) {
-                return;
-            }
-
-            BuildingGadgets.LOG.debug("handling packet paste: {}", nbt.toString());
-
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
-            ChunkCoordinates pos = message.pos;
-            TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
 
-            if (!(te instanceof TemplateManagerTileEntity)) {
-                return;
+            try {
+                var parsed = new JsonParser().parse(message.jsonString);
+                var nbt = NBTJson.toNbt(parsed);
+
+                if (nbt.equals(new NBTTagCompound()) || !(nbt instanceof NBTTagCompound)) {
+                    TemplateManagerCommands.pasteFailed(player);
+                    return;
+                }
+
+                BuildingGadgets.LOG.debug("handling packet paste: {}", nbt.toString());
+
+                World world = player.worldObj;
+                ChunkCoordinates pos = message.pos;
+                TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
+
+                if (!(te instanceof TemplateManagerTileEntity)) {
+                    return;
+                }
+
+                TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
+                TemplateManagerCommands.pasteTemplate(container, player, (NBTTagCompound) nbt, message.templateName);
+            } catch (JsonSyntaxException e) {
+                TemplateManagerCommands.pasteFailed(player);
             }
-
-            TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
-            TemplateManagerCommands.pasteTemplate(container, player, (NBTTagCompound) nbt, message.templateName);
         }
     }
 }

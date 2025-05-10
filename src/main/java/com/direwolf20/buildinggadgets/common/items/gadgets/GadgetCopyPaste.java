@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,6 +23,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetCopyPasteConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.CopyGUI;
 import com.direwolf20.buildinggadgets.client.gui.CopyPasteGUI;
@@ -195,13 +194,13 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             tagCompound = new NBTTagCompound();
         }
 
-        NBTTagList MapIntStateTag = (NBTTagList) tagCompound.getTag("mapIntState");
-        if (MapIntStateTag == null) {
-            MapIntStateTag = new NBTTagList();
+        NBTTagList mapIntStateTag = (NBTTagList) tagCompound.getTag("mapIntState");
+        if (mapIntStateTag == null) {
+            mapIntStateTag = new NBTTagList();
         }
 
-        BlockMapIntState MapIntState = new BlockMapIntState();
-        MapIntState.getIntStateMapFromNBT(MapIntStateTag);
+        BlockMapIntState mapIntState = new BlockMapIntState();
+        mapIntState.getIntStateMapFromNBT(mapIntStateTag);
 
         var posIntArray = getTagIntArrayFromTagCompound(tagCompound, NBTKeys.GADGET_POS_INT_ARRAY);
         var stateIntArray = getTagIntArrayFromTagCompound(tagCompound, NBTKeys.GADGET_STATE_INT_ARRAY);
@@ -212,7 +211,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             blockMap.add(
                 new BlockMap(
                     pos,
-                    MapIntState.getStateFromSlot(IntState),
+                    mapIntState.getStateFromSlot(IntState),
                     (byte) ((p & 0xff0000) >> 16),
                     (byte) ((p & 0x00ff00) >> 8),
                     (byte) (p & 0x0000ff)));
@@ -536,7 +535,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     // var notBlacklisted = !SyncedConfig.blockBlacklist.contains(tempState.getBlock());
                     var notBlacklisted = true;
 
-                    if (!(tempState.getBlock() instanceof EffectBlock) && !tempState.isAir()
+                    if (!(tempState.block() instanceof EffectBlock) && !tempState.isAir()
                         && (world.getTileEntity(tempPos.posX, tempPos.posY, tempPos.posZ) == null
                             || world.getTileEntity(
                                 tempPos.posX,
@@ -579,8 +578,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
                                 List<ItemStack> drops = new ArrayList<>();
                                 if (actualState != null) {
-                                    drops = actualState.getBlock()
-                                        .getDrops(world, 0, 0, 0, actualState.getMetadata(), 0);
+                                    drops = actualState.block()
+                                        .getDrops(world, 0, 0, 0, actualState.metadata(), 0);
                                 }
 
                                 int neededItems = 0;
@@ -678,9 +677,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             return;
         }
 
-        if ((GeneralConfig.canOverwriteBlocks && !testState.getBlock()
+        if ((GeneralConfig.canOverwriteBlocks && !testState.block()
             .isReplaceable(world, pos.posX, pos.posY, pos.posZ))
-            || (!GeneralConfig.canOverwriteBlocks && testState.getBlock()
+            || (!GeneralConfig.canOverwriteBlocks && testState.block()
                 .isAir(world, pos.posX, pos.posY, pos.posZ))) {
             return;
         }
@@ -701,8 +700,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
 
         ItemStack itemStack = new ItemStack(uniqueItem.item, 1, uniqueItem.meta);
-        var drops = state.getBlock()
-            .getDrops(world, pos.posX, pos.posY, pos.posZ, state.getMetadata(), 0);
+        var drops = state.block()
+            .getDrops(world, pos.posX, pos.posY, pos.posZ, state.metadata(), 0);
         int neededItems = 0;
 
         for (ItemStack drop : drops) {
@@ -798,11 +797,11 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             var currentBlock = BlockState.getBlockState(world, blockMap.pos);
 
             boolean cancelled = !GadgetGeneric.EmitEvent
-                .breakBlock(world, blockMap.pos, currentBlock.getBlock(), player);
+                .breakBlock(world, blockMap.pos, currentBlock.block(), player);
             if (distance < 256 && !cancelled && sameDim) { // Don't allow us to undo a block while its still being
                                                            // placed or too far away
-                if (currentBlock.getBlock() == blockMap.state.getBlock()
-                    || currentBlock.getBlock() instanceof ConstructionBlock) {
+                if (currentBlock.block() == blockMap.state.block()
+                    || currentBlock.block() instanceof ConstructionBlock) {
                     if (currentBlock.getBlockHardness(world, blockMap.pos) >= 0) {
                         if (!player.capabilities.isCreativeMode) {
                             // TODO(johnrowl) silk touch is currently busted. The 1.12.x version allowed you to pass in
@@ -815,14 +814,14 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                             // world.getTileEntity(blockMap.pos.posX, blockMap.pos.posY, blockMap.pos.posZ),
                             // silkTool
                             // );
-                            currentBlock.getBlock()
+                            currentBlock.block()
                                 .harvestBlock(
                                     world,
                                     player,
                                     blockMap.pos.posX,
                                     blockMap.pos.posY,
                                     blockMap.pos.posZ,
-                                    currentBlock.getMetadata());
+                                    currentBlock.metadata());
                         }
                         world.spawnEntityInWorld(
                             new BlockBuildEntity(world, blockMap.pos, player, currentBlock, 2, currentBlock, false));

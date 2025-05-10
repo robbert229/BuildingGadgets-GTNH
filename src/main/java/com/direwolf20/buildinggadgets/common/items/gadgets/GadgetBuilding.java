@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +20,7 @@ import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetBuildingConfig;
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
@@ -117,7 +116,7 @@ public class GadgetBuilding extends GadgetGeneric {
             ChatFormatting.DARK_GREEN + StatCollector.translateToLocal("tooltip.gadget.block")
                 + ": "
                 + GadgetUtils.getToolBlock(stack)
-                    .getBlock()
+                    .block()
                     .getLocalizedName());
 
         BuildingModes mode = getToolMode(stack);
@@ -339,19 +338,19 @@ public class GadgetBuilding extends GadgetGeneric {
         boolean useConstructionPaste = false;
 
         ItemStack itemStack;
-        if (setBlock.getBlock()
+        if (setBlock.block()
             .canSilkHarvest(world, player, pos.posX, pos.posY, pos.posZ, 0)) {
-            itemStack = InventoryManipulation.getSilkTouchDrop(setBlock.getBlock(), setBlock.getMetadata());
+            itemStack = InventoryManipulation.getSilkTouchDrop(setBlock.block(), setBlock.metadata());
         } else {
-            itemStack = setBlock.getBlock()
+            itemStack = setBlock.block()
                 .getPickBlock(null, world, pos.posX, pos.posY, pos.posZ, player);
         }
         if (itemStack == null || itemStack.getItem() == null) {
-            itemStack = setBlock.getBlock()
+            itemStack = setBlock.block()
                 .getPickBlock(null, world, pos.posX, pos.posY, pos.posZ, player);
         }
 
-        List<ItemStack> drops = setBlock.getBlock()
+        List<ItemStack> drops = setBlock.block()
             .getDrops(world, pos.posX, pos.posY, pos.posZ, 0, 0);
         int neededItems = 0;
         for (ItemStack drop : drops) {

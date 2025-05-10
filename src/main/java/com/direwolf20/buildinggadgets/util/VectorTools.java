@@ -2,12 +2,12 @@ package com.direwolf20.buildinggadgets.util;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig;
-import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+
+import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 
 public class VectorTools {

@@ -28,7 +28,7 @@ public class FakeBuilderWorld implements IBlockAccess {
     @Override
     public Block getBlock(int x, int y, int z) {
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-        return positions.contains(pos) ? state.getBlock() : Blocks.air;
+        return positions.contains(pos) ? state.block() : Blocks.air;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FakeBuilderWorld implements IBlockAccess {
     @Override
     public int getBlockMetadata(int x, int y, int z) {
         ChunkCoordinates pos = new ChunkCoordinates(x, y, z);
-        return positions.contains(pos) ? state.getMetadata() : 0;
+        return positions.contains(pos) ? state.metadata() : 0;
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.direwolf20.buildinggadgets.common.network;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 // import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
+import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
@@ -59,12 +62,9 @@ public class PacketTemplateManagerLoad implements IMessage {
             ChunkCoordinates pos = message.pos;
             TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
 
-            // TODO(johnrowl) re-enable
-
-            // if (!(te instanceof TemplateManagerTileEntity)) return;
-            // TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
-            // TemplateManagerCommands.loadTemplate(container, player);
-
+            if (!(te instanceof TemplateManagerTileEntity)) return;
+            TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
+            TemplateManagerCommands.loadTemplate(container, player);
         }
     }
 }

@@ -208,10 +208,15 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             int p = posIntArray[i];
             ChunkCoordinates pos = GadgetUtils.relIntToPos(startBlock, p);
             short IntState = (short) stateIntArray[i];
+            var blockState = mapIntState.getStateFromSlot(IntState);
+            if (blockState == null) {
+                continue;
+            }
+
             blockMap.add(
                 new BlockMap(
                     pos,
-                    mapIntState.getStateFromSlot(IntState),
+                    blockState,
                     (byte) ((p & 0xff0000) >> 16),
                     (byte) ((p & 0x00ff00) >> 8),
                     (byte) (p & 0x0000ff)));

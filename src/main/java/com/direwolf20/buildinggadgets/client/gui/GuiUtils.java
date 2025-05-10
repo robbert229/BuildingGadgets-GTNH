@@ -25,4 +25,7 @@ public class GuiUtils {
     public static String getPanelName(String name) {
         return String.format("%s:%s", BuildingGadgets.MODID, name);
     }
+
+    public static final int ButtonSize = 20;
+    public static final int Spacing = 7;
 }

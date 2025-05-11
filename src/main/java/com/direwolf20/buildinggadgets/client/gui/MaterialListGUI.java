@@ -34,6 +34,7 @@ public class MaterialListGUI {
      * </ol>
      */
     public static final String PATTERN_SIMPLE = "%s: %d";
+
     /**
      * <ol>
      * <li>Item name (localized)

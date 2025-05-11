@@ -306,22 +306,21 @@ public class TemplateManagerCommands {
         }
     }
 
-    public static void pasteFailed(){
+    public static void pasteFailed() {
         pasteFailed(Minecraft.getMinecraft().thePlayer);
     }
 
-    public static void pasteFailed(EntityPlayer player){
+    public static void pasteFailed(EntityPlayer player) {
         player.addChatMessage(
-                new ChatComponentText(
-                        ChatFormatting.RED
-                                + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()));
+            new ChatComponentText(
+                ChatFormatting.RED
+                    + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()));
     }
 
-    public static void pasteIsSuccessful(){
+    public static void pasteIsSuccessful() {
         Minecraft.getMinecraft().thePlayer.addChatMessage(
-                new ChatComponentText(
-                        ChatFormatting.AQUA
-                                + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
+            new ChatComponentText(
+                ChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedText()));
     }
 
     public static void pasteIsTooLarge() {

@@ -2,12 +2,13 @@ package com.direwolf20.buildinggadgets.util.datatypes;
 
 import javax.annotation.Nullable;
 
-import com.github.bsideup.jabel.Desugar;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import com.github.bsideup.jabel.Desugar;
 
 @Desugar
 public record BlockState(Block block, int metadata) {

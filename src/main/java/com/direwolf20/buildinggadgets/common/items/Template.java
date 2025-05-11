@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.items;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -73,7 +74,7 @@ public class Template extends ItemModBase implements ITemplate {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ItemStack onItemRightClick(@Nonnull ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
             ClientGUI.open(MaterialListGUI.createGUI(stack));
         }

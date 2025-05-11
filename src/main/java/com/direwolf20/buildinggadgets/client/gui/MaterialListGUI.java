@@ -3,6 +3,8 @@ package com.direwolf20.buildinggadgets.client.gui;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -11,6 +13,7 @@ import net.minecraft.util.ChatComponentTranslation;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.ItemDrawable;
 import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -18,6 +21,7 @@ import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.utils.Color;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.layout.Row;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
@@ -31,6 +35,7 @@ public class MaterialListGUI {
      * </ol>
      */
     public static final String PATTERN_SIMPLE = "%s: %d";
+
     /**
      * <ol>
      * <li>Item name (localized)
@@ -66,14 +71,12 @@ public class MaterialListGUI {
         return stringifySimple(materials);
     }
 
-    public static ModularScreen createGUI(ItemStack itemStack) {
+    public static ModularScreen createGUI(@Nonnull ItemStack itemStack) {
         ITemplate item = (ITemplate) itemStack.getItem();
 
-        var materials = item.getItemCountMap(itemStack)
-            .entrySet()
-            .stream()
-            .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
-            .collect(Collectors.toList());
+        assert item != null;
+
+        var materials = getMaterialsList(itemStack, item);
 
         ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("material_list"))
             .heightRel(0.8f)
@@ -81,24 +84,41 @@ public class MaterialListGUI {
 
         panel.child(ButtonWidget.panelCloseButton())
             .child(
-                GuiUtils.getI18n("gui.buildinggadgets.materialList.title")
+                IKey.lang("gui.buildinggadgets.materialList.title")
                     .asWidget()
                     .align(Alignment.TopCenter)
                     .top(7));
 
         panel.child(
             new ListWidget<>().paddingLeft(7)
-                // .paddingRight(7)
+                .paddingRight(7)
                 .left(7)
                 .right(12)
                 .top(BUTTON_HEIGHT)
                 .children(() -> {
                     return materials.stream()
                         .map(material -> {
-                            return (IWidget) IKey
-                                .str(String.format("%s    %d/%d", material.getDisplayName(), 0, material.stackSize))
-                                .color(Color.rgb(255, 255, 255))
-                                .asWidget();
+                            var current = 0;
+                            var needed = material.stackSize;
+                            var color = current >= needed ? Color.rgb(0, 255, 0) : Color.rgb(255, 0, 0);
+
+                            return (IWidget) Flow.row()
+                                .child(
+                                    new ItemDrawable(material).asWidget()
+                                        .height(20)
+                                        .width(20))
+                                .child(
+                                    IKey.str(material.getDisplayName())
+                                        .color(Color.rgb(255, 255, 255))
+                                        .asWidget()
+                                        .height(20))
+                                .child(
+                                    IKey.str(String.format("%d/%d", current, needed))
+                                        .color(color)
+                                        .asWidget()
+                                        .height(20)
+                                        .align(Alignment.CenterRight))
+                                .coverChildrenHeight();
                         })
                         .iterator();
                 })
@@ -108,13 +128,14 @@ public class MaterialListGUI {
         panel.child(
             new Row()
                 .child(
-                    new ButtonWidget<>()
-                        .overlay(GuiUtils.getI18n("gui.buildinggadgets.materialList.button.sortingMode.name"))
+                    new ButtonWidget<>().overlay(IKey.lang("gui.buildinggadgets.materialList.button.sortingMode.name"))
                         .marginRight(7)
                         .expanded()
-                        .debugName("sort"))
+                        .debugName("sort")
+                        .disabled()
+                        .addTooltipElement(IKey.str("Currently not implemented`")))
                 .child(
-                    new ButtonWidget<>().overlay(GuiUtils.getI18n("gui.buildinggadgets.materialList.button.copyList"))
+                    new ButtonWidget<>().overlay(IKey.lang("gui.buildinggadgets.materialList.button.copyList"))
                         .expanded()
                         .debugName("copy")
                         .onMousePressed(mouseButton -> {
@@ -145,5 +166,13 @@ public class MaterialListGUI {
                 .right(7));
 
         return new ModularScreen(panel);
+    }
+
+    private static List<ItemStack> getMaterialsList(ItemStack itemStack, ITemplate item) {
+        return item.getItemCountMap(itemStack)
+            .entrySet()
+            .stream()
+            .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
+            .collect(Collectors.toList());
     }
 }

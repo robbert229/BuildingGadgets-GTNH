@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.entities;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.entity.RenderManager;
 
 import com.direwolf20.buildinggadgets.BuildingGadgets;
@@ -29,10 +31,11 @@ public class ModEntities {
         GameRegistry.registerTileEntity(TemplateManagerTileEntity.class, "TemplateManagerTileEntity");
     }
 
+    @SideOnly(Side.CLIENT)
     public static void initModels() {
         RenderingRegistry
             .registerEntityRenderingHandler(BlockBuildEntity.class, new BlockBuildEntityRender(RenderManager.instance));
-        // RenderingRegistry.registerEntityRenderingHandler(ConstructionBlockEntity.class, new
-        // ConstructionBlockEntityRender.Factory());
+//         RenderingRegistry.registerEntityRenderingHandler(ConstructionBlockEntity.class, new
+//         ConstructionBlockEntityRender.Factory());
     }
 }

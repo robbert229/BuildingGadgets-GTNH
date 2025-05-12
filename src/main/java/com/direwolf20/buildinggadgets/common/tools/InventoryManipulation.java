@@ -183,9 +183,22 @@ public class InventoryManipulation {
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack containerItem = inventory.getStackInSlot(i);
-            if (containerItem.getItem() == target.getItem()
-                && containerItem.getItemDamage() == target.getItemDamage()) {
+            if (containerItem == null) {
+                continue;
+            }
+
+            if (containerItem.getItem() == null) {
+                continue;
+            }
+
+            boolean match = containerItem.getItem().equals(target.getItem())
+                    && containerItem.getItemDamage() == target.getItemDamage();
+
+            if (match) {
                 ItemStack stack = extractItem(inventory, i, amountRequired, false);
+                if (stack == null) {
+                    continue;
+                }
 
                 amountSaturated += stack.stackSize;
             }
@@ -208,9 +221,9 @@ public class InventoryManipulation {
      * @return The extracted ItemStack. If nothing was extracted, returns null or an empty stack.
      */
     public static ItemStack extractItem(IInventory inventory, int slot, int amount, boolean simulate) {
-        if (inventory == null || slot < 0 || slot >= inventory.getSizeInventory()) {
-            return null;
-        }
+        assert slot >= 0;
+        assert inventory != null;
+        assert slot < inventory.getSizeInventory();
 
         // Get the current item in the slot
         ItemStack stackInSlot = inventory.getStackInSlot(slot);

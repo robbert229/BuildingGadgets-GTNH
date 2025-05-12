@@ -2,6 +2,9 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -66,14 +69,16 @@ public class GadgetExchanger extends GadgetGeneric {
     }
 
     @Override
-    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
+    @SideOnly(Side.CLIENT)
+    public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
         ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
         panel.child(
             IKey.str("STUBBED")
                 .asWidget()
                 .top(7)
                 .left(7));
-        return new ModularScreen(panel);
+        var p = new ModularScreen(panel);
+        ClientGUI.open(p);
     }
 
     @Override

@@ -1,14 +1,16 @@
 package com.direwolf20.buildinggadgets.client.events;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.direwolf20.buildinggadgets.client.gui.MaterialListGUI;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.input.Keyboard;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.client.KeyBindings;
-import com.direwolf20.buildinggadgets.client.gui.materiallist.MaterialListGUI;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.direwolf20.buildinggadgets.common.network.*;
@@ -18,6 +20,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 
+@SideOnly(Side.CLIENT)
 public class EventKeyInput {
 
     public static void init() {
@@ -38,7 +41,7 @@ public class EventKeyInput {
 
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (tool != null && tool.getItem() instanceof GadgetGeneric gadget) {
-                ClientGUI.open(gadget.getShortcutMenuGUI(tool, true));
+                gadget.openShortcutMenu(tool, true);
             }
         }
 
@@ -57,9 +60,10 @@ public class EventKeyInput {
         } else if (KeyBindings.materialList.isPressed()) {
             ItemStack held = InventoryManipulation
                 .getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
+
             if (held != null) {
-                Minecraft.getMinecraft()
-                    .displayGuiScreen(new MaterialListGUI(held));
+                var gui = MaterialListGUI.createGUI(held);
+                ClientGUI.open(gui);
             }
         }
     }

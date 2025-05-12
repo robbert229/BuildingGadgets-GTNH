@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.factory.GuiFactories;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,7 +16,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
@@ -64,14 +67,17 @@ public class GadgetBuilding extends GadgetGeneric {
     }
 
     @Override
-    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
-        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
-        panel.child(
-            IKey.str("STUBBED")
-                .asWidget()
-                .top(7)
-                .left(7));
-        return new ModularScreen(panel);
+    @SideOnly(Side.CLIENT)
+    public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
+        //GuiFactories.item().open();
+//        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
+//        panel.child(
+//            IKey.str("STUBBED")
+//                .asWidget()
+//                .top(7)
+//                .left(7));
+//        ;
+//        ClientGUI.open(new ModularScreen(panel));
     }
 
     @Override

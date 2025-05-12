@@ -11,16 +11,18 @@ import net.minecraft.tileentity.TileEntity;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class ConstructionBlockTileEntity extends TileEntity {
-
     private Block block;
     private int blockMeta;
+
     private Block actualBlock;
     private int actualBlockMeta;
 
     public boolean setBlockState(Block block, int meta) {
         this.block = block;
         this.blockMeta = meta;
+
         markDirtyClient();
+
         return true;
     }
 
@@ -31,7 +33,9 @@ public class ConstructionBlockTileEntity extends TileEntity {
     public boolean setActualBlockState(Block block, int meta) {
         this.actualBlock = block;
         this.actualBlockMeta = meta;
+
         markDirtyClient();
+
         return true;
     }
 
@@ -100,6 +104,8 @@ public class ConstructionBlockTileEntity extends TileEntity {
         NBTTagCompound tagCompound = packet.func_148857_g();
         super.onDataPacket(net, packet);
         readFromNBT(tagCompound);
+
+        //
         if (this.worldObj.isRemote) {
             if (getBlock() != oldBlock || getBlockMeta() != oldMeta) {
                 this.worldObj.markBlockRangeForRenderUpdate(

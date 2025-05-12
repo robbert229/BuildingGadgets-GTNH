@@ -18,7 +18,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent;
 
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import com.direwolf20.buildinggadgets.common.tools.DirectionUtils;
@@ -226,7 +225,7 @@ public abstract class GadgetGeneric extends ItemModBase {
     public abstract void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem);
 
     /// getShortcutMenuGUI returns the ModularUI gui to use for the gadget when the user presses the menu shortcut.
-    public abstract ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled);
+    public abstract void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled);
 
     /// anchorBlocks sets the anchor to what the player is looking at.
     public abstract void anchorBlocks(EntityPlayer player, ItemStack stack);

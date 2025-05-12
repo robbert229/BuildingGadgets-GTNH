@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,7 +23,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 
 import com.cleanroommc.modularui.factory.ClientGUI;
-import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetCopyPasteConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
@@ -86,8 +87,10 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     @Override
-    public ModularScreen getShortcutMenuGUI(ItemStack itemStack, boolean temporarilyEnabled) {
-        return new CopyPasteGUI(itemStack, temporarilyEnabled);
+    @SideOnly(Side.CLIENT)
+    public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
+        var p = new CopyPasteGUI(itemStack, temporarilyEnabled);
+        ClientGUI.open(p);
     }
 
     private static void setAnchor(ItemStack stack, ChunkCoordinates anchorPos) {
@@ -402,12 +405,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         ChunkCoordinates lookingAt = VectorTools.getPosLookingAt(player, stack);
 
         // if the user is sneak clicking on an inventory then attempt to set that as the remote inventory.
-        if (isSneakClickOnInventory(world, player, lookingAt)) {
-            if (!world.isRemote) {
-                GadgetUtils.setRemoteInventory(player, stack, lookingAt, player.dimension, world);
-                return stack;
-            }
-
+        if (!world.isRemote && isSneakClickOnInventory(world, player, lookingAt)) {
+            GadgetUtils.setRemoteInventory(player, stack, lookingAt, player.dimension, world);
             return stack;
         }
 
@@ -747,6 +746,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         } else {
             useItemSuccess = InventoryManipulation.useItem(itemStack, player, neededItems, world);
         }
+
         if (useItemSuccess) {
             this.applyDamage(heldItem, player);
             world.spawnEntityInWorld(new BlockBuildEntity(world, pos, player, state, 1, state, useConstructionPaste));

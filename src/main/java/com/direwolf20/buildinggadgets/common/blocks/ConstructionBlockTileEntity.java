@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 
 public class ConstructionBlockTileEntity extends TileEntity {
+
     private Block block;
     private int blockMeta;
 

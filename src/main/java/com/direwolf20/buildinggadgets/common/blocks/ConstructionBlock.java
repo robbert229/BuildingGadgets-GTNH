@@ -4,29 +4,22 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import com.cricketcraft.chisel.api.IFacade;
-import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
-import com.direwolf20.buildinggadgets.util.ChunkCoordinateUtils;
 import com.direwolf20.buildinggadgets.util.MetadataUtils;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ConstructionBlock extends BlockModBase {
 
@@ -183,54 +176,54 @@ public class ConstructionBlock extends BlockModBase {
     // }
     // }
     //
-//     @Override
-//     @Nullable
-//     @Deprecated
-//     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-//         Block mimicBlock = getActualMimicBlock(world, x,y,z);
-//         if (mimicBlock == null) {
-//            return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-//         }
-//
-//         try {
-//            return mimicBlock.getCollisionBoundingBoxFromPool(world, x, y, z);
-//         } catch (Exception var8) {
-//            return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-//         }
-//     }
+    // @Override
+    // @Nullable
+    // @Deprecated
+    // public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+    // Block mimicBlock = getActualMimicBlock(world, x,y,z);
+    // if (mimicBlock == null) {
+    // return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+    // }
+    //
+    // try {
+    // return mimicBlock.getCollisionBoundingBoxFromPool(world, x, y, z);
+    // } catch (Exception var8) {
+    // return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+    // }
+    // }
 
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public boolean shouldSideBeRendered(IBlockAccess worldIn, int x, int y, int z, int side) {
-//        return shouldSideBeRendered(worldIn, new ChunkCoordinates(x, y, z), side);
-//    }
-//
-//    public boolean shouldSideBeRendered(IBlockAccess worldIn, ChunkCoordinates pos, int side) {
-//        FakeRenderWorld fakeWorld = new FakeRenderWorld();
-//        EnumFacing parsedSide = EnumFacing.getFront(side);
-//
-//        Block mimicBlock = getActualMimicBlock(worldIn, pos);
-//        if (mimicBlock == null) {
-//            return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
-//        }
-//
-//        ChunkCoordinates offsetCoordinates = ChunkCoordinateUtils.offset(pos, parsedSide, 1);
-//        Block sideBlockState = worldIn.getBlock(offsetCoordinates.posX, offsetCoordinates.posY, offsetCoordinates.posZ);
-//        if (sideBlockState.equals(ModBlocks.constructionBlock)) {
-//            if (!(getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1)) == null)) {
-//                sideBlockState = getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
-//            }
-//        }
-//
-//        fakeWorld.setState(worldIn, mimicBlock, pos);
-//        fakeWorld.setState(worldIn, sideBlockState, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
-//
-//        try {
-//            return mimicBlock.shouldSideBeRendered(fakeWorld, pos.posX, pos.posY, pos.posZ, side);
-//        } catch (Exception var8) {
-//            return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
-//        }
-//    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public boolean shouldSideBeRendered(IBlockAccess worldIn, int x, int y, int z, int side) {
+    // return shouldSideBeRendered(worldIn, new ChunkCoordinates(x, y, z), side);
+    // }
+    //
+    // public boolean shouldSideBeRendered(IBlockAccess worldIn, ChunkCoordinates pos, int side) {
+    // FakeRenderWorld fakeWorld = new FakeRenderWorld();
+    // EnumFacing parsedSide = EnumFacing.getFront(side);
+    //
+    // Block mimicBlock = getActualMimicBlock(worldIn, pos);
+    // if (mimicBlock == null) {
+    // return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
+    // }
+    //
+    // ChunkCoordinates offsetCoordinates = ChunkCoordinateUtils.offset(pos, parsedSide, 1);
+    // Block sideBlockState = worldIn.getBlock(offsetCoordinates.posX, offsetCoordinates.posY, offsetCoordinates.posZ);
+    // if (sideBlockState.equals(ModBlocks.constructionBlock)) {
+    // if (!(getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1)) == null)) {
+    // sideBlockState = getActualMimicBlock(worldIn, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
+    // }
+    // }
+    //
+    // fakeWorld.setState(worldIn, mimicBlock, pos);
+    // fakeWorld.setState(worldIn, sideBlockState, ChunkCoordinateUtils.offset(pos, parsedSide, 1));
+    //
+    // try {
+    // return mimicBlock.shouldSideBeRendered(fakeWorld, pos.posX, pos.posY, pos.posZ, side);
+    // } catch (Exception var8) {
+    // return super.shouldSideBeRendered(worldIn, pos.posX, pos.posY, pos.posZ, side);
+    // }
+    // }
 
     @Override
     @SideOnly(Side.CLIENT)

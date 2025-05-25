@@ -191,8 +191,8 @@ public class InventoryManipulation {
                 continue;
             }
 
-            boolean match = containerItem.getItem().equals(target.getItem())
-                    && containerItem.getItemDamage() == target.getItemDamage();
+            boolean match = containerItem.getItem()
+                .equals(target.getItem()) && containerItem.getItemDamage() == target.getItemDamage();
 
             if (match) {
                 ItemStack stack = extractItem(inventory, i, amountRequired, false);

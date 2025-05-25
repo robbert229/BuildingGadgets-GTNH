@@ -12,13 +12,29 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
+import com.cleanroommc.modularui.api.IGuiHolder;
+import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.drawable.GuiTextures;
+import com.cleanroommc.modularui.factory.PosGuiData;
+import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.utils.item.IItemHandler;
+import com.cleanroommc.modularui.utils.item.ItemStackHandler;
+import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
+import com.cleanroommc.modularui.value.sync.PanelSyncManager;
+import com.cleanroommc.modularui.widgets.ButtonWidget;
+import com.cleanroommc.modularui.widgets.ItemSlot;
+import com.cleanroommc.modularui.widgets.ProgressWidget;
+import com.cleanroommc.modularui.widgets.SlotGroupWidget;
+import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.google.common.collect.ImmutableSet;
 
-public class TemplateManagerTileEntity extends TileEntity implements IInventory {
+public class TemplateManagerTileEntity extends TileEntity implements IInventory, IGuiHolder<PosGuiData> {
 
     public static final int SIZE = 2;
     private ItemStack[] inventory = new ItemStack[SIZE];
+    private final IItemHandler inventoryHandler = new ItemStackHandler(inventory);
 
     public TemplateManagerTileEntity() {
         Arrays.fill(inventory, null);
@@ -161,4 +177,69 @@ public class TemplateManagerTileEntity extends TileEntity implements IInventory 
         return !isInvalid() && playerIn.getDistanceSq(xCoord, yCoord, zCoord) <= 64D;
     }
 
+    @Override
+    public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager) {
+        var controls = Flow.column()
+            .child(
+                IKey.str("Template Manager")
+                    .asWidget()
+                    .marginTop(7))
+            .child(
+                Flow.row()
+                    .child(
+                        new ButtonWidget<>().overlay(IKey.str("Save"))
+                            .height(20)
+                            .width(40)
+                            .marginRight(7)
+
+                    )
+                    .child(
+                        new ButtonWidget<>().overlay(IKey.str("Load"))
+                            .height(20)
+                            .width(40)
+                            .marginLeft(7)
+
+                    )
+                    .coverChildrenHeight()
+                    .coverChildrenWidth()
+                    .marginTop(7))
+            .child(
+                Flow.row()
+                    .child(
+                        new ItemSlot().slot(new ModularSlot(this.inventoryHandler, 0).slotGroup("gadget"))
+                            .marginRight(7)
+
+                    )
+                    .child(
+                        new ProgressWidget().size(20)
+                            .texture(GuiTextures.PROGRESS_ARROW, 20)
+                            .value(new DoubleSyncValue(() -> 0, (val) -> {})))
+                    .child(
+                        new ItemSlot().slot(new ModularSlot(this.inventoryHandler, 1).slotGroup("template"))
+                            .marginLeft(7))
+                    .coverChildrenHeight()
+                    .coverChildrenWidth()
+                    .marginTop(7))
+            .child(
+                Flow.row()
+                    .child(
+                        new ButtonWidget<>().overlay(IKey.str("Copy"))
+                            .width(40)
+                            .marginRight(7))
+                    .child(
+                        new ButtonWidget<>().overlay(IKey.str("Paste"))
+                            .width(40)
+                            .marginLeft(7))
+                    .coverChildrenHeight()
+                    .coverChildrenWidth()
+                    .marginTop(7))
+            .coverChildrenHeight();
+
+        return ModularPanel.defaultPanel("templateemanager")
+            .child(controls)
+            .child(
+                SlotGroupWidget.playerInventory()
+                    .coverChildrenHeight())
+            .heightRel(0.4f);
+    }
 }

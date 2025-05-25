@@ -1,5 +1,8 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -14,7 +17,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import com.direwolf20.buildinggadgets.BuildingGadgets;
+import com.cleanroommc.modularui.factory.GuiFactories;
 import com.direwolf20.buildinggadgets.common.blocks.BlockModBase;
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
@@ -36,45 +39,14 @@ public class TemplateManager extends BlockModBase {
         world.setBlockMetadataWithNotify(x, y, z, facing, 2);
     }
 
-    // @SideOnly(Side.CLIENT)
-    // public void initModel() {
-    // ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new
-    // ModelResourceLocation(getRegistryName(), "inventory"));
-    // }
-
-    // @Override
-    // public IBlockState getStateForPlacement(World worldIn, ChunkCoordinates pos, EnumFacing facing, float hitX, float
-    // hitY, float hitZ, int meta, EntityLivingBase placer) {
-    // return this.getDefaultState().withProperty(FACING_HORIZ, placer.getHorizontalFacing().getOpposite());
-    // }
-
-    // @Override
-    // protected BlockStateContainer createBlockState() {
-    // return new BlockStateContainer(this, new IProperty[]{FACING});
-    // }
-
-    // @Override
-    // public IBlockState getStateFromMeta(int meta) {
-    //
-    // EnumFacing enumfacing = EnumFacing.getFront(meta);
-    // if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-    // enumfacing = EnumFacing.NORTH;
-    // }
-    // return this.getDefaultState().withProperty(FACING, enumfacing);
-    // }
-
-    // @Override
-    // public int getMetaFromState(IBlockState state) {
-    // return state.getValue(FACING).getIndex();
-    // }
-
     @Override
     public boolean hasTileEntity(int state) {
         return true;
     }
 
+    @Nullable
     @Override
-    public TileEntity createTileEntity(World worldin, int metadata) {
+    public TileEntity createTileEntity(@Nonnull World worldin, int metadata) {
         return new TemplateManagerTileEntity();
     }
 
@@ -111,7 +83,8 @@ public class TemplateManager extends BlockModBase {
             }
         }
 
-        player.openGui(BuildingGadgets.instance, GUI_ID, world, x, y, z);
+        GuiFactories.tileEntity()
+            .open(player, x, y, z);
         return true;
     }
 

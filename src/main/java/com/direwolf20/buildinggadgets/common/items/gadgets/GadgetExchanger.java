@@ -2,9 +2,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 
 import java.util.List;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +11,7 @@ import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
+import com.cleanroommc.modularui.factory.ClientGUI;
 import com.cleanroommc.modularui.screen.ModularPanel;
 import com.cleanroommc.modularui.screen.ModularScreen;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
@@ -23,6 +21,9 @@ import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.util.NBTTool;
 import com.mojang.realmsclient.gui.ChatFormatting;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 // import net.minecraft.util.MovingObjectPosition;
 // import net.minecraft.util.text.TextComponentString;
 // import net.minecraft.util.text.TextComponentTranslation;

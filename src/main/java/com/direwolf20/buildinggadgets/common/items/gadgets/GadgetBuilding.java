@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.cleanroommc.modularui.factory.ClientGUI;
-import com.cleanroommc.modularui.factory.GuiFactories;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,15 +14,10 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import com.cleanroommc.modularui.api.drawable.IKey;
-import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.ModularScreen;
+
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetBuildingConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
-import com.direwolf20.buildinggadgets.client.gui.GuiUtils;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.FakeBuilderWorld;
@@ -35,6 +28,9 @@ import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.mojang.realmsclient.gui.ChatFormatting;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GadgetBuilding extends GadgetGeneric {
 
@@ -69,15 +65,15 @@ public class GadgetBuilding extends GadgetGeneric {
     @Override
     @SideOnly(Side.CLIENT)
     public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
-        //GuiFactories.item().open();
-//        ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
-//        panel.child(
-//            IKey.str("STUBBED")
-//                .asWidget()
-//                .top(7)
-//                .left(7));
-//        ;
-//        ClientGUI.open(new ModularScreen(panel));
+        // GuiFactories.item().open();
+        // ModularPanel panel = ModularPanel.defaultPanel(GuiUtils.getPanelName("stubbed"));
+        // panel.child(
+        // IKey.str("STUBBED")
+        // .asWidget()
+        // .top(7)
+        // .left(7));
+        // ;
+        // ClientGUI.open(new ModularScreen(panel));
     }
 
     @Override

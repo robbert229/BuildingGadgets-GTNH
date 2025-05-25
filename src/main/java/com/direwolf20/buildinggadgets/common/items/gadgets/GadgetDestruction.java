@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -20,7 +18,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 
-//import com.cleanroommc.modularui.factory.ClientGUI;
+import com.cleanroommc.modularui.factory.ClientGUI;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GadgetsConfig.GadgetDestructionConfig;
 import com.direwolf20.buildinggadgets.BuildingGadgetsConfig.GeneralConfig;
 import com.direwolf20.buildinggadgets.client.gui.DestructionGUI;
@@ -35,6 +33,9 @@ import com.direwolf20.buildinggadgets.util.VectorTools;
 import com.direwolf20.buildinggadgets.util.WorldUtils;
 import com.direwolf20.buildinggadgets.util.datatypes.BlockState;
 import com.direwolf20.buildinggadgets.util.ref.NBTKeys;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class GadgetDestruction extends GadgetGeneric {
 
@@ -72,7 +73,7 @@ public class GadgetDestruction extends GadgetGeneric {
     @SideOnly(Side.CLIENT)
     public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
         var p = new DestructionGUI(itemStack, temporarilyEnabled);
-//        ClientGUI.open(p);
+        ClientGUI.open(p);
     }
 
     private int getCostMultiplier(ItemStack tool) {
@@ -209,7 +210,7 @@ public class GadgetDestruction extends GadgetGeneric {
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
             if (player.isSneaking()) {
-                //ClientGUI.open(new DestructionGUI(stack));
+                // ClientGUI.open(new DestructionGUI(stack));
                 return stack;
             }
 

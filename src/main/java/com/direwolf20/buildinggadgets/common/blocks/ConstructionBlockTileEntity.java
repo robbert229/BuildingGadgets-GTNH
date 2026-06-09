@@ -105,8 +105,6 @@ public class ConstructionBlockTileEntity extends TileEntity {
         NBTTagCompound tagCompound = packet.func_148857_g();
         super.onDataPacket(net, packet);
         readFromNBT(tagCompound);
-
-        //
         if (this.worldObj.isRemote) {
             if (getBlock() != oldBlock || getBlockMeta() != oldMeta) {
                 this.worldObj.markBlockRangeForRenderUpdate(

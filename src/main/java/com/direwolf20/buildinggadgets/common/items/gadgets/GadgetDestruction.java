@@ -39,36 +39,75 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class GadgetDestruction extends GadgetGeneric {
 
+    /**
+     * Initializes the destruction gadget with configured durability.
+     */
     public GadgetDestruction() {
         super("destructiontool");
         setMaxDamage(GadgetDestructionConfig.durabilityDestruction);
     }
 
+    /**
+     * Returns max damage for durability mode, or {@code 0} when FE mode is enabled.
+     *
+     * @param stack gadget stack
+     * @return max damage value for the current power mode
+     */
     @Override
     public int getMaxDamage(ItemStack stack) {
         return GeneralConfig.poweredByFE ? 0 : GadgetDestructionConfig.durabilityDestruction;
     }
 
+    /**
+     * Returns the configured FE capacity for this gadget.
+     *
+     * @return max FE capacity
+     */
     @Override
     public int getEnergyMax() {
         return GadgetDestructionConfig.energyMaxDestruction;
     }
 
+    /**
+     * Returns FE cost per action, including optional non-fuzzy multiplier.
+     *
+     * @param tool gadget stack
+     * @return FE cost for one destruction action
+     */
     @Override
     public int getEnergyCost(ItemStack tool) {
         return GadgetDestructionConfig.energyCostDestruction * getCostMultiplier(tool);
     }
 
+    /**
+     * Returns durability cost per action, including optional non-fuzzy multiplier.
+     *
+     * @param tool gadget stack
+     * @return durability cost for one destruction action
+     */
     @Override
     public int getDamageCost(ItemStack tool) {
         return GadgetDestructionConfig.damageCostDestruction * getCostMultiplier(tool);
     }
 
+    /**
+     * Renders the destruction selection preview in-world.
+     *
+     * @param evt current render event
+     * @param player rendering player
+     * @param heldItem held gadget stack
+     */
     @Override
     public void renderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         ToolRenders.renderDestructionOverlay(evt, player, heldItem);
     }
 
+    /**
+     * Opens the destruction gadget shortcut menu on the client.
+     *
+     * @param itemStack gadget stack
+     * @param temporarilyEnabled whether temporary mode is active
+     */
     @Override
     @SideOnly(Side.CLIENT)
     public void openShortcutMenu(ItemStack itemStack, boolean temporarilyEnabled) {
@@ -76,12 +115,21 @@ public class GadgetDestruction extends GadgetGeneric {
         ClientGUI.open(p);
     }
 
+    // Non-fuzzy mode can be configured to cost more, so precision targeting has a balancing tradeoff.
     private int getCostMultiplier(ItemStack tool) {
         return (int) (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool)
             ? GadgetDestructionConfig.nonFuzzyMultiplier
             : 1);
     }
 
+    /**
+     * Adds tooltip lines for warning, mode state, and energy/fluid settings.
+     *
+     * @param stack gadget stack
+     * @param player local player
+     * @param list tooltip lines to append to
+     * @param advanced whether advanced tooltips are enabled
+     */
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
         super.addInformation(stack, player, list, advanced);
@@ -105,6 +153,12 @@ public class GadgetDestruction extends GadgetGeneric {
         addEnergyInformation(list, stack);
     }
 
+    /**
+     * Returns a persistent UUID stored on the stack, creating one if missing.
+     *
+     * @param stack gadget stack
+     * @return gadget UUID from NBT
+     */
     @Nullable
     public static String getUUID(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -121,14 +175,32 @@ public class GadgetDestruction extends GadgetGeneric {
         return uuid;
     }
 
+    /**
+     * Persists the current anchor position to NBT.
+     *
+     * @param stack gadget stack
+     * @param pos anchor position, or {@code null} to clear
+     */
     public static void setAnchor(ItemStack stack, ChunkCoordinates pos) {
         GadgetUtils.writePOSToNBT(stack, pos, "anchor");
     }
 
+    /**
+     * Reads the stored anchor position from NBT.
+     *
+     * @param stack gadget stack
+     * @return stored anchor position, or {@code null} when absent
+     */
     public static ChunkCoordinates getAnchor(ItemStack stack) {
         return GadgetUtils.getPOSFromNBT(stack, "anchor");
     }
 
+    /**
+     * Persists or clears the anchor side used for anchored operations.
+     *
+     * @param stack gadget stack
+     * @param side anchor side, or {@code null} to clear
+     */
     public static void setAnchorSide(ItemStack stack, EnumFacing side) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -145,6 +217,12 @@ public class GadgetDestruction extends GadgetGeneric {
         stack.setTagCompound(tagCompound);
     }
 
+    /**
+     * Reads the stored anchor side from NBT, or {@code null} when unset.
+     *
+     * @param stack gadget stack
+     * @return stored anchor side or {@code null}
+     */
     public static EnumFacing getAnchorSide(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -159,6 +237,13 @@ public class GadgetDestruction extends GadgetGeneric {
         return DirectionUtils.enumFacingByName(facing);
     }
 
+    /**
+     * Stores a numeric area setting ({@code left/right/up/down/depth}) in NBT.
+     *
+     * @param stack gadget stack
+     * @param value value to store
+     * @param valueName NBT key name
+     */
     public static void setToolValue(ItemStack stack, int value, String valueName) {
         // Store the tool's range in NBT as an Integer
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -169,6 +254,13 @@ public class GadgetDestruction extends GadgetGeneric {
         stack.setTagCompound(tagCompound);
     }
 
+    /**
+     * Reads a numeric area setting from NBT.
+     *
+     * @param stack gadget stack
+     * @param valueName NBT key name
+     * @return stored value, or {@code 0} when missing
+     */
     public static int getToolValue(ItemStack stack, String valueName) {
         // Store the tool's range in NBT as an Integer
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -178,12 +270,7 @@ public class GadgetDestruction extends GadgetGeneric {
         return tagCompound.getInteger(valueName);
     }
 
-    /**
-     *
-     * @param side
-     * @param player
-     * @return
-     */
+    // Resolves local left/right/up/down/depth directions based on hit side and player facing.
     private static List<EnumFacing> assignDirections(EnumFacing side, EntityPlayer player) {
         List<EnumFacing> dirs = new ArrayList<>();
         EnumFacing depth = DirectionUtils.getOppositeEnumFacing(side);
@@ -206,6 +293,14 @@ public class GadgetDestruction extends GadgetGeneric {
         return dirs;
     }
 
+    /**
+     * Triggers destruction on right click (server-side), using anchor when present.
+     *
+     * @param stack gadget stack
+     * @param world world context
+     * @param player acting player
+     * @return original gadget stack
+     */
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
@@ -247,6 +342,12 @@ public class GadgetDestruction extends GadgetGeneric {
         return stack;
     }
 
+    /**
+     * Toggles anchor state at the looked-at block and reports result to chat.
+     *
+     * @param player acting player
+     * @param stack gadget stack
+     */
     @Override
     public void anchorBlocks(EntityPlayer player, ItemStack stack) {
         ChunkCoordinates currentAnchor = getAnchor(stack);
@@ -272,6 +373,16 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
+    /**
+     * Computes the candidate destruction area, then filters by mode and block validity.
+     *
+     * @param world world context
+     * @param pos clicked position
+     * @param incomingSide clicked face
+     * @param player acting player
+     * @param stack gadget stack
+     * @return valid positions that can be destroyed
+     */
     public static Set<ChunkCoordinates> getArea(World world, ChunkCoordinates pos, EnumFacing incomingSide,
         EntityPlayer player, ItemStack stack) {
         int depth = getToolValue(stack, "depth");
@@ -311,6 +422,7 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
+    // Validates whether a block can be targeted for destruction under current constraints.
     private static boolean validBlock(World world, ChunkCoordinates voidPos, EntityPlayer player, Block block,
         boolean fuzzy) {
         var currentBlock = WorldUtils.getBlock(world, voidPos);
@@ -344,6 +456,7 @@ public class GadgetDestruction extends GadgetGeneric {
         return WorldUtils.isBlockModifiableUsingItem(player, voidPos, tool);
     }
 
+    // Destroys all valid blocks in area and stores undo data for successful removals.
     private void clearArea(World world, ChunkCoordinates pos, EnumFacing side, EntityPlayer player, ItemStack stack) {
         Set<ChunkCoordinates> voidPosArray = getArea(world, pos, side, player, stack);
         List<BlockPosState> blockList = new ArrayList<>();
@@ -371,11 +484,12 @@ public class GadgetDestruction extends GadgetGeneric {
             blockList.add(new BlockPosState(voidPos, isPaste ? pasteState : blockState, isPaste));
         }
 
-        if (blockList.size() > 0) {
+        if (!blockList.isEmpty()) {
             storeUndo(world, blockList, stack, player);
         }
     }
 
+    // Writes destruction history for this gadget UUID so undo can restore affected blocks.
     private static void storeUndo(World world, List<BlockPosState> blockList, ItemStack stack, EntityPlayer player) {
         WorldSave worldSave = WorldSave.getWorldSaveDestruction(world);
 
@@ -391,6 +505,12 @@ public class GadgetDestruction extends GadgetGeneric {
         worldSave.markForSaving();
     }
 
+    /**
+     * Replays stored destruction history by spawning placement entities when space is available.
+     *
+     * @param player acting player
+     * @param stack gadget stack
+     */
     public void undo(EntityPlayer player, ItemStack stack) {
         World world = player.worldObj;
         WorldSave worldSave = WorldSave.getWorldSaveDestruction(world);
@@ -445,6 +565,7 @@ public class GadgetDestruction extends GadgetGeneric {
         }
     }
 
+    // Performs one block-destruction action with permission, event, and cost checks.
     private boolean destroyBlock(World world, ChunkCoordinates voidPos, EntityPlayer player) {
         ItemStack tool = getGadget(player);
         if (tool == null) return false;
@@ -468,6 +589,12 @@ public class GadgetDestruction extends GadgetGeneric {
         return true;
     }
 
+    /**
+     * Returns the held gadget only when it is a destruction gadget.
+     *
+     * @param player acting player
+     * @return held destruction gadget stack, or {@code null}
+     */
     public static ItemStack getGadget(EntityPlayer player) {
         ItemStack stack = GadgetGeneric.getGadget(player);
 

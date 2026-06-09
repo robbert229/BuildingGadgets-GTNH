@@ -229,11 +229,15 @@ public class ConstructionBlock extends BlockModBase {
     @SideOnly(Side.CLIENT)
     public IIcon getIcon(IBlockAccess world, int posX, int posY, int posZ, int side) {
         var te = getTE(world, posX, posY, posZ);
+        if (te == null) {
+            return super.getIcon(world, posX, posY, posZ, side);
+        }
+
         var b = te.getBlock();
 
-        if (b == null) {
+        if (b == null || b == this) {
             var ab = te.getActualBlock();
-            if (ab == null) {
+            if (ab == null || ab == this) {
                 return super.getIcon(world, posX, posY, posZ, side);
             }
 

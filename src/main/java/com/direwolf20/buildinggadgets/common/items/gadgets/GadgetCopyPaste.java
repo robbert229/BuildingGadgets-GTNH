@@ -749,7 +749,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
 
         if (useItemSuccess) {
-            this.applyDamage(heldItem, player);
+            if (!this.consumeUse(heldItem, player)) {
+                return;
+            }
             world.spawnEntityInWorld(new BlockBuildEntity(world, pos, player, state, 1, state, useConstructionPaste));
         }
     }

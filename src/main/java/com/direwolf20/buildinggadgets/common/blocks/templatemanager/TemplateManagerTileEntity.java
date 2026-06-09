@@ -17,15 +17,16 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.GuiTextures;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.utils.item.IItemHandler;
 import com.cleanroommc.modularui.utils.item.ItemStackHandler;
 import com.cleanroommc.modularui.value.sync.DoubleSyncValue;
 import com.cleanroommc.modularui.value.sync.PanelSyncManager;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
-import com.cleanroommc.modularui.widgets.ItemSlot;
 import com.cleanroommc.modularui.widgets.ProgressWidget;
 import com.cleanroommc.modularui.widgets.SlotGroupWidget;
 import com.cleanroommc.modularui.widgets.layout.Flow;
+import com.cleanroommc.modularui.widgets.slot.ItemSlot;
 import com.cleanroommc.modularui.widgets.slot.ModularSlot;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.google.common.collect.ImmutableSet;
@@ -178,7 +179,7 @@ public class TemplateManagerTileEntity extends TileEntity implements IInventory,
     }
 
     @Override
-    public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager) {
+    public ModularPanel buildUI(PosGuiData data, PanelSyncManager syncManager, UISettings uiSettings) {
         var controls = Flow.column()
             .child(
                 IKey.str("Template Manager")
@@ -238,7 +239,7 @@ public class TemplateManagerTileEntity extends TileEntity implements IInventory,
         return ModularPanel.defaultPanel("templateemanager")
             .child(controls)
             .child(
-                SlotGroupWidget.playerInventory()
+                SlotGroupWidget.playerInventory(true)
                     .coverChildrenHeight())
             .heightRel(0.4f);
     }

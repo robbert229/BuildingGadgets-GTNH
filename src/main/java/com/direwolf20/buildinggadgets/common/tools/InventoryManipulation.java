@@ -221,9 +221,9 @@ public class InventoryManipulation {
      * @return The extracted ItemStack. If nothing was extracted, returns null or an empty stack.
      */
     public static ItemStack extractItem(IInventory inventory, int slot, int amount, boolean simulate) {
-        assert slot >= 0;
-        assert inventory != null;
-        assert slot < inventory.getSizeInventory();
+        if (inventory == null || slot < 0 || slot >= inventory.getSizeInventory()) {
+            return null;
+        }
 
         // Get the current item in the slot
         ItemStack stackInSlot = inventory.getStackInSlot(slot);

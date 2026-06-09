@@ -396,7 +396,7 @@ public class GadgetDestruction extends GadgetGeneric {
         Region selectionRegion = new Region(startPos);
         for (int i = 0; i < directionNames.length; i++) {
             var offset = ChunkCoordinateUtils
-                .offset(startPos, directions.get(i), getToolValue(stack, directionNames[i]) - (i == 4 ? 1 : 0));;
+                .offset(startPos, directions.get(i), getToolValue(stack, directionNames[i]) - (i == 4 ? 1 : 0));
             selectionRegion = selectionRegion.union(new Region(offset));
         }
 

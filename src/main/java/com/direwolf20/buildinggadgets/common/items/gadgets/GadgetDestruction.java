@@ -159,7 +159,6 @@ public class GadgetDestruction extends GadgetGeneric {
      * @param stack gadget stack
      * @return gadget UUID from NBT
      */
-    @Nullable
     public static String getUUID(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {

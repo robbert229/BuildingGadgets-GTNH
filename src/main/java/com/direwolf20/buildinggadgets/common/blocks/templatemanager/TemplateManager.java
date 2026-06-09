@@ -1,7 +1,6 @@
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -44,7 +43,6 @@ public class TemplateManager extends BlockModBase {
         return true;
     }
 
-    @Nullable
     @Override
     public TileEntity createTileEntity(@Nonnull World worldin, int metadata) {
         return new TemplateManagerTileEntity();

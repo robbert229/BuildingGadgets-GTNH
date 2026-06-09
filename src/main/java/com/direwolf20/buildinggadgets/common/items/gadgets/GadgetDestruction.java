@@ -454,7 +454,7 @@ public class GadgetDestruction extends GadgetGeneric {
         if (!GadgetGeneric.EmitEvent
             .breakBlock(world, voidPos, world.getBlock(voidPos.posX, voidPos.posY, voidPos.posZ), player)) return false;
 
-        this.applyDamage(tool, player);
+        if (!this.consumeUse(tool, player)) return false;
 
         world.spawnEntityInWorld(
             new BlockBuildEntity(

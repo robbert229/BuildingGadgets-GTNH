@@ -400,7 +400,9 @@ public class GadgetBuilding extends GadgetGeneric {
         }
 
         if (useItemSuccess) {
-            this.applyDamage(heldItem, player);
+            if (!this.consumeUse(heldItem, player)) {
+                return false;
+            }
             world.spawnEntityInWorld(
                 new BlockBuildEntity(
                     world,

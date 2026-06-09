@@ -48,7 +48,8 @@ public class ConstructionBlock extends BlockModBase {
     }
 
     private static ConstructionBlockTileEntity getTE(IBlockAccess world, ChunkCoordinates pos) {
-        return (ConstructionBlockTileEntity) world.getTileEntity(pos.posX, pos.posY, pos.posZ);
+        TileEntity te = world.getTileEntity(pos.posX, pos.posY, pos.posZ);
+        return te instanceof ConstructionBlockTileEntity ? (ConstructionBlockTileEntity) te : null;
     }
 
     private static ConstructionBlockTileEntity getTE(IBlockAccess world, int x, int y, int z) {

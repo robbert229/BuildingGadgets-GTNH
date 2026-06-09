@@ -67,25 +67,25 @@ public class DestructionGUI extends GadgetGUI {
             .child(
                 getSlider().stopper(1)
 
-                    .overlay(new DynamicKey(() -> String.format("Up %d", this.up)))
+                    .overlay(new DynamicKey(() -> IKey.str(String.format("Up %d", this.up))))
                     .value(new DoubleValue.Dynamic(() -> this.up * 1.0, val -> this.up = (int) Math.round(val))))
 
             .child(
                 Flow.row()
                     .child(
-                        getSlider().overlay(new DynamicKey(() -> String.format("Left %d", this.left)))
+                        getSlider().overlay(new DynamicKey(() -> IKey.str(String.format("Left %d", this.left))))
                             .value(
                                 new DoubleValue.Dynamic(
                                     () -> this.left * 1.0,
                                     val -> this.left = (int) Math.round(val))))
                     .child(
-                        getSlider().overlay(new DynamicKey(() -> String.format("Depth %d", this.depth)))
+                        getSlider().overlay(new DynamicKey(() -> IKey.str(String.format("Depth %d", this.depth))))
                             .value(
                                 new DoubleValue.Dynamic(
                                     () -> this.depth * 1.0,
                                     val -> this.depth = (int) Math.round(val))))
                     .child(
-                        getSlider().overlay(new DynamicKey(() -> String.format("Right %d", this.right)))
+                        getSlider().overlay(new DynamicKey(() -> IKey.str(String.format("Right %d", this.right))))
                             .value(
                                 new DoubleValue.Dynamic(
                                     () -> this.right * 1.0,
@@ -94,7 +94,7 @@ public class DestructionGUI extends GadgetGUI {
                     .coverChildrenHeight())
 
             .child(
-                getSlider().overlay(new DynamicKey(() -> String.format("Down %d", this.down)))
+                getSlider().overlay(new DynamicKey(() -> IKey.str(String.format("Down %d", this.down))))
                     .value(new DoubleValue.Dynamic(() -> this.down * 1.0, val -> this.down = (int) Math.round(val))))
             .coverChildrenHeight()
             .coverChildrenWidth();

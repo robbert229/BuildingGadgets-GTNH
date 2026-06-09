@@ -112,6 +112,72 @@ class GadgetDestructionIntegrationTest {
         assertTrue(area.contains(clickPos));
     }
 
+    /**
+     * Regression test for the stateTarget-vs-anchor bug in non-fuzzy mode.
+     *
+     * <h3>How the bug could happen</h3>
+     * <ol>
+     *   <li>The player anchors the Destruction Gadget at block A (e.g. stone at (30,70,40))
+     *       by shift-right-clicking it.</li>
+     *   <li>The player then right-clicks the gadget while looking at a completely different
+     *       block B (e.g. dirt at (5,5,5)). Because an anchor exists, the game passes
+     *       the current look-target as the {@code pos} argument to {@link GadgetDestruction#getArea}
+     *       while the actual operating position ({@code startPos}) is derived from the anchor.</li>
+     *   <li>Before the fix, {@code stateTarget} was computed as
+     *       {@code WorldUtils.getBlock(world, pos)} — that is, the block at the incoming
+     *       look-target (block B / dirt). The selection region, however, is centred on
+     *       {@code startPos} (block A / stone). Every block in that region is stone, but
+     *       the non-fuzzy filter compares against dirt (block B). Because stone&nbsp;≠&nbsp;dirt,
+     *       {@code validBlock} rejects every candidate and {@code getArea} returns an empty
+     *       set — the gadget silently does nothing.</li>
+     *   <li>After the fix, {@code stateTarget} is derived from {@code startPos} (block A /
+     *       stone). Every block in the region matches stone, so the full area is returned.</li>
+     * </ol>
+     */
+    @Test
+    void nonFuzzyModeUsesAnchorBlockAsFilterTargetNotIncomingPos() {
+        GadgetDestructionConfig.nonFuzzyEnabled = true;
+
+        // Anchor at (30,70,40); depth=2 → region covers (30,70,38)-(30,70,40).
+        ItemStack stack = prepareNonFuzzyAreaStack(0, 0, 0, 0, 2);
+        ChunkCoordinates anchor = new ChunkCoordinates(30, 70, 40);
+        GadgetDestruction.setAnchor(stack, anchor);
+        GadgetDestruction.setAnchorSide(stack, EnumFacing.NORTH);
+
+        // anchorBlock: the block type that lives at the anchor and throughout the region.
+        Block anchorBlock = mock(Block.class);
+        when(anchorBlock.isAir(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(false);
+        when(anchorBlock.getBlockHardness(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(1.0f);
+
+        // clickBlock: a completely different block type at the caller's incoming pos.
+        // Before the fix this was mistakenly used as the non-fuzzy filter target.
+        Block clickBlock = mock(Block.class);
+
+        // The incoming pos is far from the anchor — simulating the player looking at
+        // a different block than the one they anchored.
+        ChunkCoordinates incomingPos = new ChunkCoordinates(5, 5, 5);
+
+        World world = mock(World.class);
+        // Default: every position in the world returns anchorBlock …
+        when(world.getBlock(anyInt(), anyInt(), anyInt())).thenReturn(anchorBlock);
+        // … except the incoming pos, which returns a different block.
+        when(world.getBlock(incomingPos.posX, incomingPos.posY, incomingPos.posZ)).thenReturn(clickBlock);
+        when(world.getTileEntity(anyInt(), anyInt(), anyInt())).thenReturn(null);
+
+        Set<ChunkCoordinates> area = GadgetDestruction
+            .getArea(world, incomingPos, EnumFacing.NORTH, createHoldingPlayer(stack), stack);
+
+        // With the fix stateTarget == anchorBlock (from startPos), so every block in the
+        // region passes the filter. Before the fix stateTarget == clickBlock (from pos),
+        // causing all region blocks to be rejected and the area to be empty.
+        assertFalse(area.isEmpty(),
+            "Non-fuzzy mode must derive its block-type filter from startPos (the anchor), "
+                + "not from the incoming pos argument. When an anchor is active the two positions "
+                + "can differ, and using pos produces an empty area.");
+        assertTrue(area.contains(anchor),
+            "The anchor position itself must be included in the destruction area");
+    }
+
     @Test
     void getAreaUsesAnchorAndAnchorSideInsteadOfIncomingTarget() {
         ItemStack stack = prepareAreaStack(0, 0, 0, 0, 2);
@@ -137,6 +203,13 @@ class GadgetDestructionIntegrationTest {
         GadgetDestruction.setToolValue(stack, depth, "depth");
         NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_UNCONNECTED_AREA, true);
         NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_FUZZY, true);
+        return stack;
+    }
+
+    /** Same as {@link #prepareAreaStack} but with fuzzy mode disabled. */
+    private static ItemStack prepareNonFuzzyAreaStack(int left, int right, int up, int down, int depth) {
+        ItemStack stack = prepareAreaStack(left, right, up, down, depth);
+        NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_FUZZY, false);
         return stack;
     }
 

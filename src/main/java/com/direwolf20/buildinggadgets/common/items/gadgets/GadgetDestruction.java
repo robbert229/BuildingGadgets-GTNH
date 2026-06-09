@@ -401,7 +401,9 @@ public class GadgetDestruction extends GadgetGeneric {
         }
 
         boolean fuzzy = !GadgetDestructionConfig.nonFuzzyEnabled || GadgetGeneric.getFuzzy(stack);
-        Block stateTarget = fuzzy ? null : WorldUtils.getBlock(world, pos);
+        // Use startPos (which reflects the anchor when one is set) so that non-fuzzy mode
+        // filters against the block that was actually anchored, not the caller's incoming pos.
+        Block stateTarget = fuzzy ? null : WorldUtils.getBlock(world, startPos);
         if (GadgetGeneric.getConnectedArea(stack)) {
             return ConnectedSurface
                 .create(

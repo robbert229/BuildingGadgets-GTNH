@@ -1,22 +1,21 @@
 dependencies {
-    implementation("com.github.GTNewHorizons:ModularUI2:2.2.7-1.7.10")
     api("com.github.GTNewHorizons:ModularUI2:2.2.7-1.7.10")
-    implementation("com.github.GTNewHorizons:StructureLib:1.4.10:dev")
-    implementation("com.github.GTNewHorizons:GTNHLib:0.6.21:dev")
+    implementation("com.github.GTNewHorizons:StructureLib:1.4.38:dev")
+    implementation("com.github.GTNewHorizons:GTNHLib:0.11.4:dev")
     implementation 'com.google.guava:guava:32.1.2-jre'
     implementation 'it.unimi.dsi:fastutil:8.5.12'
 
-    compile("com.github.GTNewHorizons:NotEnoughItems:2.8.101-GTNH:dev")
+    api("com.github.GTNewHorizons:NotEnoughItems:2.8.101-GTNH:dev")
 
-    compile("com.github.GTNewHorizons:CarpentersBlocks:3.7.0-GTNH")
-    compile("com.github.GTNewHorizons:Ztones-Unofficial:2.3.2-GTNH") { transitive = false }
+    api("com.github.GTNewHorizons:CarpentersBlocks:3.7.2-GTNH")
+    api("com.github.GTNewHorizons:Ztones-Unofficial:2.3.2-GTNH") { transitive = false }
 
     implementation("curse.maven:cofh-core-69162:2388751") { transitive = false }
-    implementation("com.github.GTNewHorizons:Chisel:2.10.11-GTNH:dev")
+    api("com.github.GTNewHorizons:Chisel:2.10.11-GTNH:dev")
 
     compileOnly("com.github.GTNewHorizons:GT5-Unofficial:5.09.51.266:dev") { transitive = false }
 
     testImplementation(platform('org.junit:junit-bom:5.9.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.0"
 }

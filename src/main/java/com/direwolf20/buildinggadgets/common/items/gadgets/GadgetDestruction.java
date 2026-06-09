@@ -76,18 +76,18 @@ public class GadgetDestruction extends GadgetGeneric {
      */
     @Override
     public int getEnergyCost(ItemStack tool) {
-        return GadgetDestructionConfig.energyCostDestruction * getCostMultiplier(tool);
+        double multiplier = (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool))
+            ? GadgetDestructionConfig.nonFuzzyMultiplier
+            : 1.0D;
+        return (int) Math.round(GadgetDestructionConfig.energyCostDestruction * multiplier);
     }
 
-    /**
-     * Returns durability cost per action, including optional non-fuzzy multiplier.
-     *
-     * @param tool gadget stack
-     * @return durability cost for one destruction action
-     */
     @Override
     public int getDamageCost(ItemStack tool) {
-        return GadgetDestructionConfig.damageCostDestruction * getCostMultiplier(tool);
+        double multiplier = (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool))
+            ? GadgetDestructionConfig.nonFuzzyMultiplier
+            : 1.0D;
+        return (int) Math.round(GadgetDestructionConfig.damageCostDestruction * multiplier);
     }
 
     /**

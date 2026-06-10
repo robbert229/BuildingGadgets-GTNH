@@ -27,7 +27,10 @@ class GadgetDestructionUnitTest {
 
         assertNotNull(first);
         assertEquals(first, second);
-        assertEquals(first, stack.getTagCompound().getString(NBTKeys.GADGET_UUID));
+        assertEquals(
+            first,
+            stack.getTagCompound()
+                .getString(NBTKeys.GADGET_UUID));
     }
 
     @Test
@@ -55,16 +58,10 @@ class GadgetDestructionUnitTest {
         ItemStack stack = new ItemStack(new GadgetDestruction());
         GadgetDestruction.setToolValue(stack, 0, "depth");
 
-        Set<ChunkCoordinates> area = GadgetDestruction.getArea(
-            null,
-            new ChunkCoordinates(0, 64, 0),
-            EnumFacing.NORTH,
-            null,
-            stack);
+        Set<ChunkCoordinates> area = GadgetDestruction
+            .getArea(null, new ChunkCoordinates(0, 64, 0), EnumFacing.NORTH, null, stack);
 
         assertNotNull(area);
         assertTrue(area.isEmpty());
     }
 }
-
-

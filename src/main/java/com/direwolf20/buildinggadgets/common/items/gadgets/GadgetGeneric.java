@@ -45,7 +45,9 @@ public abstract class GadgetGeneric extends ItemModBase implements IEnergyContai
     }
 
     protected static boolean isCreativeGadget(ItemStack stack) {
-        return stack != null && stack.hasTagCompound() && stack.getTagCompound().hasKey(NBTKeys.CREATIVE_MARKER);
+        return stack != null && stack.hasTagCompound()
+            && stack.getTagCompound()
+                .hasKey(NBTKeys.CREATIVE_MARKER);
     }
 
     private int getMaxReceive(ItemStack stack) {
@@ -63,7 +65,8 @@ public abstract class GadgetGeneric extends ItemModBase implements IEnergyContai
         }
 
         int clamped = Math.max(0, Math.min(getMaxEnergyStored(stack), energy));
-        NBTTool.getOrNewTag(stack).setInteger(NBTKeys.ENERGY, clamped);
+        NBTTool.getOrNewTag(stack)
+            .setInteger(NBTKeys.ENERGY, clamped);
     }
 
     @Override
@@ -246,7 +249,8 @@ public abstract class GadgetGeneric extends ItemModBase implements IEnergyContai
             return 0;
         }
 
-        int stored = container.getTagCompound().getInteger(NBTKeys.ENERGY);
+        int stored = container.getTagCompound()
+            .getInteger(NBTKeys.ENERGY);
         return Math.max(0, Math.min(max, stored));
     }
 

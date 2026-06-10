@@ -13,8 +13,7 @@
 # Welcome to BuildingGadgets-GTNH
 
 `BuildingGadgets-GTNH` is as fork, and backport of direwolf20's building gadget mod. It is not currently associated with
-GTNH, but it was backported for the sole purpose of use in GTNH. As a result, it is currently not supported outside  
-GTNH.
+GTNH, but it was backported for the sole purpose of use in GTNH. As a result, it is currently not supported outside GTNH.
 
 Its behavior closely matches the upstream's functionality in 1.12.x. It does not aim to be a perfect port, but instead 
 is focused on the functionality.  

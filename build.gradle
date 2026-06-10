@@ -4,3 +4,6 @@ plugins {
     id 'com.gtnewhorizons.gtnhconvention'
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}

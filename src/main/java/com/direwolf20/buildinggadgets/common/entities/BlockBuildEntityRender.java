@@ -46,9 +46,9 @@ public class BlockBuildEntityRender extends Render {
             scale = (float) (maxLife - teCounter) / maxLife;
         }
 
-        float trans = (1 - scale) / 2;
-
-        GL11.glTranslated(x + trans + 0.5, y + trans + 0.5, z + trans + 0.5);
+        // renderBlockAsItem centers ordinary block item geometry around local origin.
+        // Translate to the voxel center so scaling grows/shrinks in place.
+        GL11.glTranslated(centerOnBlock(x), centerOnBlock(y), centerOnBlock(z));
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glScalef(scale, scale, scale);
 
@@ -120,6 +120,10 @@ public class BlockBuildEntityRender extends Render {
 
         GL11.glPopMatrix();
         GL11.glPopAttrib();
+    }
+
+    static double centerOnBlock(double coordinate) {
+        return coordinate + 0.5D;
     }
 
     @Override

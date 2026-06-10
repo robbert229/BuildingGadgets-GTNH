@@ -46,9 +46,9 @@ public class BlockBuildEntityRender extends Render {
             scale = (float) (maxLife - teCounter) / maxLife;
         }
 
-        float trans = (1 - scale) / 2;
+        float trans = computeTranslationOffset(scale);
 
-        GL11.glTranslated(x + trans + 0.5, y + trans + 0.5, z + trans + 0.5);
+        GL11.glTranslated(x + trans, y + trans, z + trans);
         GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glScalef(scale, scale, scale);
 
@@ -120,6 +120,22 @@ public class BlockBuildEntityRender extends Render {
 
         GL11.glPopMatrix();
         GL11.glPopAttrib();
+    }
+
+    /**
+     * Computes the translation offset needed to keep a scaled block centred within its
+     * unit-cube voxel.
+     *
+     * <p>{@code renderBlockAsItem} draws a block from local (0,0,0) to (1,1,1). After
+     * {@code glScalef(scale)}, the block occupies [0, scale]. To centre it in [0, 1] the
+     * origin must be shifted by {@code (1 - scale) / 2}, so the rendered range becomes
+     * [{@code offset}, {@code offset + scale}] with its midpoint always at {@code 0.5}.
+     *
+     * @param scale the current animation scale, in [0, 1]
+     * @return the per-axis translation offset to apply before {@code glScalef}
+     */
+    static float computeTranslationOffset(float scale) {
+        return (1f - scale) / 2f;
     }
 
     @Override

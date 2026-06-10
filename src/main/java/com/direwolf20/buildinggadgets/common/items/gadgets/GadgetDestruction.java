@@ -3,8 +3,6 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -76,25 +74,19 @@ public class GadgetDestruction extends GadgetGeneric {
      */
     @Override
     public int getEnergyCost(ItemStack tool) {
-        double multiplier = (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool))
-            ? GadgetDestructionConfig.nonFuzzyMultiplier
-            : 1.0D;
-        return (int) Math.round(GadgetDestructionConfig.energyCostDestruction * multiplier);
+        return (int) Math.round(GadgetDestructionConfig.energyCostDestruction * getCostMultiplier(tool));
     }
 
     @Override
     public int getDamageCost(ItemStack tool) {
-        double multiplier = (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool))
-            ? GadgetDestructionConfig.nonFuzzyMultiplier
-            : 1.0D;
-        return (int) Math.round(GadgetDestructionConfig.damageCostDestruction * multiplier);
+        return (int) Math.round(GadgetDestructionConfig.damageCostDestruction * getCostMultiplier(tool));
     }
 
     /**
      * Renders the destruction selection preview in-world.
      *
-     * @param evt current render event
-     * @param player rendering player
+     * @param evt      current render event
+     * @param player   rendering player
      * @param heldItem held gadget stack
      */
     @Override
@@ -105,7 +97,7 @@ public class GadgetDestruction extends GadgetGeneric {
     /**
      * Opens the destruction gadget shortcut menu on the client.
      *
-     * @param itemStack gadget stack
+     * @param itemStack          gadget stack
      * @param temporarilyEnabled whether temporary mode is active
      */
     @Override
@@ -116,18 +108,17 @@ public class GadgetDestruction extends GadgetGeneric {
     }
 
     // Non-fuzzy mode can be configured to cost more, so precision targeting has a balancing tradeoff.
-    private int getCostMultiplier(ItemStack tool) {
-        return (int) (GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool)
-            ? GadgetDestructionConfig.nonFuzzyMultiplier
-            : 1);
+    private double getCostMultiplier(ItemStack tool) {
+        return GadgetDestructionConfig.nonFuzzyEnabled && !getFuzzy(tool) ? GadgetDestructionConfig.nonFuzzyMultiplier
+            : 1.0D;
     }
 
     /**
      * Adds tooltip lines for warning, mode state, and energy/fluid settings.
      *
-     * @param stack gadget stack
-     * @param player local player
-     * @param list tooltip lines to append to
+     * @param stack    gadget stack
+     * @param player   local player
+     * @param list     tooltip lines to append to
      * @param advanced whether advanced tooltips are enabled
      */
     @Override
@@ -178,7 +169,7 @@ public class GadgetDestruction extends GadgetGeneric {
      * Persists the current anchor position to NBT.
      *
      * @param stack gadget stack
-     * @param pos anchor position, or {@code null} to clear
+     * @param pos   anchor position, or {@code null} to clear
      */
     public static void setAnchor(ItemStack stack, ChunkCoordinates pos) {
         GadgetUtils.writePOSToNBT(stack, pos, "anchor");
@@ -198,7 +189,7 @@ public class GadgetDestruction extends GadgetGeneric {
      * Persists or clears the anchor side used for anchored operations.
      *
      * @param stack gadget stack
-     * @param side anchor side, or {@code null} to clear
+     * @param side  anchor side, or {@code null} to clear
      */
     public static void setAnchorSide(ItemStack stack, EnumFacing side) {
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -239,8 +230,8 @@ public class GadgetDestruction extends GadgetGeneric {
     /**
      * Stores a numeric area setting ({@code left/right/up/down/depth}) in NBT.
      *
-     * @param stack gadget stack
-     * @param value value to store
+     * @param stack     gadget stack
+     * @param value     value to store
      * @param valueName NBT key name
      */
     public static void setToolValue(ItemStack stack, int value, String valueName) {
@@ -256,7 +247,7 @@ public class GadgetDestruction extends GadgetGeneric {
     /**
      * Reads a numeric area setting from NBT.
      *
-     * @param stack gadget stack
+     * @param stack     gadget stack
      * @param valueName NBT key name
      * @return stored value, or {@code 0} when missing
      */
@@ -295,8 +286,8 @@ public class GadgetDestruction extends GadgetGeneric {
     /**
      * Triggers destruction on right click (server-side), using anchor when present.
      *
-     * @param stack gadget stack
-     * @param world world context
+     * @param stack  gadget stack
+     * @param world  world context
      * @param player acting player
      * @return original gadget stack
      */
@@ -345,7 +336,7 @@ public class GadgetDestruction extends GadgetGeneric {
      * Toggles anchor state at the looked-at block and reports result to chat.
      *
      * @param player acting player
-     * @param stack gadget stack
+     * @param stack  gadget stack
      */
     @Override
     public void anchorBlocks(EntityPlayer player, ItemStack stack) {
@@ -375,11 +366,11 @@ public class GadgetDestruction extends GadgetGeneric {
     /**
      * Computes the candidate destruction area, then filters by mode and block validity.
      *
-     * @param world world context
-     * @param pos clicked position
+     * @param world        world context
+     * @param pos          clicked position
      * @param incomingSide clicked face
-     * @param player acting player
-     * @param stack gadget stack
+     * @param player       acting player
+     * @param stack        gadget stack
      * @return valid positions that can be destroyed
      */
     public static Set<ChunkCoordinates> getArea(World world, ChunkCoordinates pos, EnumFacing incomingSide,
@@ -401,7 +392,7 @@ public class GadgetDestruction extends GadgetGeneric {
         }
 
         boolean fuzzy = !GadgetDestructionConfig.nonFuzzyEnabled || GadgetGeneric.getFuzzy(stack);
-        Block stateTarget = fuzzy ? null : WorldUtils.getBlock(world, pos);
+        Block stateTarget = fuzzy ? null : WorldUtils.getBlock(world, startPos);
         if (GadgetGeneric.getConnectedArea(stack)) {
             return ConnectedSurface
                 .create(
@@ -508,7 +499,7 @@ public class GadgetDestruction extends GadgetGeneric {
      * Replays stored destruction history by spawning placement entities when space is available.
      *
      * @param player acting player
-     * @param stack gadget stack
+     * @param stack  gadget stack
      */
     public void undo(EntityPlayer player, ItemStack stack) {
         World world = player.worldObj;

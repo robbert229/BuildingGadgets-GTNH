@@ -3,8 +3,8 @@ package com.direwolf20.buildinggadgets.common.items.gadgets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +57,8 @@ class GadgetDestructionIntegrationTest {
         GadgetDestructionConfig.nonFuzzyEnabled = true;
         ItemStack stack = new ItemStack(new GadgetDestruction());
 
-        NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_FUZZY, false);
+        NBTTool.getOrNewTag(stack)
+            .setBoolean(NBTKeys.GADGET_FUZZY, false);
 
         GadgetDestruction gadget = new GadgetDestruction();
 
@@ -70,7 +71,8 @@ class GadgetDestructionIntegrationTest {
         GadgetDestructionConfig.nonFuzzyEnabled = true;
         ItemStack stack = new ItemStack(new GadgetDestruction());
 
-        NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_FUZZY, true);
+        NBTTool.getOrNewTag(stack)
+            .setBoolean(NBTKeys.GADGET_FUZZY, true);
         GadgetDestruction gadget = new GadgetDestruction();
 
         assertEquals(100, gadget.getEnergyCost(stack));
@@ -96,12 +98,30 @@ class GadgetDestructionIntegrationTest {
         Set<ChunkCoordinates> area = GadgetDestruction
             .getArea(createAlwaysValidWorld(), clickPos, EnumFacing.NORTH, createHoldingPlayer(stack), stack);
 
-        int minX = area.stream().mapToInt(p -> p.posX).min().orElseThrow(() -> new AssertionError("Area must not be empty"));
-        int maxX = area.stream().mapToInt(p -> p.posX).max().orElseThrow(() -> new AssertionError("Area must not be empty"));
-        int minY = area.stream().mapToInt(p -> p.posY).min().orElseThrow(() -> new AssertionError("Area must not be empty"));
-        int maxY = area.stream().mapToInt(p -> p.posY).max().orElseThrow(() -> new AssertionError("Area must not be empty"));
-        int minZ = area.stream().mapToInt(p -> p.posZ).min().orElseThrow(() -> new AssertionError("Area must not be empty"));
-        int maxZ = area.stream().mapToInt(p -> p.posZ).max().orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int minX = area.stream()
+            .mapToInt(p -> p.posX)
+            .min()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int maxX = area.stream()
+            .mapToInt(p -> p.posX)
+            .max()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int minY = area.stream()
+            .mapToInt(p -> p.posY)
+            .min()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int maxY = area.stream()
+            .mapToInt(p -> p.posY)
+            .max()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int minZ = area.stream()
+            .mapToInt(p -> p.posZ)
+            .min()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
+        int maxZ = area.stream()
+            .mapToInt(p -> p.posZ)
+            .max()
+            .orElseThrow(() -> new AssertionError("Area must not be empty"));
 
         assertEquals(24, area.size());
         assertEquals(4, maxX - minX + 1);
@@ -128,6 +148,31 @@ class GadgetDestructionIntegrationTest {
         assertFalse(area.contains(incomingPos));
     }
 
+    @Test
+    void getAreaUsesAnchorBlockAsNonFuzzyTarget() {
+        GadgetDestructionConfig.nonFuzzyEnabled = true;
+        ItemStack stack = prepareAreaStack(0, 0, 0, 0, 2);
+        NBTTool.getOrNewTag(stack)
+            .setBoolean(NBTKeys.GADGET_FUZZY, false);
+
+        ChunkCoordinates anchor = new ChunkCoordinates(30, 70, 40);
+        GadgetDestruction.setAnchor(stack, anchor);
+        GadgetDestruction.setAnchorSide(stack, EnumFacing.UP);
+
+        ChunkCoordinates incomingPos = new ChunkCoordinates(5, 5, 5);
+        Set<ChunkCoordinates> area = GadgetDestruction.getArea(
+            createWorldWithDifferentIncomingBlock(incomingPos),
+            incomingPos,
+            EnumFacing.NORTH,
+            createHoldingPlayer(stack),
+            stack);
+
+        assertEquals(2, area.size());
+        assertTrue(area.contains(anchor));
+        assertTrue(area.contains(new ChunkCoordinates(30, 69, 40)));
+        assertFalse(area.contains(incomingPos));
+    }
+
     private static ItemStack prepareAreaStack(int left, int right, int up, int down, int depth) {
         ItemStack stack = new ItemStack(new GadgetDestruction());
         GadgetDestruction.setToolValue(stack, left, "left");
@@ -135,8 +180,10 @@ class GadgetDestructionIntegrationTest {
         GadgetDestruction.setToolValue(stack, up, "up");
         GadgetDestruction.setToolValue(stack, down, "down");
         GadgetDestruction.setToolValue(stack, depth, "depth");
-        NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_UNCONNECTED_AREA, true);
-        NBTTool.getOrNewTag(stack).setBoolean(NBTKeys.GADGET_FUZZY, true);
+        NBTTool.getOrNewTag(stack)
+            .setBoolean(NBTKeys.GADGET_UNCONNECTED_AREA, true);
+        NBTTool.getOrNewTag(stack)
+            .setBoolean(NBTKeys.GADGET_FUZZY, true);
         return stack;
     }
 
@@ -152,13 +199,33 @@ class GadgetDestructionIntegrationTest {
         return world;
     }
 
+    private static World createWorldWithDifferentIncomingBlock(ChunkCoordinates incomingPos) {
+        World world = mock(World.class);
+        Block anchorBlock = mock(Block.class);
+        Block incomingBlock = mock(Block.class);
+
+        when(world.getBlock(anyInt(), anyInt(), anyInt())).thenAnswer(invocation -> {
+            int x = invocation.getArgument(0, Integer.class);
+            int y = invocation.getArgument(1, Integer.class);
+            int z = invocation.getArgument(2, Integer.class);
+            if (x == incomingPos.posX && y == incomingPos.posY && z == incomingPos.posZ) {
+                return incomingBlock;
+            }
+            return anchorBlock;
+        });
+        when(world.getTileEntity(anyInt(), anyInt(), anyInt())).thenReturn(null);
+        when(anchorBlock.isAir(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(false);
+        when(incomingBlock.isAir(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(false);
+        when(anchorBlock.getBlockHardness(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(1.0f);
+        when(incomingBlock.getBlockHardness(any(World.class), anyInt(), anyInt(), anyInt())).thenReturn(1.0f);
+
+        return world;
+    }
+
     private static EntityPlayer createHoldingPlayer(ItemStack heldStack) {
         EntityPlayer player = mock(EntityPlayer.class);
         when(player.getHeldItem()).thenReturn(heldStack);
-        when(player.canPlayerEdit(anyInt(), anyInt(), anyInt(), anyInt(), any(ItemStack.class)))
-            .thenReturn(true);
+        when(player.canPlayerEdit(anyInt(), anyInt(), anyInt(), anyInt(), any(ItemStack.class))).thenReturn(true);
         return player;
     }
 }
-
-

@@ -2,6 +2,7 @@ package com.direwolf20.buildinggadgets;
 
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
+import com.direwolf20.buildinggadgets.common.crafting.ModRecipes;
 import com.direwolf20.buildinggadgets.common.entities.ModEntities;
 import com.direwolf20.buildinggadgets.common.integration.IntegrationHandler;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
@@ -28,6 +29,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
+        ModRecipes.init();
         NetworkRegistry.INSTANCE.registerGuiHandler(BuildingGadgets.instance, new GuiProxy());
     }
 
